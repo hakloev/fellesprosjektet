@@ -5,12 +5,12 @@ Kode for utvikling av applikasjon i fellesprosjektet.
 
 ### Authors:
 
-  * [Kristian Andre Volden](https://github.com/tbTapion)
-  * [Torgeir Skogen](https://github.com/andlon93)
-  * [Truls Mørk Pettersen](http://loevdal.net)
-  * [Håkon Ødegård Løvdal](https://github.com/midmad10)
-  * [Tarald Gåsbakk](https://github.com/maxmelander)
-  * [Håvard Snabry](https://github.com/samoth1601)
+  * [Kristian Andre Volden](https://github.com/DeimosA)
+  * [Torgeir Skogen](https://github.com/torgeiws)
+  * [Truls Mørk Pettersen](http://github.com/trulsmp)
+  * [Håkon Ødegård Løvdal](https://loevdal.net)
+  * [Tarald Gåsbakk](https://github.com/taraldga)
+  * [Håvard Snabry](https://github.com/haavardsn)
 
 Koden er tilgjenglig under modifisert [Beerware license](http://en.wikipedia.org/wiki/Beerware).
 
