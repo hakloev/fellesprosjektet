@@ -4,3 +4,26 @@
 *.jar
 *.war
 *.ear
+
+# Java class files #
+/bin
+*.class
+/out
+
+/jar_lib
+/gui
+
+
+# IntelliJ project files #
+*.idea
+*.iml
+
+# Eclipse project files #
+
+*.classpath
+*.project
+
+*.settings
+
+#For all who hates DS_Store
+*.DS_Store
