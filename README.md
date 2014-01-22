@@ -10,7 +10,7 @@ Kode for utvikling av applikasjon i fellesprosjektet.
   * [Truls Mørk Pettersen](http://github.com/trulsmp)
   * [Håkon Ødegård Løvdal](https://loevdal.net)
   * [Tarald Gåsbakk](https://github.com/taraldga)
-  * [Håvard Snabry](https://github.com/haavardsn)
+  * [Håvard Snabry](https://github.com/Haavarsn)
 
 Koden er tilgjenglig under modifisert [Beerware license](http://en.wikipedia.org/wiki/Beerware).
 
