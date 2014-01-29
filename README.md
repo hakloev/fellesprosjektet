@@ -7,8 +7,8 @@ Kode for utvikling av applikasjon i fellesprosjektet.
 
   * [Kristian Andre Volden](https://github.com/DeimosA)
   * [Torgeir Skogen](https://github.com/torgeiws)
-  * [Truls Mørk Pettersen](http://github.com/trulsmp)
-  * [Håkon Ødegård Løvdal](https://loevdal.net)
+  * [Truls Mørk Pettersen](https://github.com/trulsmp)
+  * [Håkon Ødegård Løvdal](http://loevdal.net)
   * [Tarald Gåsbakk](https://github.com/taraldga)
   * [Håvard Snabry](https://github.com/Haavarsn)
 
