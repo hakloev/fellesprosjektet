@@ -2,7 +2,7 @@
 KTN-project 2013 / 2014
 '''
 import socket
-
+import json
 
 class Client(object):
 
@@ -11,10 +11,10 @@ class Client(object):
 
     def start(self, host, port):
         self.connection.connect((host, port))
-        self.send('Hello')
+        #self.send('Hello')
         received_data = self.connection.recv(1024).strip()
         print 'Received from server: ' + received_data
-        self.connection.close()
+        #self.connection.close()
 
     def message_received(self, message, connection):
         pass
@@ -26,6 +26,7 @@ class Client(object):
         self.connection.sendall(data)
 
     def force_disconnect(self):
+        self.connection.close()
         pass
 
 

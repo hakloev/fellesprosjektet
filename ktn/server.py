@@ -3,7 +3,9 @@ KTN-project 2013 / 2014
 Very simple server implementation that should serve as a basis
 for implementing the chat server
 '''
+
 import SocketServer
+import json
 
 '''
 The RequestHandler class for our server.
@@ -12,7 +14,6 @@ It is instantiated once per connection to the server, and must
 override the handle() method to implement communication to the
 client.
 '''
-
 
 class CLientHandler(SocketServer.BaseRequestHandler):
     def handle(self):
@@ -38,7 +39,6 @@ class CLientHandler(SocketServer.BaseRequestHandler):
 This will make all Request handlers being called in its own thread.
 Very important, otherwise only one client will be served at a time
 '''
-
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     pass
