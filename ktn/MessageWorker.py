@@ -23,14 +23,18 @@ class ReceiveMessageWorker(Thread):
         self.daemeon = True
         self.listener = listener
         self.connection = connection
-        Thread.__init__(self)
 
     def run(self):
         print 'MessageWorker initiated'
         while True:
-            msg = self.connection.recv(1024).strip()
-            if not msg:
-                break
-            else:
+            try:
+                msg = self.connection.recv(1024).strip()
+                if not msg:
+                    break
                 self.listener.message_received(msg, self.connection)
+            except:
+                break
         pass
+
+
+

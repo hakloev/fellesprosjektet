@@ -24,16 +24,18 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         # Get the remote port number of the socket
         self.port = self.client_address[1]
         print 'Client connected @' + self.ip + ':' + str(self.port)
-        # Wait for data from the client
-        data = self.connection.recv(1024).strip()
-        # Check if the data exists
-        # (recv could have returned due to a disconnect)
-        if data:
-            print data
-            # Return the string in uppercase
-            self.connection.sendall(data.upper())
-        else:
-            print 'Client disconnected!'
+        
+        while True:
+            # Wait for data from the client
+            data = self.connection.recv(1024).strip()
+            # Check if the data exists
+            # (recv could have returned due to a disconnect)
+            if data:
+                print data
+                # Return the string in uppercase
+                self.connection.sendall(data.upper())
+            else:
+                print 'Client disconnected!'
 
 '''
 This will make all Request handlers being called in its own thread.
