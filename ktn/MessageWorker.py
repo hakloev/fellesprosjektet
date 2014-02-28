@@ -19,7 +19,18 @@ from threading import Thread
 class ReceiveMessageWorker(Thread):
 
     def __init__(self, listener, connection):
+        # We have to set daemon to False so it terminates when parent thread is terminated
         self.daemeon = True
+        self.listener = listener
+        self.connection = connection
+        Thread.__init__(self)
 
     def run(self):
+        print 'MessageWorker initiated'
+        while True:
+            msg = self.connection.recv(1024).strip()
+            if not msg:
+                break
+            else:
+                self.listener.message_received(msg, self.connection)
         pass
