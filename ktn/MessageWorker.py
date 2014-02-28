@@ -23,6 +23,7 @@ class ReceiveMessageWorker(Thread):
         self.daemeon = True
         self.listener = listener
         self.connection = connection
+        Thread.__init__(self)
 
     def run(self):
         print 'MessageWorker initiated'

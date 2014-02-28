@@ -19,7 +19,6 @@ class Client(object):
        
         self.messageWorker = MessageWorker.ReceiveMessageWorker(self, self.connection)    
         #self.messageWorkerThread = threading.Thread(target=self.messageWorker)
-        
         self.messageWorker.start()
         #self.messageWorkerThread.start() 
 
