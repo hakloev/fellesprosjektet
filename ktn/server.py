@@ -6,7 +6,7 @@ for implementing the chat server
 
 import SocketServer
 import json
-from threading import Thread
+import re
 
 '''
 The RequestHandler class for our server.
@@ -62,8 +62,11 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         data = json.loads(data)
         if data['request'] == 'login':
             if not data['username'] in usernames:
-                usernames.append(data['username'])
-                res = {'response': 'login', 'username': data['username']}
+                if re.search("^[a-zA-Z0-9_]{0,15}$", data['username']) is not None:
+                    usernames.append(data['username'])
+                    res = {'response': 'login', 'username': data['username']}
+                else:
+                    res = {'response': 'login', 'error': 'Invalid username!', 'username': data['username']}
             else:  
                 res = {'response': 'login', 'error': 'Name already taken!', 'username': data['username']}
         elif data['request'] == 'logout':
