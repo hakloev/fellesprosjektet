@@ -90,7 +90,7 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             pass
 
     def sendResponse(self, res, type, origin):
-        print 'sendResponse()'
+        if self.debug: print 'sendResponse'
         res = json.dumps(res)
         if type == 'all': 
             for ID in clients:
