@@ -25,7 +25,7 @@ override the handle() method to implement communication to the
 client.
 '''
 class CLientHandler(SocketServer.BaseRequestHandler):
-    
+
     debug = None
     socketHandler = None
 
@@ -46,19 +46,47 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             # Check if the data exists
             # (recv could have returned due to a disconnect)
             if data:
-                print self. ip + ':' + str(self.port) + ' requested ' + data 
-                self.handleJSON(data)
+                print self.ip + ':' + str(self.port) + ' requested ' + data 
+                self.socketHandler.handleJSON(data, self)
             else:
                 print 'Client disconnected @' + self.ip + ':' + str(self.port)
                 break
+    
+    def sendJSON(self, data):
+        print 'Send all data from ' + self.ip + ':' + str(self.port)
+        self.connection.sendall(data)
 
-    def handleJSON(self, data):
+
+'''
+Class for holding information about sockets, usernames and jsonhandling
+'''
+class SocketHandler:
+
+    usernames = None
+    clients = None
+    debug = None
+
+    '''
+    TANKEN ER:
+    Alle kaller sockethandler for persing av json, og har samme referanse til sockethandler
+    de kaller sockethandler med en instans av seg selv, altsaa vil den holde oversikt og sende til alle clienthandler objekter 
+    da vil alle clienthandlers muligens ha en send funksjon, usikker paa denne
+    '''
+
+    def __init__(self):
+        self.usernames = [] 
+        self.clients = {}
+        debug = True
+        pass
+
+    def handleJSON(self, data, socket):
         data = json.loads(data)
         if data['request'] == 'login':
-            if not data['username'] in usernames:
+            if not data['username'] in self.clients.itervalues():
                 if re.search("^[a-zA-Z0-9_]{0,15}$", data['username']) is not None:
-                    usernames.append(data['username'])
+                    self.usernames.append(data['username'])
                     res = {'response': 'login', 'username': data['username']}
+                    self.clients[socket]  = data['username']
                     self.sendResponse(res,'all','')
                 else:
                     res = {'response': 'login', 'error': 'Invalid username!', 'username': data['username']}
@@ -78,7 +106,6 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         elif data['request'] == 'message':
             res = {'response': 'message', 'message': data['message']}
             self.sendResponse(res,'all', '')
-
         else:
             pass
 
@@ -86,29 +113,17 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         if self.debug: print 'sendResponse'
         res = json.dumps(res)
         if type == 'all': 
+            print self.clients
+            for socket in self.clients.iterkeys():
+                print socket
+                socket.sendJSON(res)
             pass
         elif type == 'one':
-            self.connection.sendall(res)
             pass
         elif type == 'allxone':
             #har ikke mulighet til aa finne lokal sender enda
             pass
         pass 
-
-'''
-Class for holding information about sockets, usernames and jsonhandling
-'''
-class SocketHandler:
-
-    '''
-    TANKEN ER:
-    Alle kaller sockethandler for persing av json, og har samme referanse til sockethandler
-    de kaller sockethandler med en instans av seg selv, altså vil den holde oversikt og sende til alle clienthandler objekter 
-    da vil alle clienthandlers muligens ha en send funksjon, usikker på denne
-    '''
-    
-    def __init__(self):
-        pass
 
 # Main method
 if __name__ == "__main__":
@@ -119,7 +134,7 @@ if __name__ == "__main__":
         HOST = 'localhost'    
     print "Using IP: " + HOST
     PORT = 9999
-    
+
     # Give all CLientHandlers the same instance of SocketHandler
     CLientHandler.socketHandler = SocketHandler()
 
