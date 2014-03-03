@@ -86,8 +86,6 @@ class Client(object):
         if self.loggedIn:
             req = {'request': 'logout', 'username': self.uname}
             
-
-
     def handleJSON(self, data):
         data = json.loads(data)
         if data['response'] == 'login':
@@ -112,7 +110,7 @@ class Client(object):
         
 if __name__ == "__main__":
     client = Client()
-    ip = raw_input("Velg IP: [''] for localhost: ")
+    ip = raw_input("Choose IP: [''] for localhost: ")
     if str(ip) == '':
         client.start('localhost', 9999)
     else: 
