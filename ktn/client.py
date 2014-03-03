@@ -61,4 +61,8 @@ class Client(object):
 
 if __name__ == "__main__":
     client = Client()
-    client.start('localhost', 9999)
+    ip = raw_input("Velg IP: [''] for localhost: ")
+    if str(ip) == '':
+        client.start('localhost', 9999)
+    else: 
+        client.start(ip, 9999)
