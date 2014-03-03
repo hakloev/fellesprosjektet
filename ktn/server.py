@@ -17,6 +17,7 @@ client.
 '''
 
 clients = {}
+usernames = []
 
 class CLientHandler(SocketServer.BaseRequestHandler):
     
@@ -46,14 +47,33 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             # Check if the data exists
             # (recv could have returned due to a disconnect)
             if data:
-                print self. ip + ':' + str(self.port) + ' said ' + data 
+                self.handleJSON(data)
+                print self. ip + ':' + str(self.port) + ' requested ' + data 
                 # Return the string in uppercase
-                for ID in clients:
-                    client = clients[ID]
-                    client.connection.sendall(data.upper())
+                #for ID in clients:
+                #    client = clients[ID]
+                #    client.connection.sendall(data.upper())
             else:
                 print 'Client disconnected @' + self.ip + ':' + str(self.port)
+                del clients[self.port]
                 break
+
+    def handleJSON(self, data):
+        data = json.loads(data)
+        if data['request'] == 'login':
+            if not data['username'] in usernames:
+                usernames.append(data['username'])
+                res = {'response': 'login', 'username': data['username']}
+            else:  
+                res = {'response': 'login', 'error': 'Name already taken!', 'username': data['username']}
+        elif data['request'] == 'logout':
+            print 'handleJSON: logout'
+        elif data['request'] == 'message':
+            res = {'response': 'message', 'message': data['message']}
+        else:
+            pass
+        res = json.dumps(res)
+        self.connection.sendall(res)
 
 '''
 This will make all Request handlers being called in its own thread.
