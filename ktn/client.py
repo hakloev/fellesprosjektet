@@ -31,7 +31,6 @@ class Client(object):
         self.messageWorker.start()
 
         while True:
-            print
             msg = raw_input()
             if msg.upper() == 'Q':
                 self.force_disconnect()
@@ -79,11 +78,15 @@ class Client(object):
                         print data['error']
                     else:
                         self.loggedIn = True
+                        self.uname = uname
                         if self.debug: print 'login: loggedIn'
                         #print data['messages']
 
     def logout(self):
-        pass
+        if self.loggedIn:
+            req = {'request': 'logout', 'username': self.uname}
+            
+
 
     def handleJSON(self, data):
         data = json.loads(data)

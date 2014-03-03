@@ -15,7 +15,6 @@ executing the run() method in a new thread.
 '''
 from threading import Thread
 
-
 class ReceiveMessageWorker(Thread):
 
     debug = None
