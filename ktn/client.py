@@ -1,6 +1,7 @@
 '''
 KTN-project 2013 / 2014
 '''
+import sys
 import socket
 import json
 import threading
@@ -41,10 +42,15 @@ class Client(object):
         print message
 
     def connection_closed(self, connection):
-        pass
+        print 'Will terminate'
+        sys.exit(0)
 
     def send(self, data):
-        self.connection.sendall(data)
+        try:
+            self.connection.sendall(data)
+        except socket.error:
+            print 'Connection to server broken'
+            self.connection_closed(self.connection)
 
     def force_disconnect(self):
         self.connection.close()
