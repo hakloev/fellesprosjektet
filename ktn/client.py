@@ -8,9 +8,12 @@ import MessageWorker
 
 class Client(object):
 
+    debug = None
+
     def __init__(self):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
+        self.debug = True  
+
     def start(self, host, port):
         # Initate the connection
         self.connection.connect((host, port))
@@ -18,19 +21,17 @@ class Client(object):
         # Login here before threading?
        
         self.messageWorker = MessageWorker.ReceiveMessageWorker(self, self.connection)    
-        #self.messageWorkerThread = threading.Thread(target=self.messageWorker)
         self.messageWorker.start()
-        #self.messageWorkerThread.start() 
 
         while True:
-            msg = raw_input('\nNew message: ')
+            msg = raw_input('New message: ')
             self.send(msg)
             #received_data = self.connection.recv(1024).strip()
             #print 'Received from server: ' + received_data
         #self.connection.close()
 
     def message_received(self, message, connection):
-        print '\nmessage_received called'
+        if self.debug: print 'Client: message_received'
         print message
 
     def connection_closed(self, connection):
@@ -41,6 +42,9 @@ class Client(object):
 
     def force_disconnect(self):
         self.connection.close()
+        pass
+
+    def login(self):
         pass
 
 

@@ -18,15 +18,17 @@ from threading import Thread
 
 class ReceiveMessageWorker(Thread):
 
+    debug = None
+
     def __init__(self, listener, connection):
-        # We have to set daemon to False so it terminates when parent thread is terminated
-        self.daemeon = True
+        Thread.__init__(self)
+        self.daemon = True
         self.listener = listener
         self.connection = connection
-        Thread.__init__(self)
+        self.debug = True
 
     def run(self):
-        print 'MessageWorker initiated'
+        if self.debug: print 'ReceiveMessageWorker: run'
         while True:
             try:
                 msg = self.connection.recv(1024).strip()
