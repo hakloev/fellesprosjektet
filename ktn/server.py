@@ -14,7 +14,6 @@ import threading
 This will make all Request handlers being called in its own thread.
 Very important, otherwise only one client will be served at a time
 '''
-
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
     pass    
 
@@ -25,14 +24,10 @@ It is instantiated once per connection to the server, and must
 override the handle() method to implement communication to the
 client.
 '''
-
-clients = {}
-usernames = []
-
 class CLientHandler(SocketServer.BaseRequestHandler):
     
     debug = None
-    users = None
+    socketHandler = None
 
     def handle(self):
         print 'Handle called from: ' + str(self)
@@ -44,13 +39,6 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         self.port = self.client_address[1]
         # Print information about client
         print 'Client connected @' + self.ip + ':' + str(self.port)
-        # Adding client do dictionary
-        self.users[self] = self.port
-        if self.debug:
-            print 'Connected clients in ' + str(self),
-            for key, value in self.users.items():
-                print key, value, 
-            print 
 
         while True:
             # Wait for data from the client
@@ -60,13 +48,8 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             if data:
                 print self. ip + ':' + str(self.port) + ' requested ' + data 
                 self.handleJSON(data)
-                # Return the string in uppercase
-                #for ID in clients:
-                #    client = clients[ID]
-                #    client.connection.sendall(data.upper())
             else:
                 print 'Client disconnected @' + self.ip + ':' + str(self.port)
-                del self.users[self]
                 break
 
     def handleJSON(self, data):
@@ -103,10 +86,7 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         if self.debug: print 'sendResponse'
         res = json.dumps(res)
         if type == 'all': 
-            print 'sendResponse from ' + str(self)
-            for socket in self.users.iterkeys():
-                print 'calling send'
-                socket.send(res)
+            pass
         elif type == 'one':
             self.connection.sendall(res)
             pass
@@ -115,11 +95,9 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             pass
         pass 
 
-    def send(self, data):
-        print 'send called'
-        self.request.sendall(data)
-
-
+'''
+Class for holding information about sockets, usernames and jsonhandling
+'''
 class SocketHandler:
 
     '''
@@ -132,6 +110,7 @@ class SocketHandler:
     def __init__(self):
         pass
 
+# Main method
 if __name__ == "__main__":
     ip = raw_input("Choose IP [localhost/foreign]: ")
     if str(ip).upper() == 'FOREIGN':
@@ -141,9 +120,9 @@ if __name__ == "__main__":
     print "Using IP: " + HOST
     PORT = 9999
     
-    clients = {}
+    # Give all CLientHandlers the same instance of SocketHandler
+    CLientHandler.socketHandler = SocketHandler()
 
-    CLientHandler.users = clients
     # Create the server, binding to localhost on port 9999
     server = ThreadedTCPServer((HOST, PORT), CLientHandler)
 
