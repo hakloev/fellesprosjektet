@@ -8,6 +8,15 @@ import SocketServer
 import json
 import re
 import socket
+import threading
+
+'''
+This will make all Request handlers being called in its own thread.
+Very important, otherwise only one client will be served at a time
+'''
+
+class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
+    pass    
 
 '''
 The RequestHandler class for our server.
@@ -22,9 +31,11 @@ usernames = []
 
 class CLientHandler(SocketServer.BaseRequestHandler):
     
-    debug = True
+    debug = None
+    users = None
 
     def handle(self):
+        print 'Handle called from: ' + str(self)
         # Get a reference to the socket object
         self.connection = self.request
         # Get the remote ip adress of the socket
@@ -33,13 +44,12 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         self.port = self.client_address[1]
         # Print information about client
         print 'Client connected @' + self.ip + ':' + str(self.port)
-
         # Adding client do dictionary
-        clients[self.port] = self
-        if self.debug: 
-            print 'Connected clients:', 
-            for ID in clients: 
-                print str(clients[ID].port),  
+        self.users[self] = self.port
+        if self.debug:
+            print 'Connected clients in ' + str(self),
+            for key, value in self.users.items():
+                print key, value, 
             print 
 
         while True:
@@ -48,15 +58,15 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             # Check if the data exists
             # (recv could have returned due to a disconnect)
             if data:
-                self.handleJSON(data)
                 print self. ip + ':' + str(self.port) + ' requested ' + data 
+                self.handleJSON(data)
                 # Return the string in uppercase
                 #for ID in clients:
                 #    client = clients[ID]
                 #    client.connection.sendall(data.upper())
             else:
                 print 'Client disconnected @' + self.ip + ':' + str(self.port)
-                del clients[self.port]
+                del self.users[self]
                 break
 
     def handleJSON(self, data):
@@ -93,38 +103,47 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         if self.debug: print 'sendResponse'
         res = json.dumps(res)
         if type == 'all': 
-            for ID in clients:
-                client = clients[ID]
-                client.connection.sendall(res)
+            print 'sendResponse from ' + str(self)
+            for socket in self.users.iterkeys():
+                print 'calling send'
+                socket.send(res)
         elif type == 'one':
-            client.connection.sendall(res)
+            self.connection.sendall(res)
             pass
         elif type == 'allxone':
             #har ikke mulighet til aa finne lokal sender enda
             pass
-
-
-
         pass 
 
+    def send(self, data):
+        print 'send called'
+        self.request.sendall(data)
 
-'''
-This will make all Request handlers being called in its own thread.
-Very important, otherwise only one client will be served at a time
-'''
 
-class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-    pass    
+class SocketHandler:
+
+    '''
+    TANKEN ER:
+    Alle kaller sockethandler for persing av json, og har samme referanse til sockethandler
+    de kaller sockethandler med en instans av seg selv, altså vil den holde oversikt og sende til alle clienthandler objekter 
+    da vil alle clienthandlers muligens ha en send funksjon, usikker på denne
+    '''
+    
+    def __init__(self):
+        pass
 
 if __name__ == "__main__":
-    ip = raw_input("Choose IP: [localhost/foreign] ")
-    if str(ip).upper() == 'LOCALHOST':
-        HOST = 'localhost'
-    else:
+    ip = raw_input("Choose IP [localhost/foreign]: ")
+    if str(ip).upper() == 'FOREIGN':
         HOST = socket.gethostbyname(socket.gethostname())
+    else:
+        HOST = 'localhost'    
     print "Using IP: " + HOST
     PORT = 9999
+    
+    clients = {}
 
+    CLientHandler.users = clients
     # Create the server, binding to localhost on port 9999
     server = ThreadedTCPServer((HOST, PORT), CLientHandler)
 
