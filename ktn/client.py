@@ -17,14 +17,20 @@ class Client(object):
     def start(self, host, port):
         # Initate the connection
         self.connection.connect((host, port))
-
+        
+        print 'Connection esblished with server'
+        print 'Exit with [q]'
         # Login here before threading?
        
         self.messageWorker = MessageWorker.ReceiveMessageWorker(self, self.connection)    
         self.messageWorker.start()
 
+
         while True:
             msg = raw_input()
+            if msg.upper() == 'Q':
+                self.force_disconnect()
+                break
             self.send(msg)
             #received_data = self.connection.recv(1024).strip()
             #print 'Received from server: ' + received_data
@@ -42,7 +48,6 @@ class Client(object):
 
     def force_disconnect(self):
         self.connection.close()
-        pass
 
     def login(self):
         pass

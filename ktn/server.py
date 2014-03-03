@@ -31,6 +31,8 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         self.port = self.client_address[1]
         # Print information about client
         print 'Client connected @' + self.ip + ':' + str(self.port)
+
+        # Adding client do dictionary
         clients[self.port] = self
         if self.debug: 
             print 'Connected clients:', 
