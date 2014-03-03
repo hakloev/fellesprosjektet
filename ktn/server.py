@@ -6,6 +6,7 @@ for implementing the chat server
 
 import SocketServer
 import json
+from threading import Thread
 
 '''
 The RequestHandler class for our server.
@@ -16,6 +17,7 @@ client.
 '''
 
 class CLientHandler(SocketServer.BaseRequestHandler):
+    
     def handle(self):
         # Get a reference to the socket object
         self.connection = self.request
@@ -31,11 +33,12 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             # Check if the data exists
             # (recv could have returned due to a disconnect)
             if data:
-                print data
+                print self. ip + ':' + str(self.port) + ' said ' + data 
                 # Return the string in uppercase
                 self.connection.sendall(data.upper())
             else:
-                print 'Client disconnected!'
+                print 'Client disconnected @' + self.ip + ':' + str(self.port)
+                break
 
 '''
 This will make all Request handlers being called in its own thread.
@@ -43,7 +46,7 @@ Very important, otherwise only one client will be served at a time
 '''
 
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-    pass
+    pass    
 
 if __name__ == "__main__":
     HOST = 'localhost'
