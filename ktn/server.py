@@ -16,8 +16,12 @@ override the handle() method to implement communication to the
 client.
 '''
 
+clients = {}
+
 class CLientHandler(SocketServer.BaseRequestHandler):
     
+    debug = True
+
     def handle(self):
         # Get a reference to the socket object
         self.connection = self.request
@@ -25,8 +29,15 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         self.ip = self.client_address[0]
         # Get the remote port number of the socket
         self.port = self.client_address[1]
+        # Print information about client
         print 'Client connected @' + self.ip + ':' + str(self.port)
-        
+        clients[self.port] = self
+        if self.debug: 
+            print 'Connected clients:', 
+            for ID in clients: 
+                print str(clients[ID].port),  
+            print 
+
         while True:
             # Wait for data from the client
             data = self.connection.recv(1024).strip()
@@ -35,7 +46,9 @@ class CLientHandler(SocketServer.BaseRequestHandler):
             if data:
                 print self. ip + ':' + str(self.port) + ' said ' + data 
                 # Return the string in uppercase
-                self.connection.sendall(data.upper())
+                for ID in clients:
+                    client = clients[ID]
+                    client.connection.sendall(data.upper())
             else:
                 print 'Client disconnected @' + self.ip + ':' + str(self.port)
                 break

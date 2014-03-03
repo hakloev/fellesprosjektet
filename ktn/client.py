@@ -24,7 +24,7 @@ class Client(object):
         self.messageWorker.start()
 
         while True:
-            msg = raw_input('New message: ')
+            msg = raw_input()
             self.send(msg)
             #received_data = self.connection.recv(1024).strip()
             #print 'Received from server: ' + received_data
