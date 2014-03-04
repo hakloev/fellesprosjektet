@@ -9,13 +9,17 @@ import json
 import re
 import socket
 import threading
+import select
 
 '''
 This will make all Request handlers being called in its own thread.
 Very important, otherwise only one client will be served at a time
 '''
 class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-    pass    
+    daemon_threads = True
+    allow_reuse_address = True
+    def __init__(self, server_address, RequestHandlerClass):
+        SocketServer.TCPServer.__init__(self, server_address, RequestHandlerClass)
 
 '''
 The RequestHandler class for our server.
@@ -29,6 +33,9 @@ class CLientHandler(SocketServer.BaseRequestHandler):
     debug = None
     socketHandler = None
 
+    def __init__(self, request, client_address, server):
+        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
+
     def handle(self):
         print 'Handle called from: ' + str(self)
         # Get a reference to the socket object
@@ -40,21 +47,30 @@ class CLientHandler(SocketServer.BaseRequestHandler):
         # Print information about client
         print 'Client connected @' + self.ip + ':' + str(self.port)
 
+        ready_to_read, ready_to_write, in_error = select.select([], [], [], None)
+    
+        print 'ready to read' + str(ready_to_read)
+        
         while True:
-            # Wait for data from the client
-            data = self.connection.recv(1024).strip()
-            # Check if the data exists
-            # (recv could have returned due to a disconnect)
-            if data:
-                print self.ip + ':' + str(self.port) + ' requested ' + data 
-                self.socketHandler.handleJSON(data, self)
-            else:
-                print 'Client disconnected @' + self.ip + ':' + str(self.port)
-                break
+            print 'ClientHandler: Active threads: ' + str(threading.active_count())
+            print 'ClientHandler: Current Thread: ' + str(threading.current_thread())
+
+            if len(ready_to_read) == 1 and ready_to_read[0] == self.request:
+                # Wait for data from the client
+                data = self.request.recv(1024).strip()
+                print data
+                # Check if the data exists
+                # (recv could have returned due to a disconnect)
+                if data:
+                    print self.ip + ':' + str(self.port) + ' requested ' + data 
+                    self.socketHandler.handleJSON(data, self)
+                else:
+                    print 'Client disconnected @' + self.ip + ':' + str(self.port)
+                    break
     
     def sendJSON(self, data):
         print 'Send all data from ' + self.ip + ':' + str(self.port)
-        self.connection.sendall(data)
+        self.request.sendall(data)
 
 
 '''
@@ -85,6 +101,7 @@ class SocketHandler:
             if not data['username'] in self.clients.itervalues():
                 if re.search("^[a-zA-Z0-9_]{0,15}$", data['username']) is not None:
                     self.usernames.append(data['username'])
+                    print data['username'] + ' added to self.clients'
                     res = {'response': 'login', 'username': data['username']}
                     self.clients[socket]  = data['username']
                     self.sendResponse(res,'all','')
@@ -104,6 +121,7 @@ class SocketHandler:
                 self.sendResponse(res,'all','')
             print 'handleJSON: logout'
         elif data['request'] == 'message':
+            print 'message requested'
             res = {'response': 'message', 'message': data['message']}
             self.sendResponse(res,'all', '')
         else:
@@ -117,7 +135,6 @@ class SocketHandler:
             for socket in self.clients.iterkeys():
                 print socket
                 socket.sendJSON(res)
-            pass
         elif type == 'one':
             pass
         elif type == 'allxone':
@@ -138,8 +155,12 @@ if __name__ == "__main__":
     # Give all CLientHandlers the same instance of SocketHandler
     CLientHandler.socketHandler = SocketHandler()
 
+    CONNECTION = []
+
     # Create the server, binding to localhost on port 9999
     server = ThreadedTCPServer((HOST, PORT), CLientHandler)
+
+    CONNECTION.append(server)
 
     # Activate the server; this will keep running until you
     # interrupt the program with Ctrl-C

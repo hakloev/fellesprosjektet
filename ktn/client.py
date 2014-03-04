@@ -48,7 +48,8 @@ class Client(object):
     def message_received(self, message, connection):
         if self.debug: print getColor('P') + 'Client: message_received'
         self.handleJSON(message)
-
+        print message
+        
     def connection_closed(self, connection):
         print getColor('R') +'Will terminate'
         sys.exit(0)
