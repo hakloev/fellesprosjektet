@@ -32,6 +32,7 @@ class Server(object):
         if self.debug: print 'Server.serveForever: SERVING FOREVER' 
 
         while True:
+            if self.debug: print '\nServer.serveForever: NEW ITERATION'
             try:
                 readyToRead, readyToWrite, errorSockets = select.select(self.readableClients, self.writeableClients, self.readableClients)
             except socket.error, e:
@@ -57,6 +58,7 @@ class Server(object):
                         self.msgQ[sock].put(data)
                         if sock not in self.writeableClients:
                             self.writeableClients.append(sock)
+                        #self.broadcastMessage(sock, data)
                     else:
                         if self.debug: print 'Server.serveForever: CONNECTION LOST WITH (%s, %s) AFTER READING NO DATA' % addr
                         print 'Server.serveForever: CLIENT (%s, %s) DISCONNECTED' % addr
@@ -72,8 +74,9 @@ class Server(object):
                     print 'Server.serveForever: MESSAGE QUEUE FOR (%s, %s) IS EMPTY' % addr
                     self.writeableClients.remove(sock)
                 else:
-                    print 'Server.serveForever: SENDING %s TO %s' % (nextMsg, str(sock.getpeername()))
-                    sock.send(nextMsg)
+                    self.broadcastMessage(sock, nextMsg)
+                    #print 'Server.serveForever: SENDING %s TO %s' % (nextMsg, str(sock.getpeername()))
+                    #sock.send(nextMsg)
             
             for sock in errorSockets:
                 print 'Server.serveForever: HANDLING EXCEPTION FOR (%s, %s)' % sock.getpeername()
@@ -83,6 +86,14 @@ class Server(object):
                 sock.close()
 
         self.serverSocket.close()
+
+    def broadcastMessage(self, sock, message):
+        if self.debug: print 'Server.broadcastMessage: CALLED BROADCAST'
+        for socket in self.readableClients:
+            if socket != self.serverSocket and socket != sock:
+                print 'Server.broadcastMessage: SENDING %s TO %s' % (message, str(socket.getpeername()))
+                socket.sendall(message)
+                     
 
     #def broadcastMessage(self, sock, message):
     #    readyToRead, readyToWrite, errorSockets = select.select([], self.writeableClients, [], 0)
