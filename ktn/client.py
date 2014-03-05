@@ -32,7 +32,8 @@ class Client(object):
         self.messageWorker.start()
 
         while True:
-            msg = raw_input(getColor('G') + 'client | ' + getColor('W'))
+            msg = sys.stdin.readline().strip()
+            #msg = raw_input(getColor('G') + 'client | ' + getColor('W'))
             if msg.upper() == 'Q':
                 self.force_disconnect()
                 break
@@ -48,7 +49,8 @@ class Client(object):
     def message_received(self, message, connection):
         if self.debug: print getColor('P') + 'Client: message_received'
         #self.handleJSON(message)
-        print '\n' + message
+        sys.stdout.write(message + '\n')
+        sys.stdout.flush()
         
     def connection_closed(self, connection):
         print getColor('R') +'Will terminate'
