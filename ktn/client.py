@@ -26,20 +26,20 @@ class Client(object):
         print getColor('O') + 'Exit with ' + getColor('R') + '[q]' + getColor('O') + ', logout with ' + getColor('R') + '[logout]'
         
         # Login here before threading?
-        self.login()
+        #self.login()
 
         self.messageWorker = MessageWorker.ReceiveMessageWorker(self, self.connection)    
         self.messageWorker.start()
 
         while True:
-            msg = raw_input(getColor('W'))
+            msg = raw_input(getColor('G') + 'client | ' + getColor('W'))
             if msg.upper() == 'Q':
                 self.force_disconnect()
                 break
             elif msg.upper() == 'LOGOUT':
                 self.logout()
                 break
-            msg = self.createJSONMessage(msg)
+            #msg = self.createJSONMessage(msg)
             self.send(msg)
             #received_data = self.connection.recv(1024).strip()
             #print 'Received from server: ' + received_data
@@ -47,8 +47,8 @@ class Client(object):
 
     def message_received(self, message, connection):
         if self.debug: print getColor('P') + 'Client: message_received'
-        self.handleJSON(message)
-        print message
+        #self.handleJSON(message)
+        print '\n' + message
         
     def connection_closed(self, connection):
         print getColor('R') +'Will terminate'
