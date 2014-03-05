@@ -49,6 +49,8 @@ class Server(object):
                     self.readableClients.append(sockfd)
                     print 'Server.serveForever: CLIENT (%s, %s) CONNECTED' % addr
                     self.msgQ[sockfd] = Queue.Queue()
+                    sockfd.sendall('Welcome to the chatserver!')
+                    self.broadcastMessage(sockfd, 'CLIENT (%s, %s) CONNECTED' % addr)
                 else:
                     data = sock.recv(self.recvBuff).strip()
                     if self.debug: print 'Server.serveForever: RECIEVED DATA FROM (%s, %s)' % addr
@@ -62,6 +64,7 @@ class Server(object):
                     else:
                         if self.debug: print 'Server.serveForever: CONNECTION LOST WITH (%s, %s) AFTER READING NO DATA' % addr
                         print 'Server.serveForever: CLIENT (%s, %s) DISCONNECTED' % addr
+                        self.broadcastMessage(sock, 'CLIENT (%s, %s) DISCONNECTED' % addr)
                         if sock in self.writeableClients:
                             self.writeableClients.remove(sock)
                         self.readableClients.remove(sock)
