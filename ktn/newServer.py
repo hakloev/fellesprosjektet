@@ -8,7 +8,6 @@ for implementing the chat server
 import re
 import json
 import socket
-import threading
 import select
 
 class Server(object):
@@ -34,11 +33,11 @@ class Server(object):
             try:
                 readyToRead, readyToWrite, errorSockets = select.select(self.connections, self.write, [])
             except socket.error, e:
-                print 'socket error'
-                break
+                print 'Server.serveForever: SOCKET ERROR'
+                continue
             except select.error, e:
-                print 'select error'
-                break
+                print 'Server.serveForever: SELECT ERROR'
+                continue
 
             for sock in readyToRead:
                 try:
