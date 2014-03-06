@@ -1,4 +1,4 @@
-package main;
+package core;
 
 /**
  * Created by Truls on 06.03.14.
