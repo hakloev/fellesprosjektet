@@ -19,7 +19,6 @@
 *.iml
 
 # Eclipse project files #
-
 *.classpath
 *.project
 
@@ -32,3 +31,8 @@
 
 #For all who hates DS_Store
 *.DS_Store
+
+# Maven
+log/
+target/
+
