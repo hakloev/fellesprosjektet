@@ -1,4 +1,3 @@
-*.class
 
 # Package Files #
 *.jar
@@ -13,19 +12,17 @@
 /jar_lib
 /gui
 
+# Eclipse
+.classpath
+.project
+.settings/
 
-# IntelliJ project files #
-*.idea
+# Intellij
+.idea/
 *.iml
-
-# Eclipse project files #
-*.classpath
-*.project
-
-*.settings
+*.iws
 
 # Python crap
-
 /ktn/*.pyc
 
 
