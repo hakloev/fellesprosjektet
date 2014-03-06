@@ -6,6 +6,7 @@ import socket
 import json
 import threading
 import MessageWorker
+from Colors import getColor
 
 class Client(object):
 
@@ -14,49 +15,52 @@ class Client(object):
 
     def __init__(self):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.debug = True 
+        self.debug = False 
         self.loggedIn = False
 
     def start(self, host, port):
         # Initate the connection
         self.connection.connect((host, port))
         
-        print 'Connection esblished with server'
-        print 'Exit with [q], logout with [logout]'
+        print getColor('O') + 'Connection esblished with server'
+        print getColor('O') + 'Exit with ' + getColor('R') + '[q]' + getColor('O') + ', logout with ' + getColor('R') + '[logout]'
         
         # Login here before threading?
-        self.login()
+        #self.login()
 
         self.messageWorker = MessageWorker.ReceiveMessageWorker(self, self.connection)    
         self.messageWorker.start()
 
         while True:
-            msg = raw_input()
+            msg = sys.stdin.readline().strip()
+            #msg = raw_input(getColor('G') + 'client | ' + getColor('W'))
             if msg.upper() == 'Q':
                 self.force_disconnect()
                 break
             elif msg.upper() == 'LOGOUT':
                 self.logout()
                 break
-            msg = self.createJSONMessage(msg)
+            #msg = self.createJSONMessage(msg)
             self.send(msg)
             #received_data = self.connection.recv(1024).strip()
             #print 'Received from server: ' + received_data
         #self.connection.close()
 
     def message_received(self, message, connection):
-        if self.debug: print 'Client: message_received'
-        self.handleJSON(message)
-
+        if self.debug: print getColor('P') + 'Client: message_received'
+        #self.handleJSON(message)
+        sys.stdout.write(message + '\n')
+        sys.stdout.flush()
+        
     def connection_closed(self, connection):
-        print 'Will terminate'
+        print getColor('R') +'Will terminate'
         sys.exit(0)
 
     def send(self, data):
         try:
             self.connection.sendall(data)
         except socket.error:
-            print 'Connection to server broken'
+            print getColor('R') + 'Connection to server broken'
             self.connection_closed(self.connection)
 
     def force_disconnect(self):
@@ -64,7 +68,7 @@ class Client(object):
 
     def login(self):
         while not self.loggedIn:
-            uname = raw_input('Choose your username: ')
+            uname = raw_input(getColor('G') + 'Choose your username: ' + getColor('W'))
             req = {'request': 'login', 'username': str(uname)}
             req = json.dumps(req)
             self.send(req)
@@ -74,12 +78,13 @@ class Client(object):
             if data: 
                 if data['response'] == 'login':
                     if 'error' in data:
-                        if self.debug: print 'login: invalid login'
-                        print data['error']
+                        if self.debug: print getColor('P') + 'login: invalid login'
+                        print getColor('R') + data['error']
                     else:
                         self.loggedIn = True
                         self.uname = uname
-                        if self.debug: print 'login: loggedIn'
+                        print getColor('O') + 'Logged in with username: ' + getColor('W') + uname
+                        if self.debug: print getColor('P') + 'login: loggedIn'
                         #print data['messages']
 
     def logout(self):
@@ -90,16 +95,16 @@ class Client(object):
         data = json.loads(data)
         if data['response'] == 'login':
             if 'error' in data:
-                if self.debug: print 'handleJSON: invalid login'
+                if self.debug: print getColor('P') + 'handleJSON: invalid login'
                 print data['error']
             else:
                 self.loggedIn = True
-                if self.debug: print 'handleJSON: loggedIn'
-                print data['messages']
+                if self.debug: print getColor('P') + 'handleJSON: loggedIn'
+                print getColor('C') + data['messages'] + getColor('W')
         elif data['response'] == 'logout':
-            if self.debug: print 'handleJSON: logout'
+            if self.debug: print getColor('P') + 'handleJSON: logout'
         elif data['response'] == 'message':
-            print data['message']
+            print getColor('C') + data['message'] + getColor('W')
         else:
             pass
 
@@ -110,7 +115,7 @@ class Client(object):
         
 if __name__ == "__main__":
     client = Client()
-    ip = raw_input("Choose IP: [''] for localhost: ")
+    ip = raw_input(getColor('O') + 'Choose IP: ' + getColor('R') + "['']" + getColor('O') + ' for localhost: ' + getColor('W'))
     if str(ip) == '':
         client.start('localhost', 9999)
     else: 

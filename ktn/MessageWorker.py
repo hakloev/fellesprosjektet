@@ -14,6 +14,7 @@ it is the start() method that is responsible for actually
 executing the run() method in a new thread.
 '''
 from threading import Thread
+from Colors import getColor
 
 class ReceiveMessageWorker(Thread):
 
@@ -24,10 +25,10 @@ class ReceiveMessageWorker(Thread):
         self.daemon = True
         self.listener = listener
         self.connection = connection
-        self.debug = True
+        self.debug = False
 
     def run(self):
-        if self.debug: print 'ReceiveMessageWorker: run'
+        if self.debug: print getColor('P') + 'ReceiveMessageWorker: run' + getColor('W')
         while True:
             try:
                 msg = self.connection.recv(1024).strip()
