@@ -10,6 +10,7 @@ import json
 import socket
 import select
 import Queue
+import time
 
 class Server(object):
 
@@ -90,6 +91,12 @@ class Server(object):
                 sock.close()
         self.serverSocket.close()
 
+    def createJSON(self, data, resType):
+        if resType == 'login':
+            pass
+        else:
+            pass
+
     def handleJSON(self, data, sock):
         data = json.loads(data)
         if data['request'] == 'login':
@@ -99,7 +106,8 @@ class Server(object):
                     self.usernames[sock] = data['username']
                     #sock.sendall(json.dumps({'response': 'login', 'username': data['username']}))
                     #self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': '%s LOGGED IN' % data['username']}))
-                    self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s LOGGED IN' % data['username']}))
+                    self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  %s joined the chat' % (time.strftime("%H:%M:%S")
+, data['username'])}))
                 else:
                     if self.debug: print 'Server.handleJSON: INVALID USERNAME %s' % data['username']
                     self.msgQ[sock].put(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Invalid username!'}))
@@ -115,7 +123,8 @@ class Server(object):
             if self.debug: print 'Server.handleJSON: SENDING MESSAGE FROM %s' % str(sock.getpeername())
             #self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': self.usernames[sock] + ' said ' + data['message']}))
             try:
-                self.msgQ[sock].put(json.dumps({'response': 'message', 'message': self.usernames[sock] + ' said ' + data['message']}))
+                self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  %s said | %s' % (time.strftime("%H:%M:%S")
+, self.usernames[sock], data['message'])}))
             except KeyError:
                 if self.debug: print 'Server.handleJSON: KeyError, PROBABLY INVALID USERNAME'
         else:
