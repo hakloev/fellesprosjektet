@@ -17,7 +17,7 @@ from threading import Thread
 
 class ReceiveMessageWorker(Thread):
 
-    def __init__(self, listener, connection, debug=True):
+    def __init__(self, listener, connection, debug=False):
         Thread.__init__(self)
         self.debug = debug
         self.daemon = True

@@ -59,17 +59,19 @@ class Server(object):
                     if data:
                         if self.debug: print 'Server.serveForever: CONNECTED SOCKETS ' + str(len(self.readableClients))
                         print 'Server.serveForever: RECEIVED %s FROM %s' % (data, sock.getpeername())
-                        #self.msgQ[sock].put(data) # Sending request, will fail
                         if sock not in self.writeableClients:
                             self.writeableClients.append(sock)
-                        self.handleJSON(data, sock)
+                        self.handleJSON(data, sock) # This is where messages are added to the message queue
                     else:
                         if self.debug: print 'Server.serveForever: CONNECTION LOST WITH (%s, %s) AFTER READING NO DATA' % addr
                         print 'Server.serveForever: CLIENT (%s, %s) DISCONNECTED' % addr
-                        self.broadcastMessage(sock, 'CLIENT (%s, %s) DISCONNECTED' % addr) #must send json
+                        self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': '%s  %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock])})) # must send json
                         if sock in self.writeableClients:
                             self.writeableClients.remove(sock)
                         self.readableClients.remove(sock)
+                        if sock in self.usernames.iterkeys():
+                            if self.debug: print 'Server.serveForever: REMOVED %s FROM USERNAMES' % self.usernames[sock]
+                            del self.usernames[sock]
                         sock.close()
 
             for sock in readyToWrite:
@@ -79,7 +81,7 @@ class Server(object):
                     print 'Server.serveForever: MESSAGE QUEUE FOR (%s, %s) IS EMPTY' % addr
                     self.writeableClients.remove(sock)
                 else:
-                    self.broadcastMessage(sock, nextMsg) #must send json
+                    self.broadcastMessage(sock, nextMsg) # must send json
                     #print 'Server.serveForever: SENDING %s TO %s' % (nextMsg, str(sock.getpeername()))
                     #sock.send(nextMsg)
             
@@ -91,12 +93,6 @@ class Server(object):
                 sock.close()
         self.serverSocket.close()
 
-    def createJSON(self, data, resType):
-        if resType == 'login':
-            pass
-        else:
-            pass
-
     def handleJSON(self, data, sock):
         data = json.loads(data)
         if data['request'] == 'login':
@@ -106,8 +102,7 @@ class Server(object):
                     self.usernames[sock] = data['username']
                     #sock.sendall(json.dumps({'response': 'login', 'username': data['username']}))
                     #self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': '%s LOGGED IN' % data['username']}))
-                    self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  %s joined the chat' % (time.strftime("%H:%M:%S")
-, data['username'])}))
+                    self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  %s joined the chat' % (time.strftime("%H:%M:%S"), data['username'])}))
                 else:
                     if self.debug: print 'Server.handleJSON: INVALID USERNAME %s' % data['username']
                     self.msgQ[sock].put(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Invalid username!'}))
@@ -123,15 +118,14 @@ class Server(object):
             if self.debug: print 'Server.handleJSON: SENDING MESSAGE FROM %s' % str(sock.getpeername())
             #self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': self.usernames[sock] + ' said ' + data['message']}))
             try:
-                self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  %s said | %s' % (time.strftime("%H:%M:%S")
-, self.usernames[sock], data['message'])}))
+                self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  %s said | %s' % (time.strftime("%H:%M:%S"), self.usernames[sock], data['message'])}))
             except KeyError:
                 if self.debug: print 'Server.handleJSON: KeyError, PROBABLY INVALID USERNAME'
         else:
             if self.debug: print 'Server.handleJSON: UNEXPECTED JSON'
                     
     def broadcastMessage(self, sock, message):
-        if self.debug: print 'Server.broadcastMessage: CALLED BROADCAST'
+        if self.debug: print 'Server.broadcastMessage: BROADCAST CALLED'
         for socket in self.readableClients:
             if socket != self.serverSocket and socket != sock:
                 print 'Server.broadcastMessage: SENDING %s TO %s' % (message, str(socket.getpeername()))
@@ -139,4 +133,9 @@ class Server(object):
     
 # Main method
 if __name__ == "__main__":
-    chatServer = Server().serveForever()
+    ip = raw_input('''Choose IP: [''] for localhost, [out] for router-IP: ''')
+    if str(ip) == '':
+        chatServer = Server().serveForever()
+    else:
+        chatServer = Server(socket.gethostbyname(socket.gethostname())).serveForever()
+    

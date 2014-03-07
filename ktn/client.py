@@ -9,14 +9,14 @@ import MessageWorker
 
 class Client(object):
 
-    def __init__(self, debug=True):
+    def __init__(self, debug=False):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.debug = debug
         self.loggedIn = False
 
-    def start(self, host, port):
+    def start(self, HOST='localhost', PORT=9999):
         # Initate the connection
-        self.connection.connect((host, port))
+        self.connection.connect((HOST, PORT))
         
         print 'CONNECTION ESTABLISHED WITH SERVER'
         print 'EXIT [\q], LOGOUT WITH [\close]'
@@ -40,7 +40,7 @@ class Client(object):
 
     def message_received(self, message, connection):
         if self.debug: print 'Client.message_received: RECEIVED MESSAGE'
-        print message
+        if self.debug: print 'Client.message_received: ' + message
         self.handleJSON(message)
         
     def connection_closed(self, connection):
@@ -102,8 +102,8 @@ class Client(object):
 
 if __name__ == "__main__":
     client = Client()
-    ip = raw_input('Choose IP: [''] for localhost: ')
+    ip = raw_input('''Choose IP: [''] for localhost, [out] for router-IP: ''')
     if str(ip) == '':
-        client.start('localhost', 9999)
+        client.start()
     else: 
-        client.start(ip, 9999)
+        client.start(socket.gethostbyname(socket.gethostname()))
