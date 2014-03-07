@@ -22,18 +22,14 @@ class Client(object):
         # Initate the connection
         self.connection.connect((host, port))
         
-        print getColor('O') + 'Connection esblished with server'
-        print getColor('O') + 'Exit with ' + getColor('R') + '[q]' + getColor('O') + ', logout with ' + getColor('R') + '[logout]'
+        print 'Connection esblished with server'
+        print 'Exit with [q], logout with [logout]'
         
-        # Login here before threading?
-        #self.login()
-
         self.messageWorker = MessageWorker.ReceiveMessageWorker(self, self.connection)    
         self.messageWorker.start()
 
         while True:
             msg = sys.stdin.readline().strip()
-            #msg = raw_input(getColor('G') + 'client | ' + getColor('W'))
             if msg.upper() == 'Q':
                 self.force_disconnect()
                 break
@@ -47,46 +43,28 @@ class Client(object):
         #self.connection.close()
 
     def message_received(self, message, connection):
-        if self.debug: print getColor('P') + 'Client: message_received'
+        if self.debug: print 'Client: message_received'
         #self.handleJSON(message)
         sys.stdout.write(message + '\n')
         sys.stdout.flush()
         
     def connection_closed(self, connection):
-        print getColor('R') +'Will terminate'
+        print 'Will terminate'
         sys.exit(0)
 
     def send(self, data):
         try:
             self.connection.sendall(data)
         except socket.error:
-            print getColor('R') + 'Connection to server broken'
+            print 'Connection to server broken'
             self.connection_closed(self.connection)
 
     def force_disconnect(self):
         self.connection.close()
 
     def login(self):
-        while not self.loggedIn:
-            uname = raw_input(getColor('G') + 'Choose your username: ' + getColor('W'))
-            req = {'request': 'login', 'username': str(uname)}
-            req = json.dumps(req)
-            self.send(req)
-            
-            data = self.connection.recv(1024).strip()
-            data = json.loads(data)
-            if data: 
-                if data['response'] == 'login':
-                    if 'error' in data:
-                        if self.debug: print getColor('P') + 'login: invalid login'
-                        print getColor('R') + data['error']
-                    else:
-                        self.loggedIn = True
-                        self.uname = uname
-                        print getColor('O') + 'Logged in with username: ' + getColor('W') + uname
-                        if self.debug: print getColor('P') + 'login: loggedIn'
-                        #print data['messages']
-
+        pass
+        
     def logout(self):
         if self.loggedIn:
             req = {'request': 'logout', 'username': self.uname}
@@ -95,16 +73,15 @@ class Client(object):
         data = json.loads(data)
         if data['response'] == 'login':
             if 'error' in data:
-                if self.debug: print getColor('P') + 'handleJSON: invalid login'
+                if self.debug: print 'handleJSON: invalid login'
                 print data['error']
             else:
                 self.loggedIn = True
-                if self.debug: print getColor('P') + 'handleJSON: loggedIn'
-                print getColor('C') + data['messages'] + getColor('W')
+                if self.debug: print 'handleJSON: loggedIn'
         elif data['response'] == 'logout':
-            if self.debug: print getColor('P') + 'handleJSON: logout'
+            if self.debug: print 'handleJSON: logout'
         elif data['response'] == 'message':
-            print getColor('C') + data['message'] + getColor('W')
+            print data['message'] 
         else:
             pass
 
@@ -115,7 +92,7 @@ class Client(object):
         
 if __name__ == "__main__":
     client = Client()
-    ip = raw_input(getColor('O') + 'Choose IP: ' + getColor('R') + "['']" + getColor('O') + ' for localhost: ' + getColor('W'))
+    ip = raw_input('Choose IP: [''] for localhost: ')
     if str(ip) == '':
         client.start('localhost', 9999)
     else: 
