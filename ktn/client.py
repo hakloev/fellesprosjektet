@@ -29,7 +29,7 @@ class Client(object):
 
         while True:
             #self.serve()
-            data = sys.stdin.readline().strip()
+            data = raw_input()
             if data.upper() == '\Q':
                 self.force_disconnect()
                 break
@@ -40,6 +40,7 @@ class Client(object):
 
     def message_received(self, message, connection):
         if self.debug: print 'Client.message_received: RECEIVED MESSAGE'
+        print message
         self.handleJSON(message)
         
     def connection_closed(self, connection):
@@ -93,6 +94,7 @@ class Client(object):
             if self.debug: print 'Client.handleJSON: LOGOUT'
             print data['logout']
         elif data['response'] == 'message':
+            if self.debug: print 'Client.handleJSON: MESSAGE'
             print data['message'] 
         else:
             if self.debug: print 'Client.handleJSON: UNEXPECTED JSON'

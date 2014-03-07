@@ -50,7 +50,7 @@ class Server(object):
                     self.readableClients.append(sockfd)
                     print 'Server.serveForever: CLIENT (%s, %s) CONNECTED' % addr
                     self.msgQ[sockfd] = Queue.Queue()
-                    sockfd.sendall(json.dumps({'response': 'message', 'message': 'Welcome to the chatserver!'}))
+                    # sockfd.sendall(json.dumps({'response': 'message', 'message': 'Welcome to the chatserver!'}))
                     # broadcast when logged in self.broadcastMessage(sockfd, 'CLIENT (%s, %s) CONNECTED' % addr)
                 else:
                     data = sock.recv(self.recvBuff).strip()
@@ -58,14 +58,14 @@ class Server(object):
                     if data:
                         if self.debug: print 'Server.serveForever: CONNECTED SOCKETS ' + str(len(self.readableClients))
                         print 'Server.serveForever: RECEIVED %s FROM %s' % (data, sock.getpeername())
-                        self.msgQ[sock].put(data)
+                        #self.msgQ[sock].put(data) # Sending request, will fail
                         if sock not in self.writeableClients:
                             self.writeableClients.append(sock)
                         self.handleJSON(data, sock)
                     else:
                         if self.debug: print 'Server.serveForever: CONNECTION LOST WITH (%s, %s) AFTER READING NO DATA' % addr
                         print 'Server.serveForever: CLIENT (%s, %s) DISCONNECTED' % addr
-                        self.broadcastMessage(sock, 'CLIENT (%s, %s) DISCONNECTED' % addr)
+                        self.broadcastMessage(sock, 'CLIENT (%s, %s) DISCONNECTED' % addr) #must send json
                         if sock in self.writeableClients:
                             self.writeableClients.remove(sock)
                         self.readableClients.remove(sock)
@@ -78,7 +78,7 @@ class Server(object):
                     print 'Server.serveForever: MESSAGE QUEUE FOR (%s, %s) IS EMPTY' % addr
                     self.writeableClients.remove(sock)
                 else:
-                    self.broadcastMessage(sock, nextMsg)
+                    self.broadcastMessage(sock, nextMsg) #must send json
                     #print 'Server.serveForever: SENDING %s TO %s' % (nextMsg, str(sock.getpeername()))
                     #sock.send(nextMsg)
             
@@ -97,20 +97,27 @@ class Server(object):
                 if re.search("^[a-zA-Z0-9_]{0,15}$", data['username']) is not None:
                     if self.debug: print 'Server.handleJSON: USERNAME %s ADDED' % data['username']
                     self.usernames[sock] = data['username']
-                    sock.sendall(json.dumps({'response': 'login', 'username': data['username']}))
-                    self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': '%s LOGGED IN' % data['username']}))
+                    #sock.sendall(json.dumps({'response': 'login', 'username': data['username']}))
+                    #self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': '%s LOGGED IN' % data['username']}))
+                    self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s LOGGED IN' % data['username']}))
                 else:
                     if self.debug: print 'Server.handleJSON: INVALID USERNAME %s' % data['username']
-                    sock.sendall(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Invalid username!'}))
+                    self.msgQ[sock].put(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Invalid username!'}))
+                    #sock.sendall(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Invalid username!'}))
             else:
                 if self.debug: print 'Server.handleJSON: USERNAME %s ALREADY TAKEN' % data['username'] 
-                sock.sendall(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Name already taken!'}))
+                #sock.sendall(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Name already taken!'}))
+                self.msgQ[sock].put(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Name already taken!'}))
         elif data['request'] == 'logout':
             # handle logout
             pass
         elif data['request'] == 'message':
             if self.debug: print 'Server.handleJSON: SENDING MESSAGE FROM %s' % str(sock.getpeername())
-            self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': self.usernames[sock] + ' said ' + data['message']}))
+            #self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': self.usernames[sock] + ' said ' + data['message']}))
+            try:
+                self.msgQ[sock].put(json.dumps({'response': 'message', 'message': self.usernames[sock] + ' said ' + data['message']}))
+            except KeyError:
+                if self.debug: print 'Server.handleJSON: KeyError, PROBABLY INVALID USERNAME'
         else:
             if self.debug: print 'Server.handleJSON: UNEXPECTED JSON'
                     
