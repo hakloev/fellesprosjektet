@@ -105,7 +105,7 @@ if __name__ == "__main__":
     ip = raw_input('''Choose IP: [''] for localhost, [out] for router-IP: ''')
     if str(ip) == '':
         client.start()
-    elif str(ip).upper() == 'OUT' 
+    elif str(ip).upper() == 'OUT': 
         client.start(socket.gethostbyname(socket.gethostname()))
     else:
         client.start(ip)
