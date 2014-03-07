@@ -1,7 +1,9 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 KTN-project 2013 / 2014
-Very simple server implementation that should serve as a basis
-for implementing the chat server
+Very simple server implementation 
 '''
 
 # Import modules we need for server
@@ -97,7 +99,7 @@ class Server(object):
         data = json.loads(data)
         if data['request'] == 'login':
             if not data['username'] in self.usernames.itervalues():
-                if re.search("^[a-zA-Z0-9_]{0,15}$", data['username']) is not None:
+                if re.search("^[a-zA-ZæøåÆØÅ0-9_]{0,15}$", data['username']) is not None:
                     if self.debug: print 'Server.handleJSON: USERNAME %s ADDED' % data['username']
                     self.usernames[sock] = data['username']
                     #sock.sendall(json.dumps({'response': 'login', 'username': data['username']}))
@@ -138,4 +140,3 @@ if __name__ == "__main__":
         chatServer = Server().serveForever()
     else:
         chatServer = Server(socket.gethostbyname(socket.gethostname())).serveForever()
-    

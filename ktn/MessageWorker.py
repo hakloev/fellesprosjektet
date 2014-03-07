@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 KTN-project 2013 / 2014
 Python daemon thread class for listening for events on
