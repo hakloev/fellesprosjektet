@@ -13,17 +13,18 @@ import Queue
 
 class Server(object):
 
-    def __init__(self, HOST='localhost', PORT=9999):
-        self.debug = True
+    def __init__(self, HOST='localhost', PORT=9999, debug=True):
+        self.debug = debug
         self.readableClients = []
         self.writeableClients = []
         self.recvBuff = 1024
+        self.msgQ = {}
+        self.usernames = {}
         self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         self.serverSocket.setblocking(0)
         self.serverSocket.bind((HOST, PORT))
         self.serverSocket.listen(10)
-        self.msgQ = {}
         if self.debug: print 'Server.__init__: CHAT SERVER STARTED ON (%s, %s)' % (HOST, PORT)
 
 
@@ -49,8 +50,8 @@ class Server(object):
                     self.readableClients.append(sockfd)
                     print 'Server.serveForever: CLIENT (%s, %s) CONNECTED' % addr
                     self.msgQ[sockfd] = Queue.Queue()
-                    sockfd.sendall('Welcome to the chatserver!')
-                    self.broadcastMessage(sockfd, 'CLIENT (%s, %s) CONNECTED' % addr)
+                    sockfd.sendall(json.dumps({'response': 'message', 'message': 'Welcome to the chatserver!'}))
+                    # broadcast when logged in self.broadcastMessage(sockfd, 'CLIENT (%s, %s) CONNECTED' % addr)
                 else:
                     data = sock.recv(self.recvBuff).strip()
                     if self.debug: print 'Server.serveForever: RECIEVED DATA FROM (%s, %s)' % addr
@@ -60,7 +61,7 @@ class Server(object):
                         self.msgQ[sock].put(data)
                         if sock not in self.writeableClients:
                             self.writeableClients.append(sock)
-                        #self.broadcastMessage(sock, data)
+                        self.handleJSON(data, sock)
                     else:
                         if self.debug: print 'Server.serveForever: CONNECTION LOST WITH (%s, %s) AFTER READING NO DATA' % addr
                         print 'Server.serveForever: CLIENT (%s, %s) DISCONNECTED' % addr
@@ -87,28 +88,38 @@ class Server(object):
                 if sock in self.writeableClients:
                     self.writeableClients.remove(sock)
                 sock.close()
-
         self.serverSocket.close()
 
+    def handleJSON(self, data, sock):
+        data = json.loads(data)
+        if data['request'] == 'login':
+            if not data['username'] in self.usernames.itervalues():
+                if re.search("^[a-zA-Z0-9_]{0,15}$", data['username']) is not None:
+                    if self.debug: print 'Server.handleJSON: USERNAME %s ADDED' % data['username']
+                    self.usernames[sock] = data['username']
+                    sock.sendall(json.dumps({'response': 'login', 'username': data['username']}))
+                    self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': '%s LOGGED IN' % data['username']}))
+                else:
+                    if self.debug: print 'Server.handleJSON: INVALID USERNAME %s' % data['username']
+                    sock.sendall(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Invalid username!'}))
+            else:
+                if self.debug: print 'Server.handleJSON: USERNAME %s ALREADY TAKEN' % data['username'] 
+                sock.sendall(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Name already taken!'}))
+        elif data['request'] == 'logout':
+            # handle logout
+            pass
+        elif data['request'] == 'message':
+            if self.debug: print 'Server.handleJSON: SENDING MESSAGE FROM %s' % str(sock.getpeername())
+            self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': self.usernames[sock] + ' said ' + data['message']}))
+        else:
+            if self.debug: print 'Server.handleJSON: UNEXPECTED JSON'
+                    
     def broadcastMessage(self, sock, message):
         if self.debug: print 'Server.broadcastMessage: CALLED BROADCAST'
         for socket in self.readableClients:
             if socket != self.serverSocket and socket != sock:
                 print 'Server.broadcastMessage: SENDING %s TO %s' % (message, str(socket.getpeername()))
                 socket.sendall(message)
-                     
-
-    #def broadcastMessage(self, sock, message):
-    #    readyToRead, readyToWrite, errorSockets = select.select([], self.writeableClients, [], 0)
-    #    for socket in readyToWrite:
-    #        if socket != self.serverSocket and socket != sock:
-    #            try:
-    #                socket.sendall(message)
-    #            except : 
-    #                self.broadcastMessage(socket, '<-- server (%s, %s) has quit the chat' % addr)
-    #                self.readableClients.remove(socket)
-    #                self.writeableClients.remove(socket)
-    #                socket.close()
     
 # Main method
 if __name__ == "__main__":
