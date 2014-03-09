@@ -4,9 +4,15 @@
 '''
 KTN-project 2013 / 2014
 Very simple server implementation 
+
+Because of troubles with implementing multithreaded server
+we went for implementing a multiplexed server instead. 
+This server accepts sockets and puts incoming messages
+in a queue. It then sends this messages to the sockets
+with free space in the write buffer
 '''
 
-# Import modules we need for server
+# Import modules we need for the server
 import re
 import json
 import socket
@@ -16,7 +22,7 @@ import time
 
 class Server(object):
 
-    def __init__(self, HOST='localhost', PORT=9999, debug=True):
+    def __init__(self, HOST='localhost', PORT=9999, debug=True): 
         self.debug = debug
         self.readableClients = []
         self.writeableClients = []
@@ -45,7 +51,8 @@ class Server(object):
             except select.error, e:
                 print 'Server.serveForever: SELECT ERROR'
                 continue
-
+            
+            # Sockets to be read from
             for sock in readyToRead:
                 if sock == self.serverSocket:
                     sockfd, addr = self.serverSocket.accept()
@@ -53,8 +60,7 @@ class Server(object):
                     self.readableClients.append(sockfd)
                     print 'Server.serveForever: CLIENT (%s, %s) CONNECTED' % addr
                     self.msgQ[sockfd] = Queue.Queue()
-                    # sockfd.sendall(json.dumps({'response': 'message', 'message': 'Welcome to the chatserver!'}))
-                    # broadcast when logged in self.broadcastMessage(sockfd, 'CLIENT (%s, %s) CONNECTED' % addr)
+                    # Will not broadcast to others clients that client is connected before a valid username is entered
                 else:
                     data = sock.recv(self.recvBuff).strip()
                     if self.debug: print 'Server.serveForever: RECIEVED DATA FROM (%s, %s)' % addr
@@ -67,7 +73,7 @@ class Server(object):
                     else:
                         if self.debug: print 'Server.serveForever: CONNECTION LOST WITH (%s, %s) AFTER READING NO DATA' % addr
                         print 'Server.serveForever: CLIENT (%s, %s) DISCONNECTED' % addr
-                        self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': '%s  %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock])})) # must send json
+                        self.broadcastMessageToOthers(sock, json.dumps({'response': 'message', 'message': '%s  %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock])})) # must send json
                         if sock in self.writeableClients:
                             self.writeableClients.remove(sock)
                         self.readableClients.remove(sock)
@@ -75,18 +81,18 @@ class Server(object):
                             if self.debug: print 'Server.serveForever: REMOVED %s FROM USERNAMES' % self.usernames[sock]
                             del self.usernames[sock]
                         sock.close()
-
+            
+            # Sending all messages in queue to everyone except origin sender. Sockets must have free space in write buffer
             for sock in readyToWrite:
                 try:
-                    nextMsg = self.msgQ[sock].get_nowait()
+                    nextMsg = self.msgQ[sock].get_nowait() # Get the sockets next message in queue
                 except Queue.Empty:
                     print 'Server.serveForever: MESSAGE QUEUE FOR (%s, %s) IS EMPTY' % addr
                     self.writeableClients.remove(sock)
                 else:
-                    self.broadcastMessage(sock, nextMsg) # must send json
-                    #print 'Server.serveForever: SENDING %s TO %s' % (nextMsg, str(sock.getpeername()))
-                    #sock.send(nextMsg)
+                    self.broadcastMessageToOthers(sock, nextMsg) # Sending JSON-response to all other than origin sender
             
+            # Remove sockets with error 
             for sock in errorSockets:
                 print 'Server.serveForever: HANDLING EXCEPTION FOR (%s, %s)' % sock.getpeername()
                 self.readableClients.remove(sock)
@@ -102,23 +108,19 @@ class Server(object):
                 if re.search("^[a-zA-ZæøåÆØÅ0-9_]{0,15}$", data['username']) is not None:
                     if self.debug: print 'Server.handleJSON: USERNAME %s ADDED' % data['username']
                     self.usernames[sock] = data['username']
-                    #sock.sendall(json.dumps({'response': 'login', 'username': data['username']}))
-                    #self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': '%s LOGGED IN' % data['username']}))
+                    self.broadcastMessageToOne(sock, json.dumps({'response': 'login', 'username': data['username']}))
                     self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  %s joined the chat' % (time.strftime("%H:%M:%S"), data['username'])}))
                 else:
                     if self.debug: print 'Server.handleJSON: INVALID USERNAME %s' % data['username']
-                    self.msgQ[sock].put(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Invalid username!'}))
-                    #sock.sendall(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Invalid username!'}))
+                    self.broadcastMessageToOne(sock, json.dumps({'response': 'login', 'username': data['username'], 'error': 'Invalid username!'}))
             else:
                 if self.debug: print 'Server.handleJSON: USERNAME %s ALREADY TAKEN' % data['username'] 
-                #sock.sendall(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Name already taken!'}))
-                self.msgQ[sock].put(json.dumps({'response': 'login', 'username': data['username'], 'error': 'Name already taken!'}))
+                self.broadcastMessageToOne(sock, json.dumps({'response': 'login', 'username': data['username'], 'error': 'Name already taken!'}))
         elif data['request'] == 'logout':
-            # handle logout
+            # HANDLE LOGOUT
             pass
         elif data['request'] == 'message':
             if self.debug: print 'Server.handleJSON: SENDING MESSAGE FROM %s' % str(sock.getpeername())
-            #self.broadcastMessage(sock, json.dumps({'response': 'message', 'message': self.usernames[sock] + ' said ' + data['message']}))
             try:
                 self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  %s said | %s' % (time.strftime("%H:%M:%S"), self.usernames[sock], data['message'])}))
             except KeyError:
@@ -126,16 +128,22 @@ class Server(object):
         else:
             if self.debug: print 'Server.handleJSON: UNEXPECTED JSON'
                     
-    def broadcastMessage(self, sock, message):
-        if self.debug: print 'Server.broadcastMessage: BROADCAST CALLED'
+    # Will probably not be used, but is convinient                
+    def broadcastMessageToOthers(self, sock, message):
+        if self.debug: print 'Server.broadcastMessageToOthers: BROADCAST CALLED'
         for socket in self.readableClients:
             if socket != self.serverSocket and socket != sock:
-                print 'Server.broadcastMessage: SENDING %s TO %s' % (message, str(socket.getpeername()))
+                print 'Server.broadcastMessageToOne: SENDING %s TO %s' % (message, str(socket.getpeername()))
                 socket.sendall(message)
+    
+    # Sending message to only one user
+    def broadcastMessageToOne(self, sock, message):
+        if self.debug: print 'Server.broadcastMessageToOne: BROADCAST CALLED'
+        sock.sendall(message)
     
 # Main method
 if __name__ == "__main__":
-    ip = raw_input('''Choose IP: [''] for localhost, [out] for router-IP: ''')
+    ip = raw_input('''Choose IP: [''] for localhost, [out] for router-IP: ''') # We only need localhost or ip given by router, because remote connections must be handled/forwarded by router (DMZ etc) 
     if str(ip) == '':
         chatServer = Server().serveForever()
     else:

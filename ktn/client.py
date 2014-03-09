@@ -27,7 +27,6 @@ class Client(object):
         self.messageWorker = MessageWorker.ReceiveMessageWorker(self, self.connection)    
         self.messageWorker.start()
         
-       # while not self.loggedIn:
         self.login() 
 
         while True:
@@ -91,7 +90,7 @@ class Client(object):
                 print data['error']
             else:
                 if self.debug: print 'Client.handleJSON: LOGGED IN'
-                print 'LOGGED IN WITH: ' + data['username']
+                print 'Logged in with: ' + data['username']
                 self.loggedIn = True
         elif data['response'] == 'logout':
             if self.debug: print 'Client.handleJSON: LOGOUT'
