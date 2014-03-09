@@ -73,7 +73,7 @@ class Server(object):
                     else:
                         if self.debug: print 'Server.serveForever: CONNECTION LOST WITH (%s, %s) AFTER READING NO DATA' % addr
                         print 'Server.serveForever: CLIENT (%s, %s) DISCONNECTED' % addr
-                        self.broadcastMessageToOthers(sock, json.dumps({'response': 'message', 'message': '%s  %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock])})) # must send json
+                        self.broadcastMessageToOthers(sock, json.dumps({'response': 'message', 'message': '%s  SERVER | %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock])})) # must send json
                         if sock in self.writeableClients:
                             self.writeableClients.remove(sock)
                         self.readableClients.remove(sock)
@@ -109,7 +109,7 @@ class Server(object):
                     if self.debug: print 'Server.handleJSON: USERNAME %s ADDED' % data['username']
                     self.usernames[sock] = data['username']
                     self.broadcastMessageToOne(sock, json.dumps({'response': 'login', 'username': data['username']}))
-                    self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  %s joined the chat' % (time.strftime("%H:%M:%S"), data['username'])}))
+                    self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  SERVER | %s joined the chat' % (time.strftime("%H:%M:%S"), data['username'])}))
                 else:
                     if self.debug: print 'Server.handleJSON: INVALID USERNAME %s' % data['username']
                     self.broadcastMessageToOne(sock, json.dumps({'response': 'login', 'username': data['username'], 'error': 'Invalid username!'}))
@@ -117,22 +117,27 @@ class Server(object):
                 if self.debug: print 'Server.handleJSON: USERNAME %s ALREADY TAKEN' % data['username'] 
                 self.broadcastMessageToOne(sock, json.dumps({'response': 'login', 'username': data['username'], 'error': 'Name already taken!'}))
         elif data['request'] == 'logout':
-            # HANDLE LOGOUT
-            pass
+            if sock in self.usernames.keys():
+                if self.debug: print 'Server.handleJSON: USERNAME %s REQUESTED LOGOUT' % self.usernames[sock]
+                self.broadcastMessageToOne(sock, json.dumps({'response': 'logout', 'username': self.usernames[sock]}))
+                self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  SERVER | %s logged out' % (time.strftime("%H:%M:%S"), self.usernames[sock])}))
+                del self.usernames[sock]
         elif data['request'] == 'message':
             if self.debug: print 'Server.handleJSON: SENDING MESSAGE FROM %s' % str(sock.getpeername())
             try:
                 self.msgQ[sock].put(json.dumps({'response': 'message', 'message': '%s  %s said | %s' % (time.strftime("%H:%M:%S"), self.usernames[sock], data['message'])}))
             except KeyError:
-                if self.debug: print 'Server.handleJSON: KeyError, PROBABLY INVALID USERNAME'
+                if self.debug: print 'Server.handleJSON: KeyError, INVALID USERNAME/NOT LOGGED IN'
+                self.broadcastMessageToOne(sock, json.dumps({'response': 'login', 'error': '%s  SERVER | Please log in' % time.strftime("%H:%M:%S")}))
+
         else:
             if self.debug: print 'Server.handleJSON: UNEXPECTED JSON'
-                    
+    
     # Will probably not be used, but is convinient                
     def broadcastMessageToOthers(self, sock, message):
         if self.debug: print 'Server.broadcastMessageToOthers: BROADCAST CALLED'
         for socket in self.readableClients:
-            if socket != self.serverSocket and socket != sock:
+            if socket != self.serverSocket and socket != sock and socket in self.usernames.keys():
                 print 'Server.broadcastMessageToOne: SENDING %s TO %s' % (message, str(socket.getpeername()))
                 socket.sendall(message)
     

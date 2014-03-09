@@ -9,36 +9,40 @@ import socket
 import json
 import threading
 import MessageWorker
+import time
 
 class Client(object):
 
     def __init__(self, debug=False):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.debug = debug
-        self.loggedIn = False
+        self.username = None
 
     def start(self, HOST='localhost', PORT=9999):
         # Initate the connection
         self.connection.connect((HOST, PORT))
         
         print 'CONNECTION ESTABLISHED WITH SERVER'
-        print 'EXIT [\q], LOGOUT WITH [\close]'
+        print 'EXIT [/q], LOGIN WITH [/login *username*], LOGOUT WITH [/logout]'
         
         self.messageWorker = MessageWorker.ReceiveMessageWorker(self, self.connection)    
         self.messageWorker.start()
-        
-        self.login() 
 
         while True:
-            #self.serve()
             data = raw_input()
-            if data.upper() == '\Q':
+            data = data.upper()
+            if data == '/Q':
                 self.force_disconnect()
                 break
-            elif data.upper() == '\CLOSE':
-                self.logout()
-                break
-            self.send(self.createJSON(data, 'message'))
+            elif data.startswith('/LOGIN'):
+                self.login(data[data.find('/LOGIN') + 7:])
+            elif data == '/LOGOUT':
+                if self.username == None:
+                    print '%s  CLIENT | You are not logged in' % time.strftime("%H:%M:%S")
+                else:
+                    self.logout()
+            else:
+                self.send(self.createJSON(data, 'message'))
 
     def message_received(self, message, connection):
         if self.debug: print 'Client.message_received: RECEIVED MESSAGE'
@@ -59,17 +63,13 @@ class Client(object):
     def force_disconnect(self):
         self.connection.close()
 
-    def login(self):
-        data = raw_input('Enter username: ') 
-        if data.upper() == '\Q':
-            self.force_disconnect()
-        elif data.upper() == '\CLOSE':
-            self.logout()
+    def login(self, data):
+        if self.debug: print 'Client.login: REQUESTING LOGIN WITH USERNAME %s' % data
         self.send(self.createJSON(data, 'login'))
-        
 
     def logout(self):
-        pass
+        if self.debug: print 'Client.logout: REQUESTING LOGOUT FROM USERNAME %s' % self.username 
+        self.send(self.createJSON('', 'logout'))
 
     def createJSON(self, data, reqType):
         if reqType == 'login':
@@ -90,11 +90,12 @@ class Client(object):
                 print data['error']
             else:
                 if self.debug: print 'Client.handleJSON: LOGGED IN'
-                print 'Logged in with: ' + data['username']
-                self.loggedIn = True
+                print '%s  CLIENT | Logged in with: %s' % (time.strftime("%H:%M:%S"), data['username'])
+                self.username = data['username']
         elif data['response'] == 'logout':
             if self.debug: print 'Client.handleJSON: LOGOUT'
-            print data['logout']
+            print '%s  CLIENT | You are logged out' % time.strftime("%H:%M:%S")
+            self.username = None
         elif data['response'] == 'message':
             if self.debug: print 'Client.handleJSON: MESSAGE'
             print data['message'] 
