@@ -12,9 +12,11 @@ import java.net.Socket;
 public class ClientHandler extends Thread implements Runnable {
 
 	private final Socket _SOCKET;
+	private final int _CONNECTIONID;
 
-	public ClientHandler(Socket socket) {
+	public ClientHandler(Socket socket, int connectionID) {
 		this._SOCKET = socket;
+		this._CONNECTIONID = connectionID;
 	}
 
 	public void run() {
@@ -25,8 +27,6 @@ public class ClientHandler extends Thread implements Runnable {
 			while (_SERVING) {
 				readFromClient = new BufferedReader(new InputStreamReader(_SOCKET.getInputStream()));
 				// TODO: HERE WE HANDLE INCOMING JSON AND SPEAK WITH DB
-				out
-
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

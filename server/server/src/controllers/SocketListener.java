@@ -15,12 +15,13 @@ public class SocketListener extends Thread implements Runnable {
 	@Override
 	public void run() {
 		boolean _SERVING = true;
+		int connectionID = 0;
 		try {
 			ServerSocket serverSocket = new ServerSocket(_ENDPORT);
 			while (_SERVING) {
 				Socket incomingConnection = serverSocket.accept();
 				if (incomingConnection != null) {
-					ClientHandler client = new ClientHandler(incomingConnection);
+					ClientHandler client = new ClientHandler(incomingConnection, connectionID++);
 					client.start();
 				}
 			}
