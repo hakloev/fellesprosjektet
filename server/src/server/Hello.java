@@ -1,4 +1,4 @@
-package core;
+package server;
 
 /**
  * Created by Truls on 06.03.14.

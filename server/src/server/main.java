@@ -1,6 +1,5 @@
 package server;
 
-import core.Hello;
 
 /**
  * Created by Truls on 06.03.14.
