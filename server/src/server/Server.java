@@ -1,6 +1,6 @@
 package server;
 
-import src.controllers.SocketListener;
+import controllers.SocketListener;
 
 /**
  * Created by hakloev on 10/03/14.
@@ -10,6 +10,7 @@ public class Server {
 	public static void main(String[] args) {
 		SocketListener socketListener = new SocketListener();
 		socketListener.start();
+		System.out.println("Server.main: SOCKETLISTENER STARTED");
 	}
 
 }

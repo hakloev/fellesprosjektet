@@ -18,9 +18,12 @@ public class SocketListener extends Thread implements Runnable {
 		int connectionID = 0;
 		try {
 			ServerSocket serverSocket = new ServerSocket(_ENDPORT);
+			System.out.println("SocketListener.run: SERVERSOCKET LISTENING");
 			while (_SERVING) {
 				Socket incomingConnection = serverSocket.accept();
+				incomingConnection.setKeepAlive(true); // Trying to avoid timeout from socket
 				if (incomingConnection != null) {
+					System.out.println("SocketListener.run: INCOMING CONNECTION");
 					ClientHandler client = new ClientHandler(incomingConnection, connectionID++);
 					client.start();
 				}
