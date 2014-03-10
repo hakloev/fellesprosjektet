@@ -9,7 +9,7 @@ import java.sql.Statement;
 
 public class DBconnection {
 	
-	private String URL = "jdbc:mysql://mysql.login.ntnu.no/trulsmp_fpgruppe7";
+	private String URL = "jdbc:mysql://mysql.stud.ntnu.no/trulsmp_fpgruppe7";
 	private String USERNAME = "trulsmp";
 	private String PASSWORD = "grp07";
 	private Connection dbCon = null;
