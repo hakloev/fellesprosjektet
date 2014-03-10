@@ -1,7 +1,5 @@
 package gui;
 
-import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -11,9 +9,6 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
@@ -169,20 +164,11 @@ public class CalendarView {
 		JList list = new JList(new DefaultListModel());
 		scrollPane.setViewportView(list);
 		DefaultListModel listModel = (DefaultListModel) list.getModel();
-		listModel.addElement("Siri avslo m�teinnkalling");
-		listModel.addElement("Per har invitert deg til et m�te");
+		listModel.addElement("Siri avslo møteinnkalling");
+		listModel.addElement("Per har invitert deg til et møte");
 		listModel.addElement("Kake i kakerommet!");
 		listModel.addElement("Tomt for dopapir");
 		listModel.addElement("Bowling om ti minutter");
-		listModel.addElement("test");
-		listModel.addElement("test");
-		listModel.addElement("test");
-		listModel.addElement("test");
-		listModel.addElement("test");
-		listModel.addElement("test");
-		listModel.addElement("test");
-		listModel.addElement("test");
-		listModel.addElement("test");
 		
 		JLabel lblVarsler = new JLabel("Varsler:");
 		scrollPane.setColumnHeaderView(lblVarsler);
@@ -199,7 +185,7 @@ public class CalendarView {
 		panel_3.add(table);
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "L\u00F8rdag", "S\u00F8ndag"},
+				{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
 				{"07.00", null, null, null, null, null, null, null},
 				{"08.00", null, null, null, null, null, null, null},
 				{"09.00", null, null, null, null, null, null, null},
@@ -219,6 +205,10 @@ public class CalendarView {
 				"New column", "Mandag", "New column", "New column", "New column", "New column", "New column", "New column"
 			}
 		));
+		
+		EditAppointment editApp = new EditAppointment();
+		editApp.setVisible(true);
+		//frmKalenderFirma.add(editApp);
 	}
 
 }

@@ -5,7 +5,6 @@ import java.awt.EventQueue;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
-import com.sun.swing.internal.plaf.synth.resources.synth_zh_TW;
 
 /**
  * Created by Truls on 06.03.14.
