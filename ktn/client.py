@@ -80,7 +80,7 @@ class Client(object):
         if self.debug: print 'Client.logout: REQUESTING LOGOUT FROM USERNAME %s' % self.username 
         self.send(self.createJSON('', 'logout'))
 
-    # Create JSON-request to send to the server 
+    # Create JSON-request to send to the server, simpler than the one in server.py due to easier requests 
     def createJSON(self, data, reqType):
         if reqType == 'login':
             data = {'request': reqType, 'username': data}
