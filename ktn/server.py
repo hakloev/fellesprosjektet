@@ -161,7 +161,7 @@ class Server(object):
 # Main method
 if __name__ == "__main__":
     ip = raw_input('''Choose IP: [''] for localhost, [out] for router-IP: ''') # We only need localhost or ip given by router, because remote connections must be handled/forwarded by router (DMZ etc) 
-    if str(ip) == '':
+    if str(ip) == '': # User wants to start server on localhost
         chatServer = Server().serveForever()
-    else:
+    else: # User wants to start server on IP given by router (need DMZ or equal to accept from outside local network)
         chatServer = Server(socket.gethostbyname(socket.gethostname())).serveForever()
