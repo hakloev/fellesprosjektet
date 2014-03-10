@@ -114,10 +114,20 @@ class Server(object):
 
     # Method to handle the JSON-requests, mostly self explained! Creates JSON-response and send to correct client(s)
     def handleJSON(self, data, sock):
-        # Function header: createJSON(response, username, message, error) 
         data = json.loads(data)
         if data['request'] == 'login':
-            if not data['username'] in self.usernames.itervalues():
+            self.loginRequest(data, sock)
+        elif data['request'] == 'logout':
+            self.logoutRequest(sock)
+        elif data['request'] == 'message':
+            self.messageRequest(data, sock)
+        else:
+            if self.debug: print 'Server.handleJSON: UNEXPECTED JSON'
+
+    # FUNCTION HEADER FOR createJSON(response, username, message, error)
+
+    def loginRequest(self, data, sock):
+        if not data['username'] in self.usernames.itervalues():
                 if re.search("^[a-zA-ZæøåÆØÅ0-9_]{0,15}$", data['username']) is not None:
                     if self.debug: print 'Server.handleJSON: USERNAME %s ADDED' % data['username']
                     self.usernames[sock] = data['username']
@@ -126,24 +136,24 @@ class Server(object):
                 else:
                     if self.debug: print 'Server.handleJSON: INVALID USERNAME %s' % data['username']
                     self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, 'Invalid username!'))
-            else:
-                if self.debug: print 'Server.handleJSON: USERNAME %s ALREADY TAKEN' % data['username'] 
-                self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, 'Name already taken!'))
-        elif data['request'] == 'logout':
-            if sock in self.usernames.keys():
+        else:
+            if self.debug: print 'Server.handleJSON: USERNAME %s ALREADY TAKEN' % data['username'] 
+            self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, 'Name already taken!'))
+
+    def logoutRequest(self, sock):
+        if sock in self.usernames.keys():
                 if self.debug: print 'Server.handleJSON: USERNAME %s REQUESTED LOGOUT' % self.usernames[sock]
                 self.broadcastMessageToOne(sock, self.createJSON('logout', self.usernames[sock], None, None))
                 self.msgQ[sock].put(self.createJSON('message', None, '%s  SERVER | %s logged out' % (time.strftime("%H:%M:%S"), self.usernames[sock])), None)
                 del self.usernames[sock]
-        elif data['request'] == 'message':
-            if self.debug: print 'Server.handleJSON: SENDING MESSAGE FROM %s' % str(sock.getpeername())
-            try:
-                self.msgQ[sock].put(self.createJSON('message', None, '%s  %s said | %s' % (time.strftime("%H:%M:%S"), self.usernames[sock], data['message']), None))
-            except KeyError:
-                if self.debug: print 'Server.handleJSON: KeyError, INVALID USERNAME/NOT LOGGED IN'
-                self.broadcastMessageToOne(sock, self.createJSON('login', None, None, '%s  SERVER | Please log in' % time.strftime("%H:%M:%S")))
-        else:
-            if self.debug: print 'Server.handleJSON: UNEXPECTED JSON'
+    
+    def messageRequest(self, data, sock):
+        if self.debug: print 'Server.handleJSON: SENDING MESSAGE FROM %s' % str(sock.getpeername())
+        try:
+            self.msgQ[sock].put(self.createJSON('message', None, '%s  %s said | %s' % (time.strftime("%H:%M:%S"), self.usernames[sock], data['message']), None))
+        except KeyError:
+            if self.debug: print 'Server.handleJSON: KeyError, INVALID USERNAME/NOT LOGGED IN'
+            self.broadcastMessageToOne(sock, self.createJSON('login', None, None, '%s  SERVER | Please log in' % time.strftime("%H:%M:%S")))      
 
     # Function to clean up JSON creation
     def createJSON(self, response, username, message, error): # need messages also, when we implent message log
@@ -158,7 +168,6 @@ class Server(object):
             res['error'] = error
         return json.dumps(res)
 
-    
     # Sending message to all but origin client             
     def broadcastMessageToOthers(self, sock, message):
         if self.debug: print 'Server.broadcastMessageToOthers: BROADCAST CALLED'
