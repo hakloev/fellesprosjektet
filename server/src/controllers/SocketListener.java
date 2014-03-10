@@ -15,7 +15,7 @@ public class SocketListener extends Thread implements Runnable {
 	@Override
 	public void run() {
 		boolean _SERVING = true;
-		int connectionID = 0;
+		int connectionID = 1;
 		try {
 			ServerSocket serverSocket = new ServerSocket(_ENDPORT);
 			System.out.println("SocketListener.run: SERVERSOCKET LISTENING");
