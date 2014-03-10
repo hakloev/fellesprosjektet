@@ -1,4 +1,6 @@
-package src;
+package src.server;
+
+import src.controllers.SocketListener;
 
 /**
  * Created by hakloev on 10/03/14.
