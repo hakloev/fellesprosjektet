@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 KTN-project 2013 / 2014
 '''
@@ -6,47 +9,45 @@ import socket
 import json
 import threading
 import MessageWorker
-from Colors import getColor
+import time
 
 class Client(object):
 
-    debug = None
-    loggedIn = None
-
-    def __init__(self):
+    def __init__(self, debug=False):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.debug = False 
-        self.loggedIn = False
+        self.debug = debug
+        self.username = None
 
-    def start(self, host, port):
+    def start(self, HOST='localhost', PORT=9999):
         # Initate the connection
-        self.connection.connect((host, port))
+        self.connection.connect((HOST, PORT))
         
-        print 'Connection esblished with server'
-        print 'Exit with [q], logout with [logout]'
+        print 'CONNECTION ESTABLISHED WITH SERVER'
+        print 'EXIT [/q], LOGIN WITH [/login *username*], LOGOUT WITH [/logout]'
         
         self.messageWorker = MessageWorker.ReceiveMessageWorker(self, self.connection)    
         self.messageWorker.start()
 
         while True:
-            msg = sys.stdin.readline().strip()
-            if msg.upper() == 'Q':
+            data = raw_input()
+            data = data.upper()
+            if data == '/Q':
                 self.force_disconnect()
                 break
-            elif msg.upper() == 'LOGOUT':
-                self.logout()
-                break
-            #msg = self.createJSONMessage(msg)
-            self.send(msg)
-            #received_data = self.connection.recv(1024).strip()
-            #print 'Received from server: ' + received_data
-        #self.connection.close()
+            elif data.startswith('/LOGIN'):
+                self.login(data[data.find('/LOGIN') + 7:])
+            elif data == '/LOGOUT':
+                if self.username == None:
+                    print '%s  CLIENT | You are not logged in' % time.strftime("%H:%M:%S")
+                else:
+                    self.logout()
+            else:
+                self.send(self.createJSON(data, 'message'))
 
     def message_received(self, message, connection):
-        if self.debug: print 'Client: message_received'
-        #self.handleJSON(message)
-        sys.stdout.write(message + '\n')
-        sys.stdout.flush()
+        if self.debug: print 'Client.message_received: RECEIVED MESSAGE'
+        if self.debug: print 'Client.message_received: ' + message
+        self.handleJSON(message)
         
     def connection_closed(self, connection):
         print 'Will terminate'
@@ -62,38 +63,52 @@ class Client(object):
     def force_disconnect(self):
         self.connection.close()
 
-    def login(self):
-        pass
-        
+    def login(self, data):
+        if self.debug: print 'Client.login: REQUESTING LOGIN WITH USERNAME %s' % data
+        self.send(self.createJSON(data, 'login'))
+
     def logout(self):
-        if self.loggedIn:
-            req = {'request': 'logout', 'username': self.uname}
+        if self.debug: print 'Client.logout: REQUESTING LOGOUT FROM USERNAME %s' % self.username 
+        self.send(self.createJSON('', 'logout'))
+
+    def createJSON(self, data, reqType):
+        if reqType == 'login':
+            data = {'request': reqType, 'username': data}
+        elif reqType == 'logout':
+            data = {'request': reqType}
+        elif reqType == 'message':
+            data = {'request': reqType, reqType: data}
+        else:
+            if self.debug: print 'Client.createJSON: UNEXPECTED REQUEST'
+        return json.dumps(data)
             
     def handleJSON(self, data):
         data = json.loads(data)
         if data['response'] == 'login':
             if 'error' in data:
-                if self.debug: print 'handleJSON: invalid login'
+                if self.debug: print 'Client.handleJSON: INVALID LOGIN'
                 print data['error']
             else:
-                self.loggedIn = True
-                if self.debug: print 'handleJSON: loggedIn'
+                if self.debug: print 'Client.handleJSON: LOGGED IN'
+                print '%s  CLIENT | Logged in with: %s' % (time.strftime("%H:%M:%S"), data['username'])
+                self.username = data['username']
         elif data['response'] == 'logout':
-            if self.debug: print 'handleJSON: logout'
+            if self.debug: print 'Client.handleJSON: LOGOUT'
+            print '%s  CLIENT | You are logged out' % time.strftime("%H:%M:%S")
+            self.username = None
         elif data['response'] == 'message':
+            if self.debug: print 'Client.handleJSON: MESSAGE'
             print data['message'] 
         else:
+            if self.debug: print 'Client.handleJSON: UNEXPECTED JSON'
             pass
 
-    def createJSONMessage(self, msg):
-        msg = {'request': 'message', 'message': msg}
-        msg = json.dumps(msg)
-        return msg
-        
 if __name__ == "__main__":
     client = Client()
-    ip = raw_input('Choose IP: [''] for localhost: ')
+    ip = raw_input('''Choose IP: [''] for localhost, [out] for router-IP: ''')
     if str(ip) == '':
-        client.start('localhost', 9999)
-    else: 
-        client.start(ip, 9999)
+        client.start()
+    elif str(ip).upper() == 'OUT': 
+        client.start(socket.gethostbyname(socket.gethostname()))
+    else:
+        client.start(ip)

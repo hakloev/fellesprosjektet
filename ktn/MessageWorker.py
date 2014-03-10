@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 KTN-project 2013 / 2014
 Python daemon thread class for listening for events on
@@ -14,21 +17,18 @@ it is the start() method that is responsible for actually
 executing the run() method in a new thread.
 '''
 from threading import Thread
-from Colors import getColor
 
 class ReceiveMessageWorker(Thread):
 
-    debug = None
-
-    def __init__(self, listener, connection):
+    def __init__(self, listener, connection, debug=False):
         Thread.__init__(self)
+        self.debug = debug
         self.daemon = True
         self.listener = listener
         self.connection = connection
-        self.debug = False
 
     def run(self):
-        if self.debug: print getColor('P') + 'ReceiveMessageWorker: run' + getColor('W')
+        if self.debug: print 'ReceiveMessageWorker.run: RECEIVE THREAD INITIATED'
         while True:
             try:
                 msg = self.connection.recv(1024).strip()
@@ -37,7 +37,3 @@ class ReceiveMessageWorker(Thread):
                 self.listener.message_received(msg, self.connection)
             except:
                 break
-        pass
-
-
-
