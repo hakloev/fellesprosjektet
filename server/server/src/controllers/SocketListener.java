@@ -9,7 +9,7 @@ import java.net.Socket;
  */
 public class SocketListener extends Thread implements Runnable {
 
-	private static final int _ENDPORT = 4603; // 4603 to 4657 are unassigned ports
+	private static final int _ENDPORT = 4657; // 4603 to 4657 are unassigned ports
 	// Do we want to gather all clienthandlers in an arraylist here?
 
 	@Override
@@ -24,7 +24,6 @@ public class SocketListener extends Thread implements Runnable {
 					client.start();
 				}
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
