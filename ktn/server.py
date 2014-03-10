@@ -80,7 +80,7 @@ class Server(object):
                         if self.debug: print 'Server.serveForever: CONNECTION LOST WITH (%s, %s) AFTER READING NO DATA' % addr
                         print 'Server.serveForever: CLIENT (%s, %s) DISCONNECTED' % addr
                         # Broadcast that client lost connection
-                        self.broadcastMessageToOthers(sock, json.dumps({'response': 'message', 'message': '%s  SERVER | %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock])})) 
+                        self.broadcastMessageToOthers(sock, self.createJSON('message', None,  '%s  SERVER | %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock]), None)) 
                         # If socket in writeable list, remove it
                         if sock in self.writeableClients:
                             self.writeableClients.remove(sock)
