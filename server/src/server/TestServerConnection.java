@@ -1,4 +1,4 @@
-package src.server;
+package server;
 
 /**
  * Created by hakloev on 10/03/14.
