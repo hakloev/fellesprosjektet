@@ -1,5 +1,7 @@
 package gui;
 
+import gui.appointment.*;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
@@ -9,24 +11,23 @@ import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
+
 import java.awt.Color;
 
-public class CalendarView {
+@SuppressWarnings("serial")
+public class CalendarView extends JFrame{
 
-	protected JFrame frmKalenderFirma;
 	private JTable table;
 
 
@@ -41,14 +42,14 @@ public class CalendarView {
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		frmKalenderFirma = new JFrame();
-		frmKalenderFirma.setTitle("Kalender - Firma X");
-		frmKalenderFirma.setResizable(false);
-		frmKalenderFirma.setBounds(100, 100, 1000, 500);
-		frmKalenderFirma.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		
+		this.setTitle("Kalender - Firma X");
+		this.setResizable(false);
+		this.setBounds(100, 100, 1000, 500);
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		JPanel panel_1 = new JPanel();
-		frmKalenderFirma.getContentPane().add(panel_1, BorderLayout.NORTH);
+		this.getContentPane().add(panel_1, BorderLayout.NORTH);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
 		gbl_panel_1.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 		gbl_panel_1.rowHeights = new int[]{29, 0};
@@ -120,7 +121,7 @@ public class CalendarView {
 		comboBox_1.addItem("Kristian Volden");
 		
 		JPanel panel = new JPanel();
-		frmKalenderFirma.getContentPane().add(panel, BorderLayout.EAST);
+		this.getContentPane().add(panel, BorderLayout.EAST);
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0};
 		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
@@ -136,10 +137,6 @@ public class CalendarView {
 		panel.add(btnNyAvtale, gbc_btnNyAvtale);
 		
 		JButton btnAvtalevisning = new JButton("Avtalevisning");
-		btnAvtalevisning.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
 		GridBagConstraints gbc_btnAvtalevisning = new GridBagConstraints();
 		gbc_btnAvtalevisning.insets = new Insets(0, 0, 5, 0);
 		gbc_btnAvtalevisning.gridx = 0;
@@ -174,7 +171,7 @@ public class CalendarView {
 		scrollPane.setColumnHeaderView(lblVarsler);
 		
 		JPanel panel_3 = new JPanel();
-		frmKalenderFirma.getContentPane().add(panel_3, BorderLayout.CENTER);
+		this.getContentPane().add(panel_3, BorderLayout.CENTER);
 		
 		table = new JTable();
 		table.setColumnSelectionAllowed(true);
@@ -206,9 +203,13 @@ public class CalendarView {
 			}
 		));
 		
+		this.setVisible(true);
+		
 		EditAppointment editApp = new EditAppointment();
 		editApp.setVisible(true);
 		//frmKalenderFirma.add(editApp);
+		ViewAppointment viewApp = new ViewAppointment();
+		viewApp.setVisible(true);
 	}
 
 }
