@@ -22,6 +22,7 @@ import time
 
 class Server(object):
 
+    # Initiate server with gives arguments or default arguments
     def __init__(self, HOST='localhost', PORT=9999, debug=True): 
         self.debug = debug
         self.readableClients = []
@@ -36,7 +37,7 @@ class Server(object):
         self.serverSocket.listen(10)
         if self.debug: print 'Server.__init__: CHAT SERVER STARTED ON (%s, %s)' % (HOST, PORT)
 
-
+    # The main method in the server, loops as long as program runs
     def serveForever(self):
         self.readableClients.append(self.serverSocket)
         if self.debug: print 'Server.serveForever: SERVING FOREVER' 
@@ -52,34 +53,44 @@ class Server(object):
                 print 'Server.serveForever: SELECT ERROR'
                 continue
             
-            # Sockets to be read from
+            # Sockets ready to be read from
             for sock in readyToRead:
+                # If it is a new connection, add it to the readable list and create message queue
                 if sock == self.serverSocket:
-                    sockfd, addr = self.serverSocket.accept()
-                    sockfd.setblocking(0)
-                    self.readableClients.append(sockfd)
+                    sockfd, addr = self.serverSocket.accept() # Accept connection
+                    sockfd.setblocking(0) # Set as non-blocking
+                    self.readableClients.append(sockfd) # Add it to the readable list
                     print 'Server.serveForever: CLIENT (%s, %s) CONNECTED' % addr
-                    self.msgQ[sockfd] = Queue.Queue()
-                    # Will not broadcast to others clients that client is connected before a valid username is entered
+                    self.msgQ[sockfd] = Queue.Queue() # Create message queue
+                    # Will not broadcast to other clients that client is connected before a valid username is entered
+                # Existing connection 
                 else:
-                    data = sock.recv(self.recvBuff).strip()
+                    data = sock.recv(self.recvBuff).strip() # Read data from sockete
                     if self.debug: print 'Server.serveForever: RECIEVED DATA FROM (%s, %s)' % addr
+                    # If it recieved data 
                     if data:
                         if self.debug: print 'Server.serveForever: CONNECTED SOCKETS ' + str(len(self.readableClients))
                         print 'Server.serveForever: RECEIVED %s FROM %s' % (data, sock.getpeername())
+                        # If the socket isn't in the writeable list, append it
                         if sock not in self.writeableClients:
                             self.writeableClients.append(sock)
                         self.handleJSON(data, sock) # This is where messages are added to the message queue
+                    # No data recieved, the connection is lost, so we must remove the socket
                     else:
                         if self.debug: print 'Server.serveForever: CONNECTION LOST WITH (%s, %s) AFTER READING NO DATA' % addr
                         print 'Server.serveForever: CLIENT (%s, %s) DISCONNECTED' % addr
-                        self.broadcastMessageToOthers(sock, json.dumps({'response': 'message', 'message': '%s  SERVER | %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock])})) # must send json
+                        # Broadcast that client lost connection
+                        self.broadcastMessageToOthers(sock, json.dumps({'response': 'message', 'message': '%s  SERVER | %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock])})) 
+                        # If socket in writeable list, remove it
                         if sock in self.writeableClients:
                             self.writeableClients.remove(sock)
+                        # Remove the socket from readable list    
                         self.readableClients.remove(sock)
+                        # Remove the username, it's now free for other users to use
                         if sock in self.usernames.iterkeys():
                             if self.debug: print 'Server.serveForever: REMOVED %s FROM USERNAMES' % self.usernames[sock]
                             del self.usernames[sock]
+                        # Close connection
                         sock.close()
             
             # Sending all messages in queue to everyone except origin sender. Sockets must have free space in write buffer
@@ -88,7 +99,7 @@ class Server(object):
                     nextMsg = self.msgQ[sock].get_nowait() # Get the sockets next message in queue
                 except Queue.Empty:
                     print 'Server.serveForever: MESSAGE QUEUE FOR (%s, %s) IS EMPTY' % addr
-                    self.writeableClients.remove(sock)
+                    self.writeableClients.remove(sock) # Message queue is empty, so we remove the client from writeable list
                 else:
                     self.broadcastMessageToOthers(sock, nextMsg) # Sending JSON-response to all other than origin sender
             
@@ -101,6 +112,7 @@ class Server(object):
                 sock.close()
         self.serverSocket.close()
 
+    # Method to handle the JSON-requests, mostly self explained! Creates JSON-response and send to correct client(s)
     def handleJSON(self, data, sock):
         data = json.loads(data)
         if data['request'] == 'login':
@@ -133,7 +145,7 @@ class Server(object):
         else:
             if self.debug: print 'Server.handleJSON: UNEXPECTED JSON'
     
-    # Will probably not be used, but is convinient                
+    # Sending message to all but origin client             
     def broadcastMessageToOthers(self, sock, message):
         if self.debug: print 'Server.broadcastMessageToOthers: BROADCAST CALLED'
         for socket in self.readableClients:
@@ -141,7 +153,7 @@ class Server(object):
                 print 'Server.broadcastMessageToOne: SENDING %s TO %s' % (message, str(socket.getpeername()))
                 socket.sendall(message)
     
-    # Sending message to only one user
+    # Sending message to origin client
     def broadcastMessageToOne(self, sock, message):
         if self.debug: print 'Server.broadcastMessageToOne: BROADCAST CALLED'
         sock.sendall(message)
