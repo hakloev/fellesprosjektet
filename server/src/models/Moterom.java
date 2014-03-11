@@ -1,21 +1,22 @@
 package models;
 
-/**
- * Created by Stasj on 07.03.14.
- */
-public class Moterom implements DBinterface{
+
+public class Moterom implements DBinterface {
     private String romKode;
 
-    public Moterom(String romKode){
+    public Moterom(String romKode) {
         this.romKode = romKode;
     }
-    public void delete(){
+
+    public void delete() {
 
     }
-    public void initialize(){
+
+    public void initialize() {
 
     }
-    public void save(){
+
+    public void save() {
 
     }
 

@@ -3,9 +3,7 @@ package models;
 import java.util.ArrayList;
 import java.util.Date;
 
-/**
- * Created by Stasj on 07.03.14.
- */
+
 public class Avtale implements DBinterface{
     private int avtaleID;
     private Ansatt avtaleAnsvarlig;

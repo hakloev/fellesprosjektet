@@ -1,8 +1,6 @@
 package models;
 
-/**
- * Created by Stasj on 09.03.14.
- */
+
 public class Varsel implements DBinterface {
     private int varselID;
     private boolean erSett;
@@ -35,7 +33,6 @@ public class Varsel implements DBinterface {
 
     @Override
     public void refresh() {
-
     }
 
     public int getVarselID() {

@@ -1,8 +1,6 @@
 package models;
 
-/**
- * Created by Stasj on 07.03.14.
- */
+
 public class Ansatt implements DBinterface {
     private String brukernavn;
     private String password;

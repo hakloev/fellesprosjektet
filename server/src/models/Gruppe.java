@@ -2,9 +2,7 @@ package models;
 
 import java.util.ArrayList;
 
-/**
- * Created by Stasj on 09.03.14.
- */
+
 public class Gruppe implements DBinterface{
     private String gruppeNavn;
     private ArrayList<Ansatt> ansattListe;
