@@ -2,7 +2,7 @@ package models;
 
 import javax.swing.DefaultListModel;
 
-public class EmployeeListModel extends DefaultListModel implements NetInterface {
+public class EmployeeListModel extends DefaultListModel<Employee> implements NetInterface {
 	
 	
 	

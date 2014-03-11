@@ -2,7 +2,8 @@ package models;
 
 import javax.swing.DefaultListModel;
 
-public class GroupListModel extends DefaultListModel implements NetInterface {
+@SuppressWarnings("serial")
+public class GroupListModel extends DefaultListModel<Employee> implements NetInterface {
 	
 	
 	

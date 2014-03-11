@@ -2,7 +2,7 @@ package models;
 
 import javax.swing.DefaultListModel;
 
-public class NotificationListModel extends DefaultListModel implements NetInterface {
+public class NotificationListModel extends DefaultListModel<Notification> implements NetInterface {
 	
 	
 	
