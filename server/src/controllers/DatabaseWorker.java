@@ -12,15 +12,15 @@ public class DatabaseWorker {
 
 	public static Response handleRequest(Request request) {
 		Object obj = request.parseJSON();
-		if (obj instanceof Avtale) {
+		if (obj instanceof Appointment) {
 			// TODO
-		} else if (obj instanceof Ansatt) {
+		} else if (obj instanceof Employee) {
 			// TODO
-		} else if (obj instanceof Gruppe) {
+		} else if (obj instanceof Groupname) {
 			// TODO
-		} else if (obj instanceof Moterom) {
+		} else if (obj instanceof MeetingRoom) {
 			// TODO
-		} else if (obj instanceof Varsel) {
+		} else if (obj instanceof Warning) {
 			// TODO
 		} else {
 			System.out.println("DatabaseWorker.handleRequest: UNEXPECTED OBJECT");
