@@ -24,9 +24,11 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class CalendarView extends JFrame{
+public class CalendarView extends JFrame implements ActionListener{
 
 	private JTable table;
 
@@ -135,6 +137,7 @@ public class CalendarView extends JFrame{
 		gbc_btnNyAvtale.gridx = 0;
 		gbc_btnNyAvtale.gridy = 1;
 		panel.add(btnNyAvtale, gbc_btnNyAvtale);
+		btnNyAvtale.addActionListener(this);
 		
 		JButton btnAvtalevisning = new JButton("Avtalevisning");
 		GridBagConstraints gbc_btnAvtalevisning = new GridBagConstraints();
@@ -142,6 +145,7 @@ public class CalendarView extends JFrame{
 		gbc_btnAvtalevisning.gridx = 0;
 		gbc_btnAvtalevisning.gridy = 2;
 		panel.add(btnAvtalevisning, gbc_btnAvtalevisning);
+		btnAvtalevisning.addActionListener(this);
 		
 		JButton btnSlettavtale = new JButton("Slett avtale");
 		GridBagConstraints gbc_btnSlettavtale = new GridBagConstraints();
@@ -161,8 +165,8 @@ public class CalendarView extends JFrame{
 		JList list = new JList(new DefaultListModel());
 		scrollPane.setViewportView(list);
 		DefaultListModel listModel = (DefaultListModel) list.getModel();
-		listModel.addElement("Siri avslo mÃ¸teinnkalling");
-		listModel.addElement("Per har invitert deg til et mÃ¸te");
+		listModel.addElement("Siri avslo møteinnkalling");
+		listModel.addElement("Per har invitert deg til et møte");
 		listModel.addElement("Kake i kakerommet!");
 		listModel.addElement("Tomt for dopapir");
 		listModel.addElement("Bowling om ti minutter");
@@ -182,7 +186,7 @@ public class CalendarView extends JFrame{
 		panel_3.add(table);
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "LÃ¸rdag", "SÃ¸ndag"},
+				{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
 				{"07.00", null, null, null, null, null, null, null},
 				{"08.00", null, null, null, null, null, null, null},
 				{"09.00", null, null, null, null, null, null, null},
@@ -205,11 +209,21 @@ public class CalendarView extends JFrame{
 		
 		this.setVisible(true);
 		
-		EditAppointment editApp = new EditAppointment();
-		editApp.setVisible(true);
+
+	}
+
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		String actionCommand = e.getActionCommand();
+		if(actionCommand == "Ny avtale"){
+			EditAppointment editApp = new EditAppointment();
+			editApp.setVisible(true);
+		}
+		else if(actionCommand == "Avtalevisning"){
 		//frmKalenderFirma.add(editApp);
 		ViewAppointment viewApp = new ViewAppointment();
 		viewApp.setVisible(true);
+		} 	
 	}
 
 }
