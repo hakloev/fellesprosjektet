@@ -2,9 +2,7 @@ package controllers;
 
 import java.sql.DriverManager;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 
 public class DBconnection {
@@ -42,7 +40,6 @@ public class DBconnection {
 		}
 		return dbCon;
 	}
-	
 	
 	public static void closeConnection() {
 		try {

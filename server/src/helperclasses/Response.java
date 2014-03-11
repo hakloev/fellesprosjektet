@@ -9,4 +9,7 @@ public class Response {
 
 	}
 
+	public String getJSONString() {
+		return null;
+	}
 }

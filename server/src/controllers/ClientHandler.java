@@ -1,6 +1,7 @@
 package controllers;
 
 import helperclasses.Request;
+import helperclasses.Response;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -36,7 +37,7 @@ public class ClientHandler extends Thread implements Runnable {
 			while (_SERVING) {
 				readFromClient = new BufferedReader(new InputStreamReader(_SOCKET.getInputStream()));
 
-				Request request = handleIncomingRequest(readFromClient.readLine());
+				Request request = acceptIncomingRequest(readFromClient.readLine());
 				if (request == null) {
 					System.out.println(_CONNECTIONID + ": ClientHandler.run: " +
 							_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " CLOSED WHEN RECEIVING NO DATA");
@@ -44,12 +45,10 @@ public class ClientHandler extends Thread implements Runnable {
 				}
 
 				// behandle i database her
+				Response response = DatabaseWorker.handleRequest(request);
 
 				// return response
-
-
-
-				// writeToClient.writeBytes(incomingMsg + "\n"); // Added for testing purpose
+				writeToClient.writeBytes(response.getJSONString()); // Maybe we need "/n"
 			}
 
 		} catch (SocketException e) {
@@ -64,15 +63,13 @@ public class ClientHandler extends Thread implements Runnable {
 		}
 	}
 
-	private Request handleIncomingRequest(String incomingJSON) {
+	private Request acceptIncomingRequest(String incomingJSON) {
 		// If incoming message is null something has happened, and connection is loosed
 		if (incomingJSON == null) {
 			return null;
 		}
-
 		System.out.println(_CONNECTIONID + ": ClientHandler.run: RECEIVED " + incomingJSON + " FROM " +
 				_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
-
 		return new Request(incomingJSON);
 	}
 }
