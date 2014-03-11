@@ -4,14 +4,14 @@ package models;
 public class Warning implements DBinterface {
     private int WarningID;
     private boolean isSeen;
-    private WarningType WarningType;
+    private WarningType warningType;
     private Employee employee;
     private Appointment appointment;
 
     public Warning(int WarningID, boolean isSeen, WarningType WarningType, Employee employee, Appointment appointment) {
         this.WarningID = WarningID;
         this.isSeen = isSeen;
-        this.WarningType = WarningType;
+        this.warningType = WarningType;
         this.employee = employee;
         this.appointment = appointment;
     }
@@ -52,11 +52,11 @@ public class Warning implements DBinterface {
     }
 
     public WarningType getWarningType() {
-        return WarningType;
+        return warningType;
     }
 
     public void setWarningType(WarningType WarningType) {
-        this.WarningType = WarningType;
+        this.warningType = WarningType;
     }
 
     public Employee getEmployee() {
