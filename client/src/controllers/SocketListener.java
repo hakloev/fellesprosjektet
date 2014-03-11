@@ -3,16 +3,6 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import models.Appointment;
-import models.Employee;
-
 
 /**
  * Created by Torgeir on 11.03.14.
@@ -33,7 +23,8 @@ public class SocketListener {
         System.out.println("Attempting to connect to "+hostname+":"+port);
         socketClient = new Socket(hostname,port);
         System.out.println("Connection Established");
-        sendRequest();
+        OutboundWorker worker = new OutboundWorker(socketClient);
+        worker.sendRequest();
     }
 
 
@@ -44,34 +35,11 @@ public class SocketListener {
 
         System.out.println("Response from server:");
 
-        //call to json handler
+        //call to json handler to handle the response message
 
         while ((userInput = stdIn.readLine()) != null) {
             System.out.println(userInput);
         }
-    }
-
-
-    public void sendRequest() {
-        Employee employee = new Employee("Lars","truls");
-        Request request = new Request("APPOINTMENT","GET", employee);
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {
-            DataOutputStream writeToServer = new DataOutputStream(socketClient.getOutputStream());
-            Writer strWriter = new StringWriter();
-            mapper.writeValue(strWriter, request);
-            String userDataJSON = strWriter.toString();
-            System.out.println(userDataJSON);
-            writeToServer.writeBytes(userDataJSON + "\n");
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-
-
     }
 
 

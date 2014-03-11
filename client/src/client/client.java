@@ -8,7 +8,7 @@ import java.net.UnknownHostException;
 /**
  * Created by Truls on 11.03.14.
  */
-public class client {
+public class Client {
 
     public static void main(String[] args) {
         //Creating a SocketClient object
@@ -17,7 +17,7 @@ public class client {
             //trying to establish connection to the server
             client.connect();
             //if successful, read response from server
-            client.readResponse();
+            //client.readResponse();
 
         } catch (UnknownHostException e) {
             System.err.println("Host unknown. Cannot establish connection");

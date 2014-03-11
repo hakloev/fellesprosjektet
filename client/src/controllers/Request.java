@@ -1,8 +1,5 @@
 package controllers;
 
-import models.Employee;
-
-import java.util.Objects;
 
 /**
  * Created by Truls on 11.03.14.
@@ -49,6 +46,6 @@ public class Request {
 
     @Override
     public String toString() {
-        return "Type";
+        return "";
     }
 }
