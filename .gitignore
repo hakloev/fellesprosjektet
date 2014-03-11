@@ -9,6 +9,8 @@
 *.class
 /out
 
+/*/out
+
 /jar_lib
 /gui
 
