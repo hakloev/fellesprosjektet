@@ -19,6 +19,7 @@ public class ClientHandler extends Thread implements Runnable {
 	private final int _CONNECTIONID;
 	private boolean _SERVING;
 	private BufferedReader readFromClient;
+	private DataOutputStream writeToClient;
 
 	public ClientHandler(Socket socket, int connectionID) {
 		this._SOCKET = socket;
@@ -32,7 +33,7 @@ public class ClientHandler extends Thread implements Runnable {
 			System.out.println(_CONNECTIONID + ": ClientHandler.run: SERVING " +
 					 _SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 
-			DataOutputStream writeToClient = new DataOutputStream(_SOCKET.getOutputStream());
+			writeToClient = new DataOutputStream(_SOCKET.getOutputStream());
 
 			while (_SERVING) {
 				readFromClient = new BufferedReader(new InputStreamReader(_SOCKET.getInputStream()));
@@ -44,11 +45,16 @@ public class ClientHandler extends Thread implements Runnable {
 					break;
 				}
 
-				// behandle i database her
+				// Handle work on database here
 				Response response = DatabaseWorker.handleRequest(request);
 
-				// return response
-				writeToClient.writeBytes(response.getJSONString()); // Maybe we need "/n"
+				// Return the response to client
+				if (response != null) {
+					sendOutgoingResponse(response);
+				} else {
+					System.out.println(_CONNECTIONID + ": ClientHandler.run: " +
+							_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " GOT NULL RESPONSE, NOTHING TO SEND");
+				}
 			}
 
 		} catch (SocketException e) {
@@ -60,6 +66,14 @@ public class ClientHandler extends Thread implements Runnable {
 		} finally {
 			System.out.println(_CONNECTIONID + ": ClientHandler.run: " +
 					 _SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " FINISHED (finally CLAUSE)");
+		}
+	}
+
+	private void sendOutgoingResponse(Response response) {
+		try {
+			writeToClient.writeBytes(response.getJSONString()); // Maybe we need "/n"
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
