@@ -9,9 +9,9 @@ import java.sql.Statement;
 
 public class DBconnection {
 	
-	private String URL = "jdbc:mysql://localhost:3306/personListPanel";
-	private String USERNAME = "testBruker";
-	private String PASSWORD = "testBrukerPassord";
+	private String URL = "jdbc:mysql://mysql.stud.ntnu.no/trulsmp_fpgruppe7";
+	private String USERNAME = "trulsmp";
+	private String PASSWORD = "grp07";
 	private Connection dbCon = null;
 	
 	

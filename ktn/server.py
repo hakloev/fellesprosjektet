@@ -1,167 +1,190 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 '''
 KTN-project 2013 / 2014
-Very simple server implementation that should serve as a basis
-for implementing the chat server
+Very simple server implementation 
+
+Because of troubles with implementing multithreaded server
+we went for implementing a multiplexed server instead. 
+This server accepts sockets and puts incoming messages
+in a queue. It then sends this messages to the sockets
+with free space in the write buffer
 '''
 
-import SocketServer
-import json
+# Import modules we need for the server
 import re
+import json
 import socket
-import threading
 import select
+import Queue
+import time
 
-'''
-This will make all Request handlers being called in its own thread.
-Very important, otherwise only one client will be served at a time
-'''
-class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
-    daemon_threads = True
-    allow_reuse_address = True
-    def __init__(self, server_address, RequestHandlerClass):
-        SocketServer.TCPServer.__init__(self, server_address, RequestHandlerClass)
+class Server(object):
 
-'''
-The RequestHandler class for our server.
+    # Initiate server with gives arguments or default arguments
+    def __init__(self, HOST='localhost', PORT=9999, debug=True): 
+        self.debug = debug
+        self.readableClients = []
+        self.writeableClients = []
+        self.recvBuff = 1024
+        self.msgQ = {}
+        self.usernames = {}
+        self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        self.serverSocket.setblocking(0)
+        self.serverSocket.bind((HOST, PORT))
+        self.serverSocket.listen(10)
+        if self.debug: print 'Server.__init__: CHAT SERVER STARTED ON (%s, %s)' % (HOST, PORT)
 
-It is instantiated once per connection to the server, and must
-override the handle() method to implement communication to the
-client.
-'''
-class CLientHandler(SocketServer.BaseRequestHandler):
+    # The main method in the server, loops as long as program runs
+    def serveForever(self):
+        self.readableClients.append(self.serverSocket)
+        if self.debug: print 'Server.serveForever: SERVING FOREVER' 
 
-    debug = None
-    socketHandler = None
-
-    def __init__(self, request, client_address, server):
-        SocketServer.BaseRequestHandler.__init__(self, request, client_address, server)
-
-    def handle(self):
-        print 'Handle called from: ' + str(self)
-        # Get a reference to the socket object
-        self.connection = self.request
-        # Get the remote ip adress of the socket
-        self.ip = self.client_address[0]
-        # Get the remote port number of the socket
-        self.port = self.client_address[1]
-        # Print information about client
-        print 'Client connected @' + self.ip + ':' + str(self.port)
-
-        ready_to_read, ready_to_write, in_error = select.select([], [], [], None)
-    
-        print 'ready to read' + str(ready_to_read)
-        
         while True:
-            print 'ClientHandler: Active threads: ' + str(threading.active_count())
-            print 'ClientHandler: Current Thread: ' + str(threading.current_thread())
-
-            if len(ready_to_read) == 1 and ready_to_read[0] == self.request:
-                # Wait for data from the client
-                data = self.request.recv(1024).strip()
-                print data
-                # Check if the data exists
-                # (recv could have returned due to a disconnect)
-                if data:
-                    print self.ip + ':' + str(self.port) + ' requested ' + data 
-                    self.socketHandler.handleJSON(data, self)
+            if self.debug: print '\nServer.serveForever: NEW ITERATION'
+            try:
+                readyToRead, readyToWrite, errorSockets = select.select(self.readableClients, self.writeableClients, self.readableClients)
+            except socket.error, e:
+                print 'Server.serveForever: SOCKET ERROR'
+                continue
+            except select.error, e:
+                print 'Server.serveForever: SELECT ERROR'
+                continue
+            
+            # Sockets ready to be read from
+            for sock in readyToRead:
+                # If it is a new connection, add it to the readable list and create message queue
+                if sock == self.serverSocket:
+                    sockfd, addr = self.serverSocket.accept() # Accept connection
+                    sockfd.setblocking(0) # Set as non-blocking
+                    self.readableClients.append(sockfd) # Add it to the readable list
+                    print 'Server.serveForever: CLIENT (%s, %s) CONNECTED' % addr
+                    self.msgQ[sockfd] = Queue.Queue() # Create message queue
+                    # Will not broadcast to other clients that client is connected before a valid username is entered
+                # Existing connection 
                 else:
-                    print 'Client disconnected @' + self.ip + ':' + str(self.port)
-                    break
-    
-    def sendJSON(self, data):
-        print 'Send all data from ' + self.ip + ':' + str(self.port)
-        self.request.sendall(data)
+                    data = sock.recv(self.recvBuff).strip() # Read data from sockete
+                    if self.debug: print 'Server.serveForever: RECIEVED DATA FROM (%s, %s)' % addr
+                    # If it recieved data 
+                    if data:
+                        if self.debug: print 'Server.serveForever: CONNECTED SOCKETS ' + str(len(self.readableClients))
+                        print 'Server.serveForever: RECEIVED %s FROM %s' % (data, sock.getpeername())
+                        # If the socket isn't in the writeable list, append it
+                        if sock not in self.writeableClients:
+                            self.writeableClients.append(sock)
+                        self.handleJSON(data, sock) # This is where messages are added to the message queue
+                    # No data recieved, the connection is lost, so we must remove the socket
+                    else:
+                        if self.debug: print 'Server.serveForever: CONNECTION LOST WITH (%s, %s) AFTER READING NO DATA' % addr
+                        print 'Server.serveForever: CLIENT (%s, %s) DISCONNECTED' % addr
+                        # Broadcast that client lost connection
+                        self.broadcastMessageToOthers(sock, self.createJSON('message', None,  '%s  SERVER | %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock]), None)) 
+                        # If socket in writeable list, remove it
+                        if sock in self.writeableClients:
+                            self.writeableClients.remove(sock)
+                        # Remove the socket from readable list    
+                        self.readableClients.remove(sock)
+                        # Remove the username, it's now free for other users to use
+                        if sock in self.usernames.iterkeys():
+                            if self.debug: print 'Server.serveForever: REMOVED %s FROM USERNAMES' % self.usernames[sock]
+                            del self.usernames[sock]
+                        # Close connection
+                        sock.close()
+            
+            # Sending all messages in queue to everyone except origin sender. Sockets must have free space in write buffer
+            for sock in readyToWrite:
+                try:
+                    nextMsg = self.msgQ[sock].get_nowait() # Get the sockets next message in queue
+                except Queue.Empty:
+                    print 'Server.serveForever: MESSAGE QUEUE FOR (%s, %s) IS EMPTY' % addr
+                    self.writeableClients.remove(sock) # Message queue is empty, so we remove the client from writeable list
+                else:
+                    self.broadcastMessageToOthers(sock, nextMsg) # Sending JSON-response to all other than origin sender
+            
+            # Remove sockets with error 
+            for sock in errorSockets:
+                print 'Server.serveForever: HANDLING EXCEPTION FOR (%s, %s)' % sock.getpeername()
+                self.readableClients.remove(sock)
+                if sock in self.writeableClients:
+                    self.writeableClients.remove(sock)
+                sock.close()
+        self.serverSocket.close()
 
-
-'''
-Class for holding information about sockets, usernames and jsonhandling
-'''
-class SocketHandler:
-
-    usernames = None
-    clients = None
-    debug = None
-
-    '''
-    TANKEN ER:
-    Alle kaller sockethandler for persing av json, og har samme referanse til sockethandler
-    de kaller sockethandler med en instans av seg selv, altsaa vil den holde oversikt og sende til alle clienthandler objekter 
-    da vil alle clienthandlers muligens ha en send funksjon, usikker paa denne
-    '''
-
-    def __init__(self):
-        self.usernames = [] 
-        self.clients = {}
-        debug = True
-        pass
-
-    def handleJSON(self, data, socket):
+    # Method to handle the JSON-requests, mostly self explained! Creates JSON-response and send to correct client(s)
+    def handleJSON(self, data, sock):
         data = json.loads(data)
         if data['request'] == 'login':
-            if not data['username'] in self.clients.itervalues():
-                if re.search("^[a-zA-Z0-9_]{0,15}$", data['username']) is not None:
-                    self.usernames.append(data['username'])
-                    print data['username'] + ' added to self.clients'
-                    res = {'response': 'login', 'username': data['username']}
-                    self.clients[socket]  = data['username']
-                    self.sendResponse(res,'all','')
-                else:
-                    res = {'response': 'login', 'error': 'Invalid username!', 'username': data['username']}
-                    self.sendResponse(res,'one','')
-            else:  
-                res = {'response': 'login', 'error': 'Name already taken!', 'username': data['username']}
-                self.sendResponse(res,'one','')
+            self.loginRequest(data, sock)
         elif data['request'] == 'logout':
-            if not data['username'] in usernames:
-                res = {'response': 'login', 'error': 'Not logged in!', 'username': data['username']}
-                self.sendResponse(res,'one','')
-            else: 
-                usernames.remove(data['username'])
-                res = {'response': 'logout', 'username': data['username']}
-                self.sendResponse(res,'all','')
-            print 'handleJSON: logout'
+            self.logoutRequest(sock)
         elif data['request'] == 'message':
-            print 'message requested'
-            res = {'response': 'message', 'message': data['message']}
-            self.sendResponse(res,'all', '')
+            self.messageRequest(data, sock)
         else:
-            pass
+            if self.debug: print 'Server.handleJSON: UNEXPECTED JSON'
 
-    def sendResponse(self, res, type, origin):
-        if self.debug: print 'sendResponse'
-        res = json.dumps(res)
-        if type == 'all': 
-            print self.clients
-            for socket in self.clients.iterkeys():
-                print socket
-                socket.sendJSON(res)
-        elif type == 'one':
-            pass
-        elif type == 'allxone':
-            #har ikke mulighet til aa finne lokal sender enda
-            pass
-        pass 
+    # FUNCTION HEADER FOR createJSON(response, username, message, error)
 
+    def loginRequest(self, data, sock):
+        if not data['username'] in self.usernames.itervalues():
+                if re.search("^[a-zA-ZæøåÆØÅ0-9_]{0,15}$", data['username']) is not None:
+                    if self.debug: print 'Server.handleJSON: USERNAME %s ADDED' % data['username']
+                    self.usernames[sock] = data['username']
+                    self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, None))
+                    self.msgQ[sock].put(self.createJSON('message', None, '%s  SERVER | %s joined the chat' % (time.strftime("%H:%M:%S"), data['username']), None))
+                else:
+                    if self.debug: print 'Server.handleJSON: INVALID USERNAME %s' % data['username']
+                    self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, 'Invalid username!'))
+        else:
+            if self.debug: print 'Server.handleJSON: USERNAME %s ALREADY TAKEN' % data['username'] 
+            self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, 'Name already taken!'))
+
+    def logoutRequest(self, sock):
+        if sock in self.usernames.keys():
+                if self.debug: print 'Server.handleJSON: USERNAME %s REQUESTED LOGOUT' % self.usernames[sock]
+                self.broadcastMessageToOne(sock, self.createJSON('logout', self.usernames[sock], None, None))
+                self.msgQ[sock].put(self.createJSON('message', None, '%s  SERVER | %s logged out' % (time.strftime("%H:%M:%S"), self.usernames[sock])), None)
+                del self.usernames[sock]
+    
+    def messageRequest(self, data, sock):
+        if self.debug: print 'Server.handleJSON: SENDING MESSAGE FROM %s' % str(sock.getpeername())
+        try:
+            self.msgQ[sock].put(self.createJSON('message', None, '%s  %s said | %s' % (time.strftime("%H:%M:%S"), self.usernames[sock], data['message']), None))
+        except KeyError:
+            if self.debug: print 'Server.handleJSON: KeyError, INVALID USERNAME/NOT LOGGED IN'
+            self.broadcastMessageToOne(sock, self.createJSON('login', None, None, '%s  SERVER | Please log in' % time.strftime("%H:%M:%S")))      
+
+    # Function to clean up JSON creation
+    def createJSON(self, response, username, message, error): # need messages also, when we implent message log
+        res = {}
+        if response is not None:
+            res['response'] = response
+        if username is not None:
+            res['username'] = username
+        if message is not None:
+            res['message'] = message
+        if error is not None:
+            res['error'] = error
+        return json.dumps(res)
+
+    # Sending message to all but origin client             
+    def broadcastMessageToOthers(self, sock, message):
+        if self.debug: print 'Server.broadcastMessageToOthers: BROADCAST CALLED'
+        for socket in self.readableClients:
+            if socket != self.serverSocket and socket != sock and socket in self.usernames.keys():
+                print 'Server.broadcastMessageToOne: SENDING %s TO %s' % (message, str(socket.getpeername()))
+                socket.sendall(message)
+    
+    # Sending message to origin client
+    def broadcastMessageToOne(self, sock, message):
+        if self.debug: print 'Server.broadcastMessageToOne: BROADCAST CALLED'
+        sock.sendall(message)
+    
 # Main method
 if __name__ == "__main__":
-    ip = raw_input("Choose IP [localhost/foreign]: ")
-    if str(ip).upper() == 'FOREIGN':
-        HOST = socket.gethostbyname(socket.gethostname())
-    else:
-        HOST = 'localhost'    
-    print "Using IP: " + HOST
-    PORT = 9999
-
-    # Give all CLientHandlers the same instance of SocketHandler
-    CLientHandler.socketHandler = SocketHandler()
-
-    CONNECTION = []
-
-    # Create the server, binding to localhost on port 9999
-    server = ThreadedTCPServer((HOST, PORT), CLientHandler)
-
-    CONNECTION.append(server)
-
-    # Activate the server; this will keep running until you
-    # interrupt the program with Ctrl-C
-    server.serve_forever()
+    ip = raw_input('''Choose IP: [''] for localhost, [out] for router-IP: ''') # We only need localhost or ip given by router, because remote connections must be handled/forwarded by router (DMZ etc) 
+    if str(ip) == '': # User wants to start server on localhost
+        chatServer = Server().serveForever()
+    else: # User wants to start server on IP given by router (need DMZ or equal to accept from outside local network)
+        chatServer = Server(socket.gethostbyname(socket.gethostname())).serveForever()

@@ -17,15 +17,19 @@ public class Main {
 			e.printStackTrace();
 		}
     	
+    	new CalendarView();
+    	
+    	/*
     	EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					CalendarView window = new CalendarView();
-					window.frmKalenderFirma.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
+		*/
     }
 }

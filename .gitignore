@@ -9,6 +9,8 @@
 *.class
 /out
 
+/*/out
+
 /jar_lib
 /gui
 
@@ -32,4 +34,9 @@
 # Maven
 log/
 target/
+
+# Garbage .gitignore
+
+client/.gitignore
+server/.gitignore
 
