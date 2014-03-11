@@ -1,5 +1,9 @@
 package controllers;
 
+import models.Employee;
+
+import java.util.Objects;
+
 /**
  * Created by Truls on 11.03.14.
  */
@@ -34,9 +38,10 @@ public class Request {
         this.request = request;
     }
 
-    public Request(String type, String request) {
+    public Request(String type, String request, Object object) {
         this.type = type;
         this.request = request;
+        this.object = object;
 
     }
 

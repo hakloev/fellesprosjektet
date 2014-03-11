@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-
-
+import models.Appointment;
+import models.Employee;
 
 
 /**
@@ -53,15 +53,17 @@ public class SocketListener {
 
 
     public void sendRequest() {
-        Request request = new Request("APPOINTMENT","GET");
+        Employee employee = new Employee("Lars","truls");
+        Request request = new Request("APPOINTMENT","GET", employee);
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-
+            DataOutputStream writeToServer = new DataOutputStream(socketClient.getOutputStream());
             Writer strWriter = new StringWriter();
             mapper.writeValue(strWriter, request);
             String userDataJSON = strWriter.toString();
             System.out.println(userDataJSON);
+            writeToServer.writeBytes(userDataJSON + "\n");
 
         } catch (IOException e) {
 
