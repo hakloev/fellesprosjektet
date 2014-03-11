@@ -2,7 +2,8 @@ package models;
 
 import javax.swing.DefaultListModel;
 
-public class RoomListModel extends DefaultListModel implements NetInterface {
+@SuppressWarnings("serial")
+public class RoomListModel extends DefaultListModel<Room> implements NetInterface {
 	
 	
 	
@@ -25,14 +26,19 @@ public class RoomListModel extends DefaultListModel implements NetInterface {
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
-
+		/* Keep empty!
+		 * This method should not be saved
+		 */
 	}
 
 	@Override
 	public void delete() {
-		// TODO Auto-generated method stub
-
+		/* Keep empty!
+		 * This method should not be saved
+		 */
 	}
-
+	
+	
+	
+	
 }
