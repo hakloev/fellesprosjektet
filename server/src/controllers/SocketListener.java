@@ -9,22 +9,27 @@ import java.net.Socket;
  */
 public class SocketListener extends Thread implements Runnable {
 
-	private static final int _ENDPORT = 4657; // 4603 to 4657 are unassigned ports
+	private static final int _PORT = 4657; // 4603 to 4657 are unassigned ports
 	// Do we want to gather all clienthandlers in an arraylist here?
 
 	@Override
 	public void run() {
 		boolean _SERVING = true;
-		int connectionID = 0;
+		int connectionID = 1;
 		try {
-			ServerSocket serverSocket = new ServerSocket(_ENDPORT);
+			ServerSocket serverSocket = new ServerSocket(_PORT);
 			while (_SERVING) {
+				System.out.println("SocketListener.run: SERVERSOCKET WAITING FOR INCOMING CONNECTION");
 				Socket incomingConnection = serverSocket.accept();
+				incomingConnection.setKeepAlive(true); // Trying to avoid timeout from socket
+
 				if (incomingConnection != null) {
-					ClientHandler client = new ClientHandler(incomingConnection, connectionID++);
+					System.out.println("SocketListener.run: INCOMING CONNECTION");
+					ClientHandler client = new ClientHandler(incomingConnection, connectionID++); // Initiate one ClientHandler per incoming connection
 					client.start();
 				}
 			}
+			serverSocket.close(); // Will not be reached if things works properly
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

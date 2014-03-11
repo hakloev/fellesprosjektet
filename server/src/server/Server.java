@@ -10,6 +10,7 @@ public class Server {
 	public static void main(String[] args) {
 		SocketListener socketListener = new SocketListener();
 		socketListener.start();
+		System.out.println("Server.main: SOCKETLISTENER STARTED");
 	}
 
 }

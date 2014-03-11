@@ -11,6 +11,8 @@ public class Groupname implements DBinterface{
     public void save() {
 
     }
+
+	@Override
     public void delete() {
 
     }

@@ -13,46 +13,55 @@ public class Appointment implements DBinterface{
     private String place;
     private MeetingRoom meetingRoom;
     private ArrayList<Employee> employeeList;
+    private ArrayList<String> emailList;
 
     //Constructor med beskriverlse og place
-    public Appointment(int appointmentID, Employee appointmentManager, Date startTime, Date stopTime, String description, String place, ArrayList<Employee> employeeList){
+    public Appointment(Employee appointmentManager, Date startTime, Date stopTime, String description, String place, ArrayList<Employee> employeeList){
         this.appointmentManager = appointmentManager;
-        this.appointmentID = appointmentID;
         this.description = description;
         this.employeeList = employeeList;
         this.place = place;
         this.startTime = startTime;
         this.stopTime = stopTime;
+        emailList = new ArrayList<String>();
 
     }
     //Constructor med description og møterom
-    public Appointment(int appointmentID, Employee appointmentManager, Date startTime, Date stopTime, String description, MeetingRoom meetingRoom, ArrayList<Employee> employeeList){
+    public Appointment(Employee appointmentManager, Date startTime, Date stopTime, String description, MeetingRoom meetingRoom, ArrayList<Employee> employeeList){
         this.appointmentManager = appointmentManager;
-        this.appointmentID = appointmentID;
         this.description = description;
         this.employeeList = employeeList;
         this.meetingRoom = meetingRoom;
         this.startTime = startTime;
         this.stopTime = stopTime;
+        this.employeeList = employeeList;
+        emailList = new ArrayList<String>();
     }
     //Constructor uten description og med place.
-    public Appointment(int appointmentID, Employee appointmentManager, Date startTime, Date stopTime, ArrayList<Employee> employeeList, String place) {
-        this.appointmentID = appointmentID;
+    public Appointment(Employee appointmentManager, Date startTime, Date stopTime, ArrayList<Employee> employeeList, String place) {
         this.appointmentManager = appointmentManager;
         this.startTime = startTime;
         this.stopTime = stopTime;
         this.employeeList = employeeList;
         this.place = place;
+        emailList = new ArrayList<String>();
     }
 
-    //Constructor uten description og med møterom
-    public Appointment(int appointmentID, Employee appointmentManager, Date startTime, Date stopTime, ArrayList<Employee> participantsList, MeetingRoom meetingRoom) {
-        this.appointmentID = appointmentID;
+    //Constructor uten description, med meetingroom
+    public Appointment(Employee appointmentManager, Date startTime, Date stopTime, ArrayList<Employee> employeeList, MeetingRoom meetingRoom) {
         this.appointmentManager = appointmentManager;
         this.startTime = startTime;
         this.stopTime = stopTime;
-        this.employeeList = participantsList;
+        this.employeeList = employeeList;
         this.meetingRoom = meetingRoom;
+        emailList = new ArrayList<String>();
+    }
+    //Constructor med kun ID
+    public Appointment(int appointmentID){
+    	this.appointmentID = appointmentID;
+    	employeeList = new ArrayList<Employee>();
+        emailList = new ArrayList<String>();
+    	
     }
 
     public void delete(){}
@@ -80,7 +89,7 @@ public class Appointment implements DBinterface{
     }
 
     public void setAppointmentManager(Employee appointmentManager) {
-        this.appointmentManager = this.appointmentManager;
+        this.appointmentManager = appointmentManager;
     }
 
     public Date getStartTime() {
@@ -127,7 +136,25 @@ public class Appointment implements DBinterface{
         return employeeList;
     }
 
-    public void setEmployeeList(ArrayList<Employee> employeeList) {
-        this.employeeList = employeeList;
+    public ArrayList<String> getEmailList() {
+        return emailList;
+    }
+    public void addParticipant(Employee employee){
+    	if (employeeList.contains(employee)){
+    		return;
+    	}
+    	employeeList.add(employee);
+    }
+    public void addEmailParticipant(String email){
+    	if (emailList.contains(email)){
+    		return;
+    	}
+    	emailList.add(email);
+    }
+    public void removeParticipant(Employee employee){
+    	employeeList.remove(employee);
+    }
+    public void removeEmailParticipant(String email){
+    	emailList.remove(email);
     }
 }
