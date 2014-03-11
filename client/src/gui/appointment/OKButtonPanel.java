@@ -7,16 +7,18 @@ import javax.swing.JPanel;
 class OKButtonPanel extends JPanel {
 	
 	
-	
 	OKButtonPanel() {
 		
-		JButton btnOk = new JButton("OK");
-		this.add(btnOk);
+		JButton btnOK = new JButton("OK");
+		this.add(btnOK);
 		
 		JButton btnAvbryt = new JButton("Avbryt");
 		this.add(btnAvbryt);
 		
-		JButton btnSlett = new JButton("Slett");
+		JButton btnSlett = new JButton("Slett avtale");
 		this.add(btnSlett);
+		
+		btnOK.setPreferredSize(btnSlett.getPreferredSize());
+		btnAvbryt.setPreferredSize(btnSlett.getPreferredSize());
 	}
 }

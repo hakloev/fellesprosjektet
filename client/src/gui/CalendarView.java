@@ -1,6 +1,7 @@
 package gui;
 
 import gui.appointment.*;
+import models.*;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -16,6 +17,7 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JSpinner;
@@ -165,8 +167,8 @@ public class CalendarView extends JFrame implements ActionListener{
 		JList list = new JList(new DefaultListModel());
 		scrollPane.setViewportView(list);
 		DefaultListModel listModel = (DefaultListModel) list.getModel();
-		listModel.addElement("Siri avslo møteinnkalling");
-		listModel.addElement("Per har invitert deg til et møte");
+		listModel.addElement("Siri avslo mï¿½teinnkalling");
+		listModel.addElement("Per har invitert deg til et mï¿½te");
 		listModel.addElement("Kake i kakerommet!");
 		listModel.addElement("Tomt for dopapir");
 		listModel.addElement("Bowling om ti minutter");
@@ -186,7 +188,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		panel_3.add(table);
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
-				{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
+				{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lï¿½rdag", "Sï¿½ndag"},
 				{"07.00", null, null, null, null, null, null, null},
 				{"08.00", null, null, null, null, null, null, null},
 				{"09.00", null, null, null, null, null, null, null},
@@ -208,7 +210,8 @@ public class CalendarView extends JFrame implements ActionListener{
 		));
 		
 		this.setVisible(true);
-		
+		EditParticipants jall = new EditParticipants(new ParticipantListModel());
+		jall.setVisible(true);
 
 	}
 

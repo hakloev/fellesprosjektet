@@ -2,6 +2,7 @@ package models;
 
 import javax.swing.DefaultListModel;
 
+@SuppressWarnings("serial")
 public class EmployeeListModel extends DefaultListModel<Employee> implements NetInterface {
 	
 	
