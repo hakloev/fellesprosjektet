@@ -3,9 +3,9 @@ package models;
 import java.util.ArrayList;
 
 
-public class Gruppe implements DBinterface{
+public class Groupname implements DBinterface{
     private String gruppeNavn;
-    private ArrayList<Ansatt> ansattListe;
+    private ArrayList<Employee> employeeList;
 
     @Override
     public void save() {
@@ -25,12 +25,12 @@ public class Gruppe implements DBinterface{
     }
 
     // Get-ers and set-ers
-    public ArrayList<Ansatt> getAnsattListe() {
-        return ansattListe;
+    public ArrayList<Employee> getEmployeeList() {
+        return employeeList;
     }
 
-    public void setAnsattListe(ArrayList<Ansatt> ansattListe) {
-        this.ansattListe = ansattListe;
+    public void setEmployeeList(ArrayList<Employee> employeeList) {
+        this.employeeList = employeeList;
     }
 
     public String getGruppeNavn() {
