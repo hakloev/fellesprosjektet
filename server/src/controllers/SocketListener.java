@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-
-
 /**
  * Created by hakloev on 10/03/14.
  */
