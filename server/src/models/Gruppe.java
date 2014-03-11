@@ -13,6 +13,8 @@ public class Gruppe implements DBinterface{
     public void save() {
 
     }
+
+	@Override
     public void delete() {
 
     }

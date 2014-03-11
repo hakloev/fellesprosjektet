@@ -9,12 +9,18 @@ public class Moterom implements DBinterface{
     public Moterom(String romKode){
         this.romKode = romKode;
     }
+
+	@Override
     public void delete(){
 
     }
+
+	@Override
     public void initialize(){
 
     }
+
+	@Override
     public void save(){
 
     }

@@ -57,7 +57,10 @@ public class Avtale implements DBinterface{
         this.moterom = moterom;
     }
 
+	@Override
     public void delete(){}
+
+	@Override
     public void initialize(){}
 
     @Override

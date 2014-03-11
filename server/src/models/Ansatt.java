@@ -14,7 +14,6 @@ public class Ansatt implements DBinterface {
         this.navn = navn;
     }
 
-
     @Override
     public void save() {
 
