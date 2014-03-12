@@ -12,11 +12,15 @@ public class DatabaseWorker {
 
 	public static Response handleRequest(Request request) {
 		Object obj = request.parseJSON();
+		Response response = null;
 		if (obj instanceof Appointment) {
 			// TODO
 		} else if (obj instanceof Employee) {
 			System.out.println("obj instanceof Employee: " + (obj instanceof Employee));
 			Employee e = (Employee) obj;
+			e.setName("Rudolf Blodstrupmoen");
+			response = new Response("employee", "post", e);
+			// Do handling based on request type (request.get_REQUESTTYPE())
 		} else if (obj instanceof Groupname) {
 			// TODO
 		} else if (obj instanceof MeetingRoom) {
@@ -27,6 +31,6 @@ public class DatabaseWorker {
 			System.out.println("DatabaseWorker.handleRequest: UNEXPECTED OBJECT");
 		}
 		// return response object
-		return null;
+		return response;
 	}
 }

@@ -51,14 +51,17 @@ public class Request {
 				System.out.println("ELSE IN Request.parseJSON");
 				return null;
 			}
-
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
 		return object;
 	}
 
-	public static String getTime() {
+	public String get_REQUESTTYPE() {
+		return _REQUESTTYPE;
+	}
+
+	public static String getTime() { // Static so it can be used other places in the program
 		DateFormat df = new SimpleDateFormat("HH:mm:ss");
 		Date date = new Date();
 		return df.format(date);
