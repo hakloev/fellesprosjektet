@@ -24,7 +24,7 @@ public class JSONHandler {
 			JsonNode root = mapper.readTree(request.get_JSONREQUEST());
 			String type = String.valueOf(root.path("type"));
 			request.set_REQUESTTYPE(String.valueOf(root.path("request")));
-			System.out.println("Type " + type);
+			System.out.println("JSONHandler.parseJSON: TYPE " + type);
 
 			if (type.equals("\"appointment\"")) {
 				object = mapper.readValue(String.valueOf(root.path("object")), Appointment.class);
