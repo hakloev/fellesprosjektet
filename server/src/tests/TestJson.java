@@ -1,9 +1,11 @@
-package helperclasses;
+package testfiles;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import controllers.DatabaseWorker;
+import helperclasses.Request;
 import models.Employee;
 
 import java.io.IOException;
@@ -32,9 +34,7 @@ public class TestJson {
 			//System.out.println(fields);
 
 			Request r = new Request(userDataJSON);
-			Object o = r.parseJSON();
-			System.out.println(o);
-			System.out.println(o instanceof Employee);
+			DatabaseWorker.handleRequest(r);
 
 		} catch (JsonMappingException e) {
 			e.printStackTrace();
