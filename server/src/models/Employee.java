@@ -1,12 +1,25 @@
 package models;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Employee implements DBinterface {
     private String username;
     private String password;
     private String name;
 
-    public Employee(String username, String password, String name) {
+	@Override
+	public String toString() {
+		return "Employee{" +
+				"username='" + username + '\'' +
+				", password='" + password + '\'' +
+				", name='" + name + '\'' +
+				'}';
+	}
+
+	@JsonCreator
+    public Employee(@JsonProperty("username") String username, @JsonProperty("password") String password, @JsonProperty("name") String name) {
         this.username = username;
         this.password = password;
         this.name = name;

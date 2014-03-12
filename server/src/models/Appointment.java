@@ -1,5 +1,8 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -16,7 +19,10 @@ public class Appointment implements DBinterface{
     private ArrayList<String> emailList;
 
     //Constructor med beskriverlse og place
-    public Appointment(Employee appointmentManager, Date startTime, Date stopTime, String description, String place, ArrayList<Employee> employeeList){
+	@JsonCreator
+    public Appointment(@JsonProperty("appointmentManager") Employee appointmentManager, @JsonProperty("startTime") Date startTime,
+	                   @JsonProperty("stopTime") Date stopTime, @JsonProperty("description") String description, @JsonProperty("place") String place,
+	                   @JsonProperty("employeeList") ArrayList<Employee> employeeList){
         this.appointmentManager = appointmentManager;
         this.description = description;
         this.employeeList = employeeList;

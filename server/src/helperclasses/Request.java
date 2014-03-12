@@ -27,8 +27,15 @@ public class Request {
 
 	public Object parseJSON() { // this is supposed to return any given object, must be casted
 		ObjectMapper mapper = new ObjectMapper();
-		JsonNode root = mapper.readTree(_JSONREQUEST);
-		return mapper.readValue(String.valueOf(), Employee.class);
+		try {
+			JsonNode root = mapper.readTree(_JSONREQUEST);
+			System.out.println(root.path("object"));
+			Employee e = mapper.readValue(String.valueOf(root.path("object")), Employee.class);
+			System.out.println(e);
+
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 
 		/*	if (classTypeString.equals("appointment")) {
 				// TODO return createAppointmentObject();
@@ -43,9 +50,6 @@ public class Request {
 			} else {
 				// TODO
 			}*/
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 
 
 		//User userFromJSON = mapper.readValue(userDataJSON, User.class);

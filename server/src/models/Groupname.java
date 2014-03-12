@@ -1,13 +1,22 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
 
 public class Groupname implements DBinterface{
-    private String gruppeNavn;
+
+	private String gruppeNavn;
     private ArrayList<Employee> employeeList;
 
-    @Override
+	@JsonCreator
+	public Groupname(@JsonProperty("gruppeNavn") String gruppeNavn) {
+		this.gruppeNavn = gruppeNavn;
+	}
+
+	@Override
     public void save() {
 
     }
