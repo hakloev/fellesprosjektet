@@ -16,9 +16,9 @@ public class Employee {
 	public String getUserName() {
 		return userName;
 	}
-
-
-	public String getName() {
+	
+	
+	public String toString() {
 		return name;
 	}
 

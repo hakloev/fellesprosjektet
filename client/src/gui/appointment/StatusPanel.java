@@ -4,18 +4,19 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import models.ParticipantStatus;
+
 @SuppressWarnings("serial")
 class StatusPanel extends JPanel {
 	
 	
-	
 	StatusPanel() {
 		
-		JLabel lblDeltagerstatus = new JLabel("Deltagerstatus");
-		this.add(lblDeltagerstatus);
+		JLabel labelDeltagerstatus = new JLabel("Deltagerstatus");
+		this.add(labelDeltagerstatus);
 		
-		JComboBox comboBox = new JComboBox();
-		this.add(comboBox);
+		JComboBox<ParticipantStatus> statusComboBox = new JComboBox<ParticipantStatus>(ParticipantStatus.getStatusList());
+		this.add(statusComboBox);
 		
 	}
 	

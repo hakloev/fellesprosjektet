@@ -144,7 +144,7 @@ class Server(object):
         if sock in self.usernames.keys():
                 if self.debug: print 'Server.handleJSON: USERNAME %s REQUESTED LOGOUT' % self.usernames[sock]
                 self.broadcastMessageToOne(sock, self.createJSON('logout', self.usernames[sock], None, None))
-                self.msgQ[sock].put(self.createJSON('message', None, '%s  SERVER | %s logged out' % (time.strftime("%H:%M:%S"), self.usernames[sock])), None)
+                self.msgQ[sock].put(self.createJSON('message', None, '%s  SERVER | %s logged out' % (time.strftime("%H:%M:%S"), self.usernames[sock]), None))
                 del self.usernames[sock]
     
     def messageRequest(self, data, sock):

@@ -1,12 +1,13 @@
 package controllers;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import helperclasses.JSONHandler;
 import helperclasses.Request;
 import helperclasses.Response;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.Socket;
 import java.net.SocketException;
 
@@ -50,7 +51,7 @@ public class ClientHandler extends Thread implements Runnable {
 
 				// Return the response to client
 				if (response != null) {
-					sendOutgoingResponse(response);
+					sendOutgoingResponse(JSONHandler.createJSON(response));
 				} else {
 					System.out.println(_CONNECTIONID + ": ClientHandler.run: " +
 							_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " GOT NULL RESPONSE, NOTHING TO SEND");
@@ -69,9 +70,9 @@ public class ClientHandler extends Thread implements Runnable {
 		}
 	}
 
-	private void sendOutgoingResponse(Response response) {
+	private void sendOutgoingResponse(String response) {
 		try {
-			writeToClient.writeBytes(response.getJSONString()); // Maybe we need "/n"
+			writeToClient.writeBytes(response + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

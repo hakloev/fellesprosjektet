@@ -20,9 +20,31 @@ public class EditParticipants extends JFrame {
 	
 	
 	private JPanel contentPane;
+<<<<<<< HEAD
+
+	/**
+	 * Launch the application.
+	 */
+
+	public static void client(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					EditParticipants frame = new EditParticipants();
+					frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+
+=======
 	private ParticipantListModel appointmentParticipantList;
 	
 	
+>>>>>>> master
 	/**
 	 * Create the frame.
 	 */
