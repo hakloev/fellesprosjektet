@@ -15,7 +15,8 @@ public class DatabaseWorker {
 		if (obj instanceof Appointment) {
 			// TODO
 		} else if (obj instanceof Employee) {
-			// TODO
+			System.out.println("obj instanceof Employee: " + (obj instanceof Employee));
+			Employee e = (Employee) obj;
 		} else if (obj instanceof Groupname) {
 			// TODO
 		} else if (obj instanceof MeetingRoom) {

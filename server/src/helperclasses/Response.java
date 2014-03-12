@@ -5,6 +5,8 @@ package helperclasses;
  */
 public class Response {
 
+
+
 	public Response() {
 
 	}
