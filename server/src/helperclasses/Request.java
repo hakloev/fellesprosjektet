@@ -27,6 +27,7 @@ public class Request {
 
 	public Object parseJSON() { // this is supposed to return any given object, must be casted
 		ObjectMapper mapper = new ObjectMapper();
+		String type;
 		try {
 			JsonNode root = mapper.readTree(_JSONREQUEST);
 			System.out.println(root.path("object"));
