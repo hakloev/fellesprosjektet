@@ -90,7 +90,7 @@ public class Alert extends JDialog{
 
         textLabel1 = new JLabel("Før");
         c.gridy = 3;
-        c.gridx = 2;
+        c.gridx = GridBagConstraints.RELATIVE;
         buttonPanel.add(textLabel1,c);
 
         JSpinner spinner = new JSpinner(new SpinnerDateModel());
@@ -117,17 +117,4 @@ public class Alert extends JDialog{
 
 
     }
-    /* Main for testing design
-    public static void main(String args[]){
-        JFrame frame = new JFrame();
-        frame.setSize(500,500);
-        frame.add(new JLabel("Move Along"));
-        Alert alert = new Alert(frame);
-        alert.setVisible(true);
-
-        frame.pack();
-        frame.setVisible(true);
-        frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-    }*/
-
 }
