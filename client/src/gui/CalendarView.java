@@ -18,6 +18,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JSpinner;
@@ -33,6 +34,7 @@ import java.awt.event.ActionListener;
 public class CalendarView extends JFrame implements ActionListener{
 
 	private JTable table;
+	private JComboBox comboBox = new JComboBox();
 
 
 	/**
@@ -46,12 +48,12 @@ public class CalendarView extends JFrame implements ActionListener{
 	 * Initialize the contents of the frame.
 	 */
 	private void initialize() {
-		
+
 		this.setTitle("Kalender - Firma X");
 		this.setResizable(false);
 		this.setBounds(100, 100, 1000, 500);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
+
 		JPanel panel_1 = new JPanel();
 		this.getContentPane().add(panel_1, BorderLayout.NORTH);
 		GridBagLayout gbl_panel_1 = new GridBagLayout();
@@ -60,7 +62,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbl_panel_1.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
 		gbl_panel_1.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		panel_1.setLayout(gbl_panel_1);
-		
+
 		JButton button = new JButton("< Forrige");
 		GridBagConstraints gbc_button = new GridBagConstraints();
 		gbc_button.anchor = GridBagConstraints.WEST;
@@ -68,7 +70,8 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_button.gridx = 1;
 		gbc_button.gridy = 0;
 		panel_1.add(button, gbc_button);
-		
+		button.addActionListener(this);
+
 		JButton btnNeste = new JButton("Neste >");
 		GridBagConstraints gbc_btnNeste = new GridBagConstraints();
 		gbc_btnNeste.anchor = GridBagConstraints.WEST;
@@ -76,6 +79,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_btnNeste.gridx = 2;
 		gbc_btnNeste.gridy = 0;
 		panel_1.add(btnNeste, gbc_btnNeste);
+		btnNeste.addActionListener(this);
 		
 		JLabel lblUke = new JLabel("Uke:");
 		GridBagConstraints gbc_lblUke = new GridBagConstraints();
@@ -84,8 +88,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_lblUke.gridx = 3;
 		gbc_lblUke.gridy = 0;
 		panel_1.add(lblUke, gbc_lblUke);
-		
-		JComboBox comboBox = new JComboBox();
+
 		GridBagConstraints gbc_comboBox = new GridBagConstraints();
 		gbc_comboBox.anchor = GridBagConstraints.WEST;
 		gbc_comboBox.insets = new Insets(0, 0, 0, 5);
@@ -98,7 +101,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		comboBox.addItem(11);
 		comboBox.addItem(12);
 		comboBox.setSelectedItem(11);
-		
+
 		JSpinner spinner = new JSpinner();
 		spinner.setModel(new SpinnerNumberModel(new Integer(2014), null, null, new Integer(1)));
 		GridBagConstraints gbc_spinner = new GridBagConstraints();
@@ -107,7 +110,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_spinner.gridx = 5;
 		gbc_spinner.gridy = 0;
 		panel_1.add(spinner, gbc_spinner);
-		
+
 		JLabel lblBruker = new JLabel("Viser:");
 		GridBagConstraints gbc_lblBruker = new GridBagConstraints();
 		gbc_lblBruker.anchor = GridBagConstraints.WEST;
@@ -115,7 +118,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_lblBruker.gridx = 6;
 		gbc_lblBruker.gridy = 0;
 		panel_1.add(lblBruker, gbc_lblBruker);
-		
+
 		JComboBox comboBox_1 = new JComboBox();
 		GridBagConstraints gbc_comboBox_1 = new GridBagConstraints();
 		gbc_comboBox_1.anchor = GridBagConstraints.WEST;
@@ -124,7 +127,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		panel_1.add(comboBox_1, gbc_comboBox_1);
 		comboBox_1.setPreferredSize(new Dimension(200, 20));
 		comboBox_1.addItem("Kristian Volden");
-		
+
 		JPanel panel = new JPanel();
 		this.getContentPane().add(panel, BorderLayout.EAST);
 		GridBagLayout gbl_panel = new GridBagLayout();
@@ -133,7 +136,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		//gbl_panel.columnWeights = new double[]{1.0};
 		gbl_panel.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 1.0, 1.0};
 		panel.setLayout(gbl_panel);
-		
+
 		JButton btnNyAvtale = new JButton("Ny avtale");
 		GridBagConstraints gbc_btnNyAvtale = new GridBagConstraints();
 		gbc_btnNyAvtale.insets = new Insets(0, 0, 5, 0);
@@ -141,7 +144,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_btnNyAvtale.gridy = 1;
 		panel.add(btnNyAvtale, gbc_btnNyAvtale);
 		btnNyAvtale.addActionListener(this);
-		
+
 		JButton btnAvtalevisning = new JButton("Avtalevisning");
 		GridBagConstraints gbc_btnAvtalevisning = new GridBagConstraints();
 		gbc_btnAvtalevisning.insets = new Insets(0, 0, 5, 0);
@@ -149,14 +152,15 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_btnAvtalevisning.gridy = 2;
 		panel.add(btnAvtalevisning, gbc_btnAvtalevisning);
 		btnAvtalevisning.addActionListener(this);
-		
+
 		JButton btnSlettavtale = new JButton("Slett avtale");
 		GridBagConstraints gbc_btnSlettavtale = new GridBagConstraints();
 		gbc_btnSlettavtale.insets = new Insets(0, 0, 5, 0);
 		gbc_btnSlettavtale.gridx = 0;
 		gbc_btnSlettavtale.gridy = 3;
 		panel.add(btnSlettavtale, gbc_btnSlettavtale);
-		
+		btnSlettavtale.addActionListener(this);
+
 		JScrollPane scrollPane = new JScrollPane();
 		GridBagConstraints gbc_scrollPane = new GridBagConstraints();
 		gbc_scrollPane.insets = new Insets(0, 0, 5, 5);
@@ -174,10 +178,10 @@ public class CalendarView extends JFrame implements ActionListener{
 		
 		JLabel lblVarsler = new JLabel("Varsler:");
 		scrollPane.setColumnHeaderView(lblVarsler);
-		
+
 		JPanel panel_3 = new JPanel();
 		this.getContentPane().add(panel_3, BorderLayout.CENTER);
-		
+
 		table = new JTable();
 		table.setColumnSelectionAllowed(true);
 		table.setCellSelectionEnabled(true);
@@ -207,23 +211,35 @@ public class CalendarView extends JFrame implements ActionListener{
 				"New column", "Mandag", "New column", "New column", "New column", "New column", "New column", "New column"
 			}
 		));
-		
+
 		this.setVisible(true);
 		EditParticipants jall = new EditParticipants(new ParticipantListModel());
 		jall.setVisible(true);
+
 
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
-		if (actionCommand == "Ny avtale") {
+		if (actionCommand.equals("Ny avtale")) {
 			EditAppointment editApp = new EditAppointment();
 			editApp.setVisible(true);
-		} else if (actionCommand == "Avtalevisning") {
+			
+		} else if (actionCommand.equals("Avtalevisning")) {
 			ViewAppointment viewApp = new ViewAppointment();
 			viewApp.setVisible(true);
+			
+		} else if(actionCommand.equals("Slett avtale")){
+			JOptionPane.showConfirmDialog(null,
+					"Er du sikker på at du vil slette denne avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
+			
+		} else if(actionCommand.equals("Neste >")){
+			comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getSelectedIndex() + 1));
+			
+		} else if(actionCommand.equals("< Forrige")){
+			comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getSelectedIndex() - 1));
+			
 		}
 	}
-
 }
