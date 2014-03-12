@@ -1,5 +1,6 @@
 package controllers;
 
+import helperclasses.JSONHandler;
 import helperclasses.Request;
 import helperclasses.Response;
 import models.*;
@@ -11,7 +12,7 @@ public class DatabaseWorker {
 
 
 	public static Response handleRequest(Request request) {
-		Object obj = request.parseJSON();
+		Object obj = JSONHandler.parseJSON(request);
 		Response response = null;
 		if (obj instanceof Appointment) {
 			// TODO

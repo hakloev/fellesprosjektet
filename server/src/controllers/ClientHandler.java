@@ -3,6 +3,7 @@ package controllers;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import helperclasses.JSONHandler;
 import helperclasses.Request;
 import helperclasses.Response;
 
@@ -50,7 +51,7 @@ public class ClientHandler extends Thread implements Runnable {
 
 				// Return the response to client
 				if (response != null) {
-					sendOutgoingResponse(createJSON(response));
+					sendOutgoingResponse(JSONHandler.createJSON(response));
 				} else {
 					System.out.println(_CONNECTIONID + ": ClientHandler.run: " +
 							_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " GOT NULL RESPONSE, NOTHING TO SEND");
@@ -86,25 +87,4 @@ public class ClientHandler extends Thread implements Runnable {
 				_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 		return new Request(incomingJSON);
 	}
-
-	private String createJSON(Response response) {
-		ObjectMapper mapper = new ObjectMapper();
-		String dataJSON = null;
-
-		try {
-
-			Writer strWriter = new StringWriter();
-			mapper.writeValue(strWriter, response);
-			dataJSON = strWriter.toString();
-		} catch (JsonMappingException e) {
-			e.printStackTrace();
-		} catch (JsonGenerationException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-		return dataJSON;
-	}
-
 }
