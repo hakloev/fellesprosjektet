@@ -15,15 +15,8 @@ class StatusPanel extends JPanel {
 		JLabel labelDeltagerstatus = new JLabel("Deltagerstatus");
 		this.add(labelDeltagerstatus);
 		
-<<<<<<< HEAD
-		JComboBox comboBox = new JComboBox();
-		this.add(comboBox);
-		comboBox.addItem("Deltar");
-		comboBox.addItem("Deltar ikke");
-=======
 		JComboBox<ParticipantStatus> statusComboBox = new JComboBox<ParticipantStatus>(ParticipantStatus.getStatusList());
 		this.add(statusComboBox);
->>>>>>> master
 		
 	}
 	

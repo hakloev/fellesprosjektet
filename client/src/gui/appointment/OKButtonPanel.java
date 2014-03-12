@@ -14,9 +14,9 @@ class OKButtonPanel extends JPanel implements ActionListener {
 	
 	OKButtonPanel() {
 		
-		JButton btnOk = new JButton("OK");
-		this.add(btnOk);
-		btnOk.addActionListener(this);
+		JButton btnOK = new JButton("OK");
+		this.add(btnOK);
+		btnOK.addActionListener(this);
 		
 		JButton btnAvbryt = new JButton("Avbryt");
 		this.add(btnAvbryt);
