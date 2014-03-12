@@ -19,38 +19,20 @@ public class SocketListener {
     }
 
 
-    public void connect() throws UnknownHostException, IOException{
+    public void connect(){
         System.out.println("Attempting to connect to "+hostname+":"+port);
-        socketClient = new Socket(hostname,port);
-        System.out.println("Connection Established");
-        OutboundWorker worker = new OutboundWorker(socketClient);
-        worker.sendRequest();
-    }
+        try {
+            socketClient = new Socket(hostname,port);
+            System.out.println("Connection Established \n");
+            InboundWorker inWorker = new InboundWorker(socketClient);
+            inWorker.start();
+            System.out.println("Response Thread STARTED");
+            OutboundWorker outWorker = new OutboundWorker(socketClient);
+            outWorker.sendRequest();
 
-
-    public void readResponse() throws IOException{
-        String userInput;
-        BufferedReader stdIn = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
-
-
-        System.out.println("Response from server:");
-
-        //call to json handler to handle the response message
-
-        while ((userInput = stdIn.readLine()) != null) {
-            System.out.println(userInput);
-        }
-    }
-
-
-
-
-    public void closeSocket(){
-        try{
-            socketClient.close();
-        }
-        catch(IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 }
