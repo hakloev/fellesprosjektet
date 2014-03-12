@@ -17,6 +17,7 @@ public class JSONHandler {
 
 
 	public static Object parseJSON(Request request) { // this is supposed to return any given object, must be casted
+		System.out.println("JSONHandler.parseJSON: PARSING REQUEST " + request.get_JSONREQUEST());
 		ObjectMapper mapper = new ObjectMapper();
 		Object object = null; // Will cast in DatabaseWorker
 		try {
@@ -46,6 +47,7 @@ public class JSONHandler {
 	}
 
 	public static String createJSON(Response response) {
+		System.out.println("JSONHandler.createJSON: CREATING JSON");
 		ObjectMapper mapper = new ObjectMapper();
 		String dataJSON = null;
 

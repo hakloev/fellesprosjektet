@@ -1,8 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import helperclasses.JSONHandler;
 import helperclasses.Request;
 import helperclasses.Response;
@@ -73,6 +70,8 @@ public class ClientHandler extends Thread implements Runnable {
 
 	private void sendOutgoingResponse(String response) {
 		try {
+			System.out.println(_CONNECTIONID + ": ClientHandler.run: SENDING " + response + " TO " +
+					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 			writeToClient.writeBytes(response + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
