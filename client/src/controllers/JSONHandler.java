@@ -12,7 +12,7 @@ import java.io.Writer;
  */
 public class JSONHandler {
 
-    public String jsonParser(Object object) {
+    public String toJson(Object object) {
         ObjectMapper mapper = new ObjectMapper();
         String userDataJSON = null;
 
@@ -32,6 +32,8 @@ public class JSONHandler {
 
         return userDataJSON;
     }
+
+
 
 
 

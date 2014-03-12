@@ -27,7 +27,7 @@ public class EditParticipants extends JFrame {
 	/**
 	 * Launch the application.
 	 */
-	/*
+
 	public static void client(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
@@ -40,7 +40,7 @@ public class EditParticipants extends JFrame {
 			}
 		});
 	}
-	*/
+
 
 	/**
 	 * Create the frame.

@@ -39,7 +39,6 @@ public class InboundWorker extends Thread implements Runnable {
 
                 // TODO: call to json handler to handle the response message
 
-
             }
 
         } catch (IOException e) {

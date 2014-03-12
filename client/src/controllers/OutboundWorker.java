@@ -25,7 +25,7 @@ public class OutboundWorker {
 
         try {
             DataOutputStream writeToServer = new DataOutputStream(socketClient.getOutputStream());
-            String userDataJSON = jsonHandler.jsonParser(request);
+            String userDataJSON = jsonHandler.toJson(request);
             writeToServer.writeBytes(userDataJSON + "\n");
 
         } catch (IOException e) {
