@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.Iterator;
 
 import models.*;
-import sun.org.mozilla.javascript.internal.json.JsonParser;
 
 
 /**
@@ -28,19 +27,8 @@ public class Request {
 
 	public Object parseJSON() { // this is supposed to return any given object, must be casted
 		ObjectMapper mapper = new ObjectMapper();
-		try {
-			JsonNode root = mapper.readTree(_JSONREQUEST);
-			Iterator<JsonNode> iterator = root.iterator();
-			int count = 0;
-			while (iterator.hasNext()) {
-				JsonNode node = iterator.next();
-				System.out.println(node);
-				if (count == 2) {
-					System.out.println("inside");
-					return mapper.readValue(String.valueOf(node), Employee.class);
-				}
-				count++;
-			}
+		JsonNode root = mapper.readTree(_JSONREQUEST);
+		return mapper.readValue(String.valueOf(), Employee.class);
 
 		/*	if (classTypeString.equals("appointment")) {
 				// TODO return createAppointmentObject();
