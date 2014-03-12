@@ -100,6 +100,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		comboBox.addItem(10);
 		comboBox.addItem(11);
 		comboBox.addItem(12);
+		comboBox.setSelectedItem(11);
 
 		JSpinner spinner = new JSpinner();
 		spinner.setModel(new SpinnerNumberModel(new Integer(2014), null, null, new Integer(1)));
@@ -132,7 +133,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		GridBagLayout gbl_panel = new GridBagLayout();
 		gbl_panel.columnWidths = new int[]{0};
 		gbl_panel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		gbl_panel.columnWeights = new double[]{1.0};
+		//gbl_panel.columnWeights = new double[]{1.0};
 		gbl_panel.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 1.0, 1.0};
 		panel.setLayout(gbl_panel);
 
@@ -167,16 +168,14 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_scrollPane.gridx = 0;
 		gbc_scrollPane.gridy = 4;
 		panel.add(scrollPane, gbc_scrollPane);
-
+		scrollPane.setPreferredSize(new Dimension(180, 200));
+		
 		JList list = new JList(new DefaultListModel());
 		scrollPane.setViewportView(list);
 		DefaultListModel listModel = (DefaultListModel) list.getModel();
-		listModel.addElement("Siri avslo møteinnkalling");
-		listModel.addElement("Per har invitert deg til et møte");
-		listModel.addElement("Kake i kakerommet!");
-		listModel.addElement("Tomt for dopapir");
-		listModel.addElement("Bowling om ti minutter");
-
+		//listModel.addElement("Siri avslo møteinnkalling");
+		//listModel.addElement("Per har invitert deg til et møte");
+		
 		JLabel lblVarsler = new JLabel("Varsler:");
 		scrollPane.setColumnHeaderView(lblVarsler);
 
@@ -223,26 +222,24 @@ public class CalendarView extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		String actionCommand = e.getActionCommand();
-		if(actionCommand == "Ny avtale"){
+		if (actionCommand.equals("Ny avtale")) {
 			EditAppointment editApp = new EditAppointment();
 			editApp.setVisible(true);
-		}
-		else if(actionCommand == "Avtalevisning"){
-		//frmKalenderFirma.add(editApp);
-		ViewAppointment viewApp = new ViewAppointment();
-		viewApp.setVisible(true);
-		} 	
-	
-		else if(actionCommand.equals("Slett avtale")){
-			JOptionPane.showConfirmDialog(null,
-					"Er du sikker på at du vil slette avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
-		}
-		else if(actionCommand.equals("Neste >")){
-			comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getSelectedIndex() + 1));
-		}
-		else if(actionCommand.equals("< Forrige")){
-			comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getSelectedIndex() - 1));
-		}
 			
+		} else if (actionCommand.equals("Avtalevisning")) {
+			ViewAppointment viewApp = new ViewAppointment();
+			viewApp.setVisible(true);
+			
+		} else if(actionCommand.equals("Slett avtale")){
+			JOptionPane.showConfirmDialog(null,
+					"Er du sikker på at du vil slette denne avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
+			
+		} else if(actionCommand.equals("Neste >")){
+			comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getSelectedIndex() + 1));
+			
+		} else if(actionCommand.equals("< Forrige")){
+			comboBox.setSelectedItem(comboBox.getItemAt(comboBox.getSelectedIndex() - 1));
+			
+		}
 	}
 }
