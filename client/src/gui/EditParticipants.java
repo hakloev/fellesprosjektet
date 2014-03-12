@@ -14,51 +14,59 @@ import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class EditParticipants extends JFrame {
-	
-	
+public class EditParticipants extends JFrame implements ActionListener{
+
+
 	private JPanel contentPane;
 	private ParticipantListModel appointmentParticipantList;
-	
-	
+	private JList<Participant> participantList;
+	private JList<Employee> employeeList;
+	private EmployeeListModel employeeListModel;
+	private JList<Group> groupList;
+	private ParticipantListModel temp;
+	private Appointment appointment;
+
 	/**
 	 * Create the frame.
 	 */
-	public EditParticipants(ParticipantListModel appointmentParticipantList) {
-		this.appointmentParticipantList = appointmentParticipantList;
-		
+	public EditParticipants(Appointment appointment) {
+		this.appointment = appointment;
+		this.appointmentParticipantList = appointment.getParticipantList();
+		temp = new ParticipantListModel(appointmentParticipantList);
 		this.setTitle("Rediger deltagere");
 		this.setLocation(100, 100);
 		setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(contentPane);
-		
+
 		GridBagLayout gbl = new GridBagLayout();
 		gbl.rowHeights = new int[]{80, 80, 0};
 		contentPane.setLayout(gbl);
-		
+
 		addListsPanel();
-		
+
 		addButtonPanel();
-		
+
 		this.pack();
 	}
-	
-	
+
+
 	private void addListsPanel() {
 		/* Grupper */
 		JScrollPane groupSscrollPane = new JScrollPane();
 		groupSscrollPane.setPreferredSize(new Dimension(120, 0));
-		
+
 		JLabel lblGrupper = new JLabel("Grupper");
 		groupSscrollPane.setColumnHeaderView(lblGrupper);
-		
+
 		GroupListModel groupListModel = new GroupListModel();
 		groupListModel.initialize();
-		JList<Group> groupList = new JList<Group>(groupListModel);
+		groupList = new JList<Group>(groupListModel);
 		groupSscrollPane.setViewportView(groupList);
 		GridBagConstraints gbc_groupScrollPane = new GridBagConstraints();
 		gbc_groupScrollPane.gridheight = 2;
@@ -67,8 +75,10 @@ public class EditParticipants extends JFrame {
 		gbc_groupScrollPane.gridx = 0;
 		gbc_groupScrollPane.gridy = 0;
 		contentPane.add(groupSscrollPane, gbc_groupScrollPane);
-		
+
 		JButton addGroupButton = new JButton("->");
+		addGroupButton.setActionCommand("add group");
+		addGroupButton.addActionListener(this);
 		GridBagConstraints gbc_addGroupButton = new GridBagConstraints();
 		gbc_addGroupButton.gridheight = 2;
 		gbc_addGroupButton.anchor = GridBagConstraints.CENTER;
@@ -76,15 +86,15 @@ public class EditParticipants extends JFrame {
 		gbc_addGroupButton.gridx = 1;
 		gbc_addGroupButton.gridy = 0;
 		contentPane.add(addGroupButton, gbc_addGroupButton);
-		
+
 		/* Deltagere */
 		JScrollPane participantScrollPane = new JScrollPane();
 		participantScrollPane.setPreferredSize(new Dimension(120, 0));
-		
+
 		JLabel lblDeltagere = new JLabel("Deltagere");
 		participantScrollPane.setColumnHeaderView(lblDeltagere);
-		
-		JList<Participant> participantList = new JList<Participant>(appointmentParticipantList);
+
+		participantList = new JList<Participant>(appointmentParticipantList);
 		participantScrollPane.setViewportView(participantList);
 		GridBagConstraints gbc_participantScrollPane = new GridBagConstraints();
 		gbc_participantScrollPane.gridheight = 2;
@@ -93,33 +103,37 @@ public class EditParticipants extends JFrame {
 		gbc_participantScrollPane.gridx = 2;
 		gbc_participantScrollPane.gridy = 0;
 		contentPane.add(participantScrollPane, gbc_participantScrollPane);
-		
+
 		JButton addParticipantButton = new JButton("<-");
+		addParticipantButton.setActionCommand("add participant");
+		addParticipantButton.addActionListener(this);
 		GridBagConstraints gbc_addParticipantButton = new GridBagConstraints();
 		gbc_addParticipantButton.anchor = GridBagConstraints.SOUTH;
 		gbc_addParticipantButton.insets = new Insets(5, 0, 5, 5);
 		gbc_addParticipantButton.gridx = 3;
 		gbc_addParticipantButton.gridy = 0;
 		contentPane.add(addParticipantButton, gbc_addParticipantButton);
-		
+
 		JButton removeParticipantButton = new JButton("->");
+		removeParticipantButton.setActionCommand("remove participant");
+		removeParticipantButton.addActionListener(this);
 		GridBagConstraints gbc_removeParticipantButton = new GridBagConstraints();
 		gbc_removeParticipantButton.anchor = GridBagConstraints.NORTH;
 		gbc_removeParticipantButton.insets = new Insets(0, 0, 5, 5);
 		gbc_removeParticipantButton.gridx = 3;
 		gbc_removeParticipantButton.gridy = 1;
 		contentPane.add(removeParticipantButton, gbc_removeParticipantButton);
-		
+
 		/* Ansatte */
 		JScrollPane employeeScrollPane = new JScrollPane();
 		employeeScrollPane.setPreferredSize(new Dimension(120, 0));
-		
+
 		JLabel lblAnsatte = new JLabel("Ansatte");
 		employeeScrollPane.setColumnHeaderView(lblAnsatte);
-		
-		EmployeeListModel employeeListModel = new EmployeeListModel();
+
+		employeeListModel = new EmployeeListModel();
 		employeeListModel.initialize();
-		JList<Employee> employeeList = new JList<Employee>(employeeListModel);
+		employeeList = new JList<Employee>(employeeListModel);
 		employeeScrollPane.setViewportView(employeeList);
 		GridBagConstraints gbc_employeeScrollPane = new GridBagConstraints();
 		gbc_employeeScrollPane.fill = GridBagConstraints.BOTH;
@@ -128,21 +142,25 @@ public class EditParticipants extends JFrame {
 		gbc_employeeScrollPane.gridx = 4;
 		gbc_employeeScrollPane.gridy = 0;
 		contentPane.add(employeeScrollPane, gbc_employeeScrollPane);
-		
+
 	}
-	
-	
+
+
 	private void addButtonPanel() {
 		JPanel panel = new JPanel();
-		
+
 		JButton buttonOK = new JButton("OK");
+		buttonOK.setActionCommand("OK");
+		buttonOK.addActionListener(this);
 		panel.add(buttonOK);
-		
+
 		JButton buttonAvbryt = new JButton("Avbryt");
+		buttonAvbryt.setActionCommand("avbryt");
+		buttonAvbryt.addActionListener(this);
 		panel.add(buttonAvbryt);
-		
+
 		buttonOK.setPreferredSize(buttonAvbryt.getPreferredSize());
-		
+
 		GridBagConstraints gbc_panel = new GridBagConstraints();
 		gbc_panel.insets = new Insets(0, 0, 5, 0);
 		gbc_panel.anchor = GridBagConstraints.CENTER;
@@ -156,6 +174,33 @@ public class EditParticipants extends JFrame {
 	public ParticipantListModel getAppointmentParticipantList() {
 		return appointmentParticipantList;
 	}
-	
-	
+
+
+	@Override
+	public void actionPerformed(ActionEvent arg0) {
+		if (arg0.getActionCommand().equals("add participant")){
+			Employee selected = employeeList.getSelectedValue();
+			appointmentParticipantList.addElement(new Participant(selected));
+			
+		}
+		else if (arg0.getActionCommand().equals("remove participant")){
+			appointmentParticipantList.removeElement(participantList.getSelectedValue());
+		}
+		else if (arg0.getActionCommand().equals("add group")){
+			Group selected = groupList.getSelectedValue();
+			for (Employee employee:selected){
+				appointmentParticipantList.addElement(new Participant(employee));
+			}
+		}
+		else if (arg0.getActionCommand().equals("OK")){
+			appointment.setParticipantList(appointmentParticipantList);
+			this.dispose();
+		}
+		else if (arg0.getActionCommand().equals("avbryt")){
+			appointmentParticipantList = temp;
+			this.dispose();
+		}
+	}
+
+
 }

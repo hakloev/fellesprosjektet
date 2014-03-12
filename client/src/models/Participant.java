@@ -15,6 +15,14 @@ public class Participant {
 	}
 
 
+	public Participant(Employee employee) {
+		this.userName = employee.getUserName();
+		this.name = employee.getName();
+		participantStatus = null;
+		
+	}
+
+
 	public String getUserName() {
 		return userName;
 	}
@@ -33,5 +41,7 @@ public class Participant {
 	public String toString() {
 		return name;
 	}
-	
+	public boolean equals(Participant participant){
+		return (participant.userName.equals(this.userName) &&participant.name.equals(this.name));
+	}
 }

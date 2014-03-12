@@ -5,15 +5,20 @@ public class Appointment implements NetInterface {
 	
 	ParticipantListModel participantList;
 	
-	
-	
 	public Appointment() {
 		
 	}
 	
 	
-	
-	
+	public ParticipantListModel getParticipantList() {
+		return participantList;
+	}
+
+
+	public void setParticipantList(ParticipantListModel participantList) {
+		this.participantList = participantList;
+	}
+
 
 	@Override
 	public void initialize() {
