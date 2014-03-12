@@ -16,6 +16,8 @@ class StatusPanel extends JPanel {
 		
 		JComboBox comboBox = new JComboBox();
 		this.add(comboBox);
+		comboBox.addItem("Deltar");
+		comboBox.addItem("Deltar ikke");
 		
 	}
 	
