@@ -3,6 +3,7 @@ package models;
 public class Appointment implements NetInterface {
 	
 	
+	ParticipantListModel participantList;
 	
 	
 	

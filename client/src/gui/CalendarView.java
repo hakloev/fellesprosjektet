@@ -1,6 +1,7 @@
 package gui;
 
 import gui.appointment.*;
+import models.*;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -213,6 +214,8 @@ public class CalendarView extends JFrame implements ActionListener{
 		));
 
 		this.setVisible(true);
+		EditParticipants jall = new EditParticipants(new ParticipantListModel());
+		jall.setVisible(true);
 
 
 	}

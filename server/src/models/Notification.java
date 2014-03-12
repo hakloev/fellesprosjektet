@@ -1,17 +1,17 @@
 package models;
 
 
-public class Warning implements DBinterface {
-    private int WarningID;
+public class Notification implements DBinterface {
+    private int NotificationID;
     private boolean isSeen;
-    private WarningType warningType;
+    private NotificationType NotificationType;
     private Employee employee;
     private Appointment appointment;
 
-    public Warning(int WarningID, boolean isSeen, WarningType WarningType, Employee employee, Appointment appointment) {
-        this.WarningID = WarningID;
+    public Notification(int NotificationID, boolean isSeen, NotificationType NotificationType, Employee employee, Appointment appointment) {
+        this.NotificationID = NotificationID;
         this.isSeen = isSeen;
-        this.warningType = WarningType;
+        this.NotificationType = NotificationType;
         this.employee = employee;
         this.appointment = appointment;
     }
@@ -36,11 +36,11 @@ public class Warning implements DBinterface {
     }
 
     public int getWarningID() {
-        return WarningID;
+        return NotificationID;
     }
 
     public void setWarningID(int warningID) {
-        this.WarningID = warningID;
+        this.NotificationID = warningID;
     }
 
     public boolean isSeen() {
@@ -51,12 +51,12 @@ public class Warning implements DBinterface {
         this.isSeen = seen;
     }
 
-    public WarningType getWarningType() {
-        return warningType;
+    public NotificationType getWarningType() {
+        return NotificationType;
     }
 
-    public void setWarningType(WarningType WarningType) {
-        this.warningType = WarningType;
+    public void setWarningType(NotificationType WarningType) {
+        this.NotificationType = WarningType;
     }
 
     public Employee getEmployee() {

@@ -12,7 +12,6 @@ import javax.swing.JPanel;
 class OKButtonPanel extends JPanel implements ActionListener {
 	
 	
-	
 	OKButtonPanel() {
 		
 		JButton btnOk = new JButton("OK");
@@ -23,9 +22,12 @@ class OKButtonPanel extends JPanel implements ActionListener {
 		this.add(btnAvbryt);
 		btnAvbryt.addActionListener(this);
 		
-		JButton btnSlett = new JButton("Slett");
+		JButton btnSlett = new JButton("Slett avtale");
 		this.add(btnSlett);
 		btnSlett.addActionListener(this);
+		
+		btnOK.setPreferredSize(btnSlett.getPreferredSize());
+		btnAvbryt.setPreferredSize(btnSlett.getPreferredSize());
 	}
 
 	@Override

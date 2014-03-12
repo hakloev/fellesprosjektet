@@ -12,8 +12,7 @@ public class Employee implements DBinterface {
         this.name = name;
     }
 
-
-    @Override
+	@Override
     public void save() {
 
     }
