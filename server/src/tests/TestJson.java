@@ -1,4 +1,4 @@
-package testfiles;
+package tests;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
