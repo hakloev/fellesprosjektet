@@ -3,23 +3,24 @@ package gui.appointment;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import models.ParticipantListModel;
+import models.*;
 
 @SuppressWarnings("serial")
-public class ViewAppointment extends JFrame {
+public class ViewAppointment extends JDialog {
 	
 	
 	private JPanel contentPane;
 	
 	
-	public ViewAppointment() {
+	public ViewAppointment(JFrame parent, Appointment appointment) {
+		super(parent, true);
 		this.setTitle("Avtalevisning");
-		setLocation(100, 100);
-		setResizable(false);
+		this.setResizable(false);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(contentPane);
@@ -31,7 +32,9 @@ public class ViewAppointment extends JFrame {
 		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
-		contentPane.add(new DetailsPanel(new ParticipantListModel()), gbc_detailsPanel);
+		DetailsPanel detailsPanel = new DetailsPanel(this, appointment);
+		contentPane.add(detailsPanel, gbc_detailsPanel);
+		detailsPanel.setEnabled(false);
 		
 		// statusPanel
 		GridBagConstraints gbc_statusPanel = new GridBagConstraints();
@@ -44,8 +47,10 @@ public class ViewAppointment extends JFrame {
 		GridBagConstraints gbc_okButtonPanel = new GridBagConstraints();
 		gbc_okButtonPanel.gridx = 0;
 		gbc_okButtonPanel.gridy = 2;
-		contentPane.add(new OKButtonPanel(), gbc_okButtonPanel);
+		contentPane.add(new OKButtonPanel(this), gbc_okButtonPanel);
 		
 		this.pack();
+		this.setLocationRelativeTo(parent);
+		this.setVisible(true);
 	}
 }

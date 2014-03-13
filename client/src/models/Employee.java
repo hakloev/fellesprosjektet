@@ -16,10 +16,6 @@ public class Employee {
         this.userName = userName;
     }
 
-    public String getName() {
-        return name;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -30,6 +26,11 @@ public class Employee {
 	
 	
 	public String toString() {
+		return name;
+	}
+
+
+	public String getName() {
 		return name;
 	}
 
