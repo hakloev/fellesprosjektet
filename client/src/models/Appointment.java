@@ -30,8 +30,8 @@ public class Appointment implements NetInterface {
 
 	public void setDate(String date){
 		String oldDate = getDate();
-		day = Integer.parseInt(date.substring(0,2)); // DD:MM:YYYY
-		month = Integer.parseInt(date.substring(3,5)); // 01:34:6789
+		day = Integer.parseInt(date.substring(0,2)); // DD.MM.YYYY
+		month = Integer.parseInt(date.substring(3,5)); // 01.34.6789
 		year = Integer.parseInt(date.substring(6,10));
 	}
 	public void setStart(String start){
@@ -119,10 +119,10 @@ public class Appointment implements NetInterface {
 		String ret = "";
 		ret += day/10;
 		ret += day % 10;
-		ret += ":";
+		ret += ".";
 		ret += month/10;
 		ret += month % 10;
-		ret += ":";
+		ret += ".";
 		ret += year;
 		return ret;
 	}
