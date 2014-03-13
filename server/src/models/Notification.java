@@ -1,83 +1,66 @@
 package models;
 
+public class Notification {
+	
+	
+	private int notificationID;
+	private String userName;
+	private int appointmentID;
+	private boolean isSeen;
+	private String type;
+	
+	
+	public Notification(int notificationID, String userName, int appointmentID, String type) {
+		this.notificationID = notificationID;
+		this.userName = userName;
+		this.appointmentID = appointmentID;
+		this.type = type;
+		this.isSeen = false;
+	}
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+	public void setNotificationID(int notificationID) {
+		this.notificationID = notificationID;
+	}
 
-public class Notification implements DBinterface {
-    private int NotificationID;
-    private boolean isSeen;
-    private NotificationType NotificationType;
-    private Employee employee;
-    private Appointment appointment;
+	public boolean isSeen() {
+		return isSeen;
+	}
 
-	@JsonCreator
-    public Notification(@JsonProperty("NotificationID") int NotificationID, @JsonProperty("isSeen") boolean isSeen,
-	                    @JsonProperty("NotificationType") NotificationType NotificationType, @JsonProperty("employee")Employee employee,
-	                    @JsonProperty("appointment") Appointment appointment) {
-        this.NotificationID = NotificationID;
-        this.isSeen = isSeen;
-        this.NotificationType = NotificationType;
-        this.employee = employee;
-        this.appointment = appointment;
-    }
 
-    @Override
-    public void save() {
+	public void setSeen(boolean isSeen) {
+		this.isSeen = isSeen;
+	}
 
-    }
 
-    @Override
-    public void delete() {
+	public int getNotificationID() {
+		return notificationID;
+	}
 
-    }
 
-    @Override
-    public void initialize() {
+	public String getUserName() {
+		return userName;
+	}
 
-    }
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
 
-    @Override
-    public void refresh() {
-    }
+	public void setAppointmentID(int appointmentID) {
+		this.appointmentID = appointmentID;
+	}
 
-    public int getWarningID() {
-        return NotificationID;
-    }
+	public void setType(String type) {
+		this.type = type;
+	}
 
-    public void setWarningID(int warningID) {
-        this.NotificationID = warningID;
-    }
+	public int getAppointmentID() {
+		return appointmentID;
+	}
 
-    public boolean isSeen() {
-        return isSeen;
-    }
 
-    public void setSeen(boolean seen) {
-        this.isSeen = seen;
-    }
-
-    public NotificationType getWarningType() {
-        return NotificationType;
-    }
-
-    public void setWarningType(NotificationType WarningType) {
-        this.NotificationType = WarningType;
-    }
-
-    public Employee getEmployee() {
-        return employee;
-    }
-
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
-    }
-
-    public Appointment getAppointment() {
-        return appointment;
-    }
-
-    public void setAppointment(Appointment appointment) {
-        this.appointment = appointment;
-    }
+	public String getType() {
+		return type;
+	}
+	
+	
 }
