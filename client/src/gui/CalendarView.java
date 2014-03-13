@@ -23,25 +23,32 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
+import controllers.SocketListener;
+
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 @SuppressWarnings("serial")
-public class CalendarView extends JFrame implements ActionListener{
+public class CalendarView extends JFrame {
 
 	private JTable calendarTable;
 	private JPanel contentPane;
 	private JComboBox<Integer> weekComboBox = new JComboBox<Integer>();
+	private JFrame thisFrame;
 
 
 	/**
 	 * Create the main view.
 	 */
 	public CalendarView() {
+		thisFrame = this;
 		this.setTitle("Kalender - Firma X");
 		this.setResizable(false);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		//this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		this.addWindowListener(windowListener);
 		
 		
 		contentPane = new JPanel();
@@ -89,7 +96,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_previousBbutton.gridx = 0;
 		gbc_previousBbutton.gridy = 0;
 		topPanel.add(previousBbutton, gbc_previousBbutton);
-		previousBbutton.addActionListener(this);
+		previousBbutton.addActionListener(actionListener);
 
 		/* Next week */
 		JButton nextButton = new JButton("->");
@@ -99,7 +106,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_nextButton.gridx = 1;
 		gbc_nextButton.gridy = 0;
 		topPanel.add(nextButton, gbc_nextButton);
-		nextButton.addActionListener(this);
+		nextButton.addActionListener(actionListener);
 		
 		/* Week */
 		JLabel weekLabel = new JLabel("Uke");
@@ -189,7 +196,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_newAppointmentButton.gridx = 0;
 		gbc_newAppointmentButton.gridy = 1;
 		rightPanel.add(newAppointmentButton, gbc_newAppointmentButton);
-		newAppointmentButton.addActionListener(this);
+		newAppointmentButton.addActionListener(actionListener);
 
 		JButton showAppointmentButton = new JButton("Avtalevisning");
 		GridBagConstraints gbc_showAppointmentButton = new GridBagConstraints();
@@ -198,7 +205,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_showAppointmentButton.gridx = 0;
 		gbc_showAppointmentButton.gridy = 2;
 		rightPanel.add(showAppointmentButton, gbc_showAppointmentButton);
-		showAppointmentButton.addActionListener(this);
+		showAppointmentButton.addActionListener(actionListener);
 
 		JButton deleteAppointmentButton = new JButton("Slett avtale");
 		GridBagConstraints gbc_deleteAppointmentButton = new GridBagConstraints();
@@ -207,7 +214,7 @@ public class CalendarView extends JFrame implements ActionListener{
 		gbc_deleteAppointmentButton.gridx = 0;
 		gbc_deleteAppointmentButton.gridy = 3;
 		rightPanel.add(deleteAppointmentButton, gbc_deleteAppointmentButton);
-		deleteAppointmentButton.addActionListener(this);
+		deleteAppointmentButton.addActionListener(actionListener);
 		
 		newAppointmentButton.setPreferredSize(showAppointmentButton.getPreferredSize());
 		deleteAppointmentButton.setPreferredSize(showAppointmentButton.getPreferredSize());
@@ -272,30 +279,84 @@ public class CalendarView extends JFrame implements ActionListener{
 		));
 	}
 
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		String actionCommand = e.getActionCommand();
-		if (actionCommand.equals("Ny avtale")) {
-			new EditAppointment(this, new Appointment());
-			
-		} else if (actionCommand.equals("Avtalevisning")) {
-			new ViewAppointment(this, new Appointment());
-			
-		} else if(actionCommand.equals("Slett avtale")) {
-			int choice = JOptionPane.showConfirmDialog(this,
-					"Er du sikker på at du vil slette denne avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
-			
-			if (choice == 0) {
-				// slett avtale
-				System.out.println("Avtale slettet");
+	
+	ActionListener actionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			String actionCommand = e.getActionCommand();
+			if (actionCommand.equals("Ny avtale")) {
+				new EditAppointment(thisFrame, new Appointment());
+				
+			} else if (actionCommand.equals("Avtalevisning")) {
+				new ViewAppointment(thisFrame, new Appointment());
+				
+			} else if(actionCommand.equals("Slett avtale")) {
+				int choice = JOptionPane.showConfirmDialog(thisFrame,
+						"Er du sikker på at du vil slette denne avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
+				
+				if (choice == 0) {
+					// slett avtale
+					System.out.println("Avtale slettet");
+				}
+				
+			} else if(actionCommand.equals("->")) {
+				weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() + 1);
+				
+			} else if(actionCommand.equals("<-")) {
+				weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() - 1);
+				
 			}
-			
-		} else if(actionCommand.equals("->")) {
-			weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() + 1);
-			
-		} else if(actionCommand.equals("<-")) {
-			weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() - 1);
+		}
+	};
+	
+	
+	WindowListener windowListener = new WindowListener() {
+		
+		@Override
+		public void windowOpened(WindowEvent e) {
+			// TODO Auto-generated method stub
 			
 		}
-	}
+		
+		@Override
+		public void windowIconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void windowDeiconified(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void windowDeactivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void windowClosing(WindowEvent e) {
+			// TODO Auto-generated method stub
+			System.out.println("closing");
+			SocketListener.getClientSocketListener().closeSocket();
+			System.exit(0);
+			
+		}
+		
+		@Override
+		public void windowClosed(WindowEvent e) {
+			// TODO Auto-generated method stub
+			System.out.println("closed");
+		}
+		
+		@Override
+		public void windowActivated(WindowEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+	};
+	
 }
+
