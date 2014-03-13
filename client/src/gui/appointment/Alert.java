@@ -2,16 +2,19 @@ package gui.appointment;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.Date;
 
 /**
  * Created by Tarald on 12.03.14.
  */
-public class Alert extends JDialog{
+public class Alert extends JDialog implements ActionListener{
     private JRadioButton twentyFourButton, hourButton, minButton, customHoursButton, customDateTimeButton;
     private JLabel twentyFourLabel, hourLabel, minLabel, textLabel1;
     private JTextField customHoursTextField;
     private JButton okButton, cancelButton;
+    private ButtonGroup btnGroup;
 
     public Alert(Frame parent){
 
@@ -19,45 +22,44 @@ public class Alert extends JDialog{
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         setTitle("Alarm tidspunkt");
-        //setSize(500,500);
 
         setLocationRelativeTo(null);
         setModal(true);
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-        ButtonGroup btnGoup = new ButtonGroup();
+        btnGroup = new ButtonGroup();
 
         twentyFourButton = new JRadioButton();
-        btnGoup.add(twentyFourButton);
+        btnGroup.add(twentyFourButton);
         c.gridy = 0;
         c.gridx = 0;
         c.gridwidth = 1;
         buttonPanel.add(twentyFourButton, c);
 
         hourButton = new JRadioButton();
-        btnGoup.add(hourButton);
+        btnGroup.add(hourButton);
         c.gridy = 1;
         c.gridx = 0;
         c.gridwidth = 1;
         buttonPanel.add(hourButton, c);
 
         minButton = new JRadioButton();
-        btnGoup.add(minButton);
+        btnGroup.add(minButton);
         c.gridy = 2;
         c.gridx = 0;
         c.gridwidth = 1;
         buttonPanel.add(minButton, c);
 
         customHoursButton = new JRadioButton();
-        btnGoup.add(customHoursButton);
+        btnGroup.add(customHoursButton);
         c.gridy = 3;
         c.gridx = 0;
         c.gridwidth = 1;
         buttonPanel.add(customHoursButton, c);
 
         customDateTimeButton = new JRadioButton();
-        btnGoup.add(customDateTimeButton);
+        btnGroup.add(customDateTimeButton);
         c.gridy = 4;
         c.gridx = 0;
         c.gridwidth = 1;
@@ -116,5 +118,15 @@ public class Alert extends JDialog{
         pack();
 
 
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if(e.getActionCommand().equals("Avbryt")){
+            dispose();
+        }
+        else if(e.getActionCommand().equals("Ok")){
+            ButtonModel selection = btnGroup.getSelection();
+        }
     }
 }
