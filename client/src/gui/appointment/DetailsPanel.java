@@ -232,6 +232,12 @@ class DetailsPanel extends JPanel {
 			System.out.println(jall);
 		}
 	}
+    public Participant getSelectedParticipant(){
+        return this.participantList.getSelectedValue();
+    }
+    public ParticipantListModel getAppointmentParticipantList(){
+        return this.appointmentParticipantList;
+    }
 	
 	
 	ListSelectionListener pllsl = new ListSelectionListener() {

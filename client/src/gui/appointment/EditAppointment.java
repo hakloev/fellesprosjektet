@@ -1,8 +1,6 @@
 package gui.appointment;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import models.*;
@@ -15,6 +13,7 @@ public class EditAppointment extends JDialog {
 	
 	
 	private JPanel contentPane;
+
 	
 	EditButtonPanel editButtonPanel;
 	DetailsPanel detailsPanel;
@@ -66,6 +65,11 @@ public class EditAppointment extends JDialog {
 	public void updateUI() {
 		detailsPanel.updateUI();
 	}
-	
+    public Participant getSelectedParticipant(){
+        return this.detailsPanel.getSelectedParticipant();
+    }
+	public ParticipantListModel getParticipantList(){
+        return this.detailsPanel.getAppointmentParticipantList();
+    }
 }
 
