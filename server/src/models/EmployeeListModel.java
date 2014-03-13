@@ -5,12 +5,7 @@ import javax.swing.DefaultListModel;
 @SuppressWarnings("serial")
 public class EmployeeListModel extends DefaultListModel<Employee> implements DBInterface {
 	
-	
-	
-	
-	
-	
-	
+
 	
 	@Override
 	public void initialize() {

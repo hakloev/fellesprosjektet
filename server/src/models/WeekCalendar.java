@@ -2,19 +2,10 @@ package models;
 
 public class WeekCalendar implements DBInterface {
 	
-	
-	
-	
-	
-	
 	public WeekCalendar() {
 		
 	}
-	
-	
-	
-	
-	
+
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub

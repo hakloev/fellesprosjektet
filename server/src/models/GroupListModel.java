@@ -4,11 +4,7 @@ import javax.swing.DefaultListModel;
 
 @SuppressWarnings("serial")
 public class GroupListModel extends DefaultListModel<Group> implements DBInterface {
-	
-	
-	
-	
-	
+
 	
 	
 	@Override

@@ -1,5 +1,8 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Participant {
 	
 	
@@ -7,8 +10,9 @@ public class Participant {
 	private String name;
 	private ParticipantStatus participantStatus;
 	
-	
-	public Participant(String userName, String name, ParticipantStatus participantStatus) {
+	@JsonCreator
+	public Participant(@JsonProperty("userName" )String userName, @JsonProperty("name") String name,
+	                   @JsonProperty("participantStatus") ParticipantStatus participantStatus) {
 		this.userName = userName;
 		this.name = name;
 		this.participantStatus = participantStatus;
@@ -28,8 +32,19 @@ public class Participant {
 	public void setParticipantStatus(ParticipantStatus participantStatus) {
 		this.participantStatus = participantStatus;
 	}
-	
-	
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String toString() {
 		return name;
 	}

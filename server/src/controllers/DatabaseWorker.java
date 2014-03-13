@@ -18,25 +18,18 @@ public class DatabaseWorker {
 			System.out.println("DatabaseWorker.handleRequest: obj instanceof Appointment: " + (obj instanceof Appointment));
 			Appointment a = (Appointment) obj;
 			response = new Response("appointment", "post", a);
-		} else if (obj instanceof Employee) {
-			System.out.println("DatabaseWorker.handleRequest: obj instanceof Employee: " + (obj instanceof Employee));
-			Employee e = (Employee) obj;
-			e.setName("Rudolf Blodstrupmoen");
-			response = new Response("employee", "post", e);
-		} else if (obj instanceof Groupname) {
-			System.out.println("DatabaseWorker.handleRequest: obj instanceof Groupname: " + (obj instanceof Groupname));
-			Groupname g = (Groupname) obj;
-			g.setGruppeNavn("TILBAKE GRUPPE 1");
-			g.getEmployeeList().add(new Employee("test", "deprweprwepr", "Test Testesen"));
-			response = new Response("groupname", "post", g);
-		} else if (obj instanceof MeetingRoom) {
-			System.out.println("DatabaseWorker.handleRequest: obj instanceof MeetingRoom: " + (obj instanceof MeetingRoom));
-			MeetingRoom m = (MeetingRoom) obj;
-			response = new Response("meetingroom", "post", m);
-		} else if (obj instanceof Notification) {
-			System.out.println("DatabaseWorker.handleRequest: obj instanceof Notification: " + (obj instanceof Notification));
-			Notification n = (Notification) obj;
-			response = new Response("notification", "post", n);
+		} else if (obj instanceof ParticipantListModel) {
+			System.out.println("DatabaseWorker.handleRequest: obj instanceof ParticipantListModel: " + (obj instanceof ParticipantListModel));
+			ParticipantListModel e = (ParticipantListModel) obj;
+			response = new Response("participantlistmodel", "post", e);
+		} else if (obj instanceof Participant) {
+			System.out.println("DatabaseWorker.handleRequest: obj instanceof Participant: " + (obj instanceof Participant));
+			Participant g = (Participant) obj;
+			response = new Response("participant", "post", g);
+		} else if (obj instanceof ParticipantStatus) {
+			System.out.println("DatabaseWorker.handleRequest: obj instanceof ParticipantStatus: " + (obj instanceof ParticipantStatus));
+			ParticipantStatus m = (ParticipantStatus) obj;
+			response = new Response("participantstatus", "post", m);
 		} else {
 			System.out.println("DatabaseWorker.handleRequest: UNEXPECTED OBJECT");
 		}

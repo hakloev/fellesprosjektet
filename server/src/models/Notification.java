@@ -18,6 +18,9 @@ public class Notification {
 		this.isSeen = false;
 	}
 
+	public void setNotificationID(int notificationID) {
+		this.notificationID = notificationID;
+	}
 
 	public boolean isSeen() {
 		return isSeen;
@@ -38,6 +41,17 @@ public class Notification {
 		return userName;
 	}
 
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public void setAppointmentID(int appointmentID) {
+		this.appointmentID = appointmentID;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 
 	public int getAppointmentID() {
 		return appointmentID;

@@ -5,13 +5,9 @@ import javax.swing.DefaultListModel;
 @SuppressWarnings("serial")
 public class RoomListModel extends DefaultListModel<Room> implements DBInterface {
 	
-	
-	
-	
-	
-	
-	
-	
+
+
+
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub

@@ -1,5 +1,8 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public enum ParticipantStatus {
 	
 	
@@ -9,8 +12,8 @@ public enum ParticipantStatus {
 	
 	private String status;
 	
-	
-	private ParticipantStatus(String status) {
+	@JsonCreator
+	private ParticipantStatus(@JsonProperty("status") String status) {
 		this.status = status;
 	}
 	
@@ -19,8 +22,15 @@ public enum ParticipantStatus {
 		ParticipantStatus[] statusList = {ParticipantStatus.participating, ParticipantStatus.notParticipating};
 		return statusList;
 	}
-	
-	
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
 	public String toString() {
 		return status;
 	}

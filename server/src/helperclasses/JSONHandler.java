@@ -28,14 +28,12 @@ public class JSONHandler {
 
 			if (type.equals("\"appointment\"")) {
 				object = mapper.readValue(String.valueOf(root.path("object")), Appointment.class);
-			} else if (type.equals("\"employee\"")) {
-				object = mapper.readValue(String.valueOf(root.path("object")), Employee.class);
-			} else if (type.equals("\"groupname\"")) {
-				object = mapper.readValue(String.valueOf(root.path("object")), Groupname.class);
-			} else if (type.equals("\"meetingroom\"")) {
-				object = mapper.readValue(String.valueOf(root.path("object")), MeetingRoom.class);
-			} else if (type.equals("\"notification\"")) {
-				object = mapper.readValue(String.valueOf(root.path("object")), Notification.class);
+			} else if (type.equals("\"participantlistmodel\"")) {
+				object = mapper.readValue(String.valueOf(root.path("object")), ParticipantListModel.class);
+			} else if (type.equals("\"participant\"")) {
+				object = mapper.readValue(String.valueOf(root.path("object")), Participant.class);
+			} else if (type.equals("\"participantstatus\"")) {
+				object = mapper.readValue(String.valueOf(root.path("object")), ParticipantStatus.class);
 			} else {
 				System.out.println("ELSE IN Request.parseJSON");
 				return null;
