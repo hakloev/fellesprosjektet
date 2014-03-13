@@ -1,10 +1,14 @@
 package gui.appointment;
 
+import gui.ParticipantRenderer;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -20,7 +24,7 @@ import javax.swing.event.ListSelectionListener;
 import models.*;
 
 @SuppressWarnings("serial")
-class DetailsPanel extends JPanel {
+class DetailsPanel extends JPanel implements PropertyChangeListener {
 	
 	
 	private JDialog parent;
@@ -35,14 +39,18 @@ class DetailsPanel extends JPanel {
 	private JTextArea descriptionTextArea;
 	
 	private JList<Participant> participantList;
+
+	private Appointment appointment;
+
 	private ParticipantListModel appointmentParticipantList;
-	
+
 	private JButton btnVelgRom;
 	
 	
-	DetailsPanel(JDialog parent, ParticipantListModel appointmentParticipantList) {
+	DetailsPanel(JDialog parent, Appointment appointment) {
+		appointment.addPropertyChangeListener(this);
 		this.parent = parent;
-		this.appointmentParticipantList = appointmentParticipantList;
+		this.appointmentParticipantList = appointment.getParticipantList();
 		
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);
@@ -152,9 +160,10 @@ class DetailsPanel extends JPanel {
 		JLabel lblDeltagere = new JLabel("Deltagere");
 		participantScrollPane.setColumnHeaderView(lblDeltagere);
 		
-		participantList = new JList<Participant>(appointmentParticipantList);
+		participantList = new JList<Participant>(appointment.getParticipantList());
 		participantScrollPane.setViewportView(participantList);
 		participantList.addListSelectionListener(pllsl);
+		participantList.setCellRenderer(new ParticipantRenderer());
 		
 		/* Sted */
 		JLabel lblSted = new JLabel("Sted");
@@ -232,6 +241,12 @@ class DetailsPanel extends JPanel {
 			System.out.println(jall);
 		}
 	}
+    public Participant getSelectedParticipant(){
+        return this.participantList.getSelectedValue();
+    }
+    public ParticipantListModel getAppointmentParticipantList(){
+        return this.appointmentParticipantList;
+    }
 	
 	
 	ListSelectionListener pllsl = new ListSelectionListener() {
@@ -266,6 +281,16 @@ class DetailsPanel extends JPanel {
 			
 		}
 	};
+
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getPropertyName().equals("participantList")){
+			participantList.setModel((ParticipantListModel) evt.getNewValue());
+			
+		}
+		
+	}
 	
 	
 }

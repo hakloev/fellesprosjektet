@@ -1,8 +1,6 @@
 package gui.appointment;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 import models.*;
@@ -15,6 +13,7 @@ public class EditAppointment extends JDialog {
 	
 	
 	private JPanel contentPane;
+
 	
 	EditButtonPanel editButtonPanel;
 	DetailsPanel detailsPanel;
@@ -35,8 +34,10 @@ public class EditAppointment extends JDialog {
 		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
-		detailsPanel = new DetailsPanel(this, appointment.getParticipantList());
+
+		detailsPanel = new DetailsPanel(this, appointment);
 		contentPane.add(detailsPanel, gbc_detailsPanel);
+
 		
 		// okButtonPanel
 		GridBagConstraints gbc_okButtonPanel = new GridBagConstraints();
@@ -66,6 +67,11 @@ public class EditAppointment extends JDialog {
 	public void updateUI() {
 		detailsPanel.updateUI();
 	}
-	
+    public Participant getSelectedParticipant(){
+        return this.detailsPanel.getSelectedParticipant();
+    }
+	public ParticipantListModel getParticipantList(){
+        return this.detailsPanel.getAppointmentParticipantList();
+    }
 }
 

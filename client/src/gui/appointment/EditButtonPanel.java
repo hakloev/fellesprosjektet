@@ -8,9 +8,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import models.*;
 
@@ -93,7 +91,28 @@ class EditButtonPanel extends JPanel implements ActionListener {
 		if (ae.getActionCommand().equals("Rediger liste")) {
 			new EditParticipants(parent, appointment);
 		}
-		
+        else if(ae.getActionCommand().equals(("Deltar"))){
+
+            ((EditAppointment)parent).getSelectedParticipant().setParticipantStatus(ParticipantStatus.participating);
+            btnDeltar.setEnabled(false);
+            btnDeltarIkke.setEnabled(true);
+        }
+        else if( ae.getActionCommand().equals("Deltar ikke")){
+            ((EditAppointment)parent).getSelectedParticipant().setParticipantStatus(ParticipantStatus.notParticipating);
+            btnDeltarIkke.setEnabled(false);
+            btnDeltar.setEnabled(true);
+        }
+        else if(ae.getActionCommand().equals("Slett")){
+             int choice = JOptionPane.showConfirmDialog(this,
+                "Er du sikker på at du vil slette " + ((EditAppointment)parent).getSelectedParticipant().getUserName() + " fra avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
+
+            if (choice == 0) {
+                // slett Deltager
+                System.out.println("Deltager slettet");
+                ((EditAppointment)parent).getParticipantList().removeElement(((EditAppointment) parent).getSelectedParticipant());
+            }
+        }
+
 	}
 	
 }

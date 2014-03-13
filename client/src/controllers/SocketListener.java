@@ -3,6 +3,8 @@ import java.io.*;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+import javax.swing.JOptionPane;
+
 
 /**
  * Created by Torgeir on 11.03.14.
@@ -11,11 +13,21 @@ public class SocketListener {
 
     private String hostname;
     private int port;
-    Socket socketClient;
+    private Socket socketClient;
+    
+    private static SocketListener clientSocketListener;
+    private static boolean connected = false;
+    
 
     public SocketListener(String hostname, int port){
         this.hostname = hostname;
         this.port = port;
+    }
+    
+    
+    public SocketListener() {
+    	this.hostname = "localhost";
+        this.port = 4657;
     }
 
 
@@ -29,10 +41,40 @@ public class SocketListener {
             System.out.println("Response Thread STARTED");
             OutboundWorker outWorker = new OutboundWorker(socketClient);
             outWorker.sendRequest();
+            connected = true;
 
         } catch (IOException e) {
+        	JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
+        	connected = false;
             e.printStackTrace();
+            
         }
 
     }
+    
+    
+    public static void setClientSocketListener(SocketListener clientSocket) {
+    	clientSocketListener = clientSocket;
+    }
+    
+    
+    public static SocketListener getClientSocketListener() {
+    	return clientSocketListener;
+    }
+    
+    
+    public static boolean isConnected() {
+    	return connected;
+    }
+    
+    
+    public void closeSocket() {
+    	if (socketClient != null) try {
+			socketClient.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
 }
+
