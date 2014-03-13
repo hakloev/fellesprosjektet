@@ -292,7 +292,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			if (ae.getActionCommand().equals("Velg tid")) {
-				new Alert(parent);
+				new Alert(parent, Calendar.getInstance());
 			}
 		}
 	};
