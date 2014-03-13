@@ -7,7 +7,15 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements Net
 	
 	
 	
-	
+	public EmployeeListModel() {
+		super();
+		
+		/* test code */
+		this.addElement(new Employee("siri", "Siri Gundersen"));
+		this.addElement(new Employee("arvid", "Arvid Pettersen"));
+		this.addElement(new Employee("per", "Per Haraldsen"));
+		/* end test code */
+	}
 	
 	
 	

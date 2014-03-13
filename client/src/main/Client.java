@@ -10,22 +10,30 @@ import javax.swing.*;
 public class Client {
 
     public static void main(String[] args) {
+    	setupUIManager(); // do first
+    	
         //Creating a SocketClient object
         SocketListener client = new SocketListener ("localhost",4657);
         //trying to establish connection to the server
         client.connect();
 
-        try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-
         new CalendarView();
 
-
-
     }
+    
+    
+    private static void setupUIManager() {
+    	try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+    	
+    	UIManager.put("OptionPane.yesButtonText", "Ja");
+    	UIManager.put("OptionPane.noButtonText", "Nei");
+    }
+    
+    
 }
 
 
