@@ -23,7 +23,7 @@ import models.*;
 class DetailsPanel extends JPanel {
 	
 	
-	JDialog parent;
+	private JDialog parent;
 	
 	private JTextField dateTextField;
 	private JTextField startTimeTextField;
@@ -35,12 +35,14 @@ class DetailsPanel extends JPanel {
 	private JTextArea descriptionTextArea;
 	
 	private JList<Participant> participantList;
+	private ParticipantListModel appointmentParticipantList;
 	
 	private JButton btnVelgRom;
 	
 	
 	DetailsPanel(JDialog parent, ParticipantListModel appointmentParticipantList) {
 		this.parent = parent;
+		this.appointmentParticipantList = appointmentParticipantList;
 		
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);
@@ -219,6 +221,16 @@ class DetailsPanel extends JPanel {
 		descriptionTextArea.setEditable(enabled);
 		participantList.setEnabled(enabled);
 		this.remove(btnVelgRom);
+	}
+	
+	
+	@Override
+	public void updateUI() {
+		super.updateUI();
+		if (participantList != null) participantList.updateUI();
+		if (participantList != null) for (Object jall : appointmentParticipantList.toArray()) {
+			System.out.println(jall);
+		}
 	}
 	
 	

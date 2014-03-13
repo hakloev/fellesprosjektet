@@ -17,6 +17,7 @@ public class EditAppointment extends JDialog {
 	private JPanel contentPane;
 	
 	EditButtonPanel editButtonPanel;
+	DetailsPanel detailsPanel;
 	
 	
 	public EditAppointment(JFrame parent, Appointment appointment) {
@@ -34,7 +35,8 @@ public class EditAppointment extends JDialog {
 		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
-		contentPane.add(new DetailsPanel(this, appointment.getParticipantList()), gbc_detailsPanel);
+		detailsPanel = new DetailsPanel(this, appointment.getParticipantList());
+		contentPane.add(detailsPanel, gbc_detailsPanel);
 		
 		// okButtonPanel
 		GridBagConstraints gbc_okButtonPanel = new GridBagConstraints();
@@ -59,4 +61,11 @@ public class EditAppointment extends JDialog {
 		this.setVisible(true);
 		
 	}
+	
+	
+	public void updateUI() {
+		detailsPanel.updateUI();
+	}
+	
 }
+

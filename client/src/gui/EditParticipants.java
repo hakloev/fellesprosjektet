@@ -1,5 +1,7 @@
 package gui;
 
+import gui.appointment.EditAppointment;
+
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JDialog;
@@ -20,7 +22,9 @@ import java.awt.event.ActionListener;
 @SuppressWarnings("serial")
 public class EditParticipants extends JDialog implements ActionListener{
 
-
+	
+	private JDialog parent;
+	
 	private JPanel contentPane;
 	private JList<Participant> participantList;
 	private JList<Employee> employeeList;
@@ -37,6 +41,7 @@ public class EditParticipants extends JDialog implements ActionListener{
 		this.setLocation(100, 100);
 		this.setResizable(false);
 		
+		this.parent = parent;
 		this.appointment = appointment;
 		tempParticipantList = new ParticipantListModel(appointment.getParticipantList());
 		
@@ -189,8 +194,10 @@ public class EditParticipants extends JDialog implements ActionListener{
 			}
 		}
 		else if (ae.getActionCommand().equals("OK")){
+			System.out.println("OK");
 			appointment.setParticipantList(tempParticipantList);
 			this.dispose();
+			((EditAppointment)parent).updateUI();
 		}
 		else if (ae.getActionCommand().equals("Avbryt")){
 			this.dispose();
