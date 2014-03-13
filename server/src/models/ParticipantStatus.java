@@ -6,8 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public enum ParticipantStatus {
 	
 	
-	participating("Deltar"),
-	notParticipating("Deltar ikke");
+	participating("deltar"),
+	notParticipating("deltar_ikke");
 	
 	
 	private String status;

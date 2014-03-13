@@ -30,21 +30,23 @@ public class JSONHandler {
 			request.set_REQUESTTYPE(String.valueOf(root.path("request")));
 			System.out.println("JSONHandler.parseJSON: TYPE " + type);
 
-			if (type.equals("\"appointment\"")) {
-				object = mapper.readValue(String.valueOf(root.path("object")), Appointment.class);
-			} else if (type.equals("\"participantlistmodel\"")) {
-				object = new ArrayList<Participant>();
-				ArrayList<LinkedHashMap<?, ?>> p = mapper.readValue(String.valueOf(root.path("object").path("getParticipants")), ArrayList.class);
-				for (int i = 0; i < p.size(); i++) {
-					((ArrayList<Participant>) object).add(new Participant(p.get(i).get("userName").toString(), p.get(i).get("name").toString(), ParticipantStatus.valueOf(p.get(i).get("participantStatus").toString())));
-				}
-			} else if (type.equals("\"participant\"")) {
-				object = mapper.readValue(String.valueOf(root.path("object")), Participant.class);
-			} else if (type.equals("\"participantstatus\"")) {
-				object = mapper.readValue(String.valueOf(root.path("object")), ParticipantStatus.class);
-			} else {
-				System.out.println("Request.parseJSON: ELSE ");
-				return null;
+			switch (type) {
+				case "\"appointment\"":
+					object = mapper.readValue(String.valueOf(root.path("object")), Appointment.class);
+					break;
+				case "\"participantlistmodel\"":
+					object = new ArrayList<Participant>();
+					ArrayList<LinkedHashMap<?, ?>> p = mapper.readValue(String.valueOf(root.path("object").path("getParticipants")), ArrayList.class);
+					for (int i = 0; i < p.size(); i++) {
+						((ArrayList<Participant>) object).add(new Participant(p.get(i).get("userName").toString(), p.get(i).get("name").toString(), ParticipantStatus.valueOf(p.get(i).get("participantStatus").toString())));
+					}
+					break;
+				case "\"participant\"":
+					object = mapper.readValue(String.valueOf(root.path("object")), Participant.class);
+					break;
+				default:
+					System.out.println("Request.parseJSON: ELSE ");
+					return null;
 			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
