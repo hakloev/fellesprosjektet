@@ -1,6 +1,9 @@
 package models;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Notification implements DBinterface {
     private int NotificationID;
     private boolean isSeen;
@@ -8,7 +11,10 @@ public class Notification implements DBinterface {
     private Employee employee;
     private Appointment appointment;
 
-    public Notification(int NotificationID, boolean isSeen, NotificationType NotificationType, Employee employee, Appointment appointment) {
+	@JsonCreator
+    public Notification(@JsonProperty("NotificationID") int NotificationID, @JsonProperty("isSeen") boolean isSeen,
+	                    @JsonProperty("NotificationType") NotificationType NotificationType, @JsonProperty("employee")Employee employee,
+	                    @JsonProperty("appointment") Appointment appointment) {
         this.NotificationID = NotificationID;
         this.isSeen = isSeen;
         this.NotificationType = NotificationType;

@@ -1,31 +1,24 @@
-package gui;
+package main;
+import controllers.SocketListener;
+import gui.CalendarView;
 
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-
+import javax.swing.*;
 
 /**
- * Created by Truls on 06.03.14.
+ * Created by Truls on 13.03.14.
  */
-public class Main {
-	
+public class Client {
+
     public static void main(String[] args) {
     	setupUIManager(); // do first
     	
-    	new CalendarView();
-    	
-    	/*
-    	EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					CalendarView window = new CalendarView();
-					
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-		*/
+        //Creating a SocketClient object
+        SocketListener client = new SocketListener ("localhost",4657);
+        //trying to establish connection to the server
+        client.connect();
+
+        new CalendarView();
+
     }
     
     
@@ -39,4 +32,8 @@ public class Main {
     	UIManager.put("OptionPane.yesButtonText", "Ja");
     	UIManager.put("OptionPane.noButtonText", "Nei");
     }
+    
+    
 }
+
+

@@ -1,5 +1,6 @@
 package controllers;
 
+import helperclasses.JSONHandler;
 import helperclasses.Request;
 import helperclasses.Response;
 import models.*;
@@ -11,11 +12,16 @@ public class DatabaseWorker {
 
 
 	public static Response handleRequest(Request request) {
-		Object obj = request.parseJSON();
+		Object obj = JSONHandler.parseJSON(request);
+		Response response = null;
 		if (obj instanceof Appointment) {
 			// TODO
 		} else if (obj instanceof Employee) {
-			// TODO
+			System.out.println("obj instanceof Employee: " + (obj instanceof Employee));
+			Employee e = (Employee) obj;
+			e.setName("Rudolf Blodstrupmoen");
+			response = new Response("employee", "post", e);
+			// Do handling based on request type (request.get_REQUESTTYPE())
 		} else if (obj instanceof Groupname) {
 			// TODO
 		} else if (obj instanceof MeetingRoom) {
@@ -26,6 +32,6 @@ public class DatabaseWorker {
 			System.out.println("DatabaseWorker.handleRequest: UNEXPECTED OBJECT");
 		}
 		// return response object
-		return null;
+		return response;
 	}
 }
