@@ -241,6 +241,12 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 			System.out.println(jall);
 		}
 	}
+    public Participant getSelectedParticipant(){
+        return this.participantList.getSelectedValue();
+    }
+    public ParticipantListModel getAppointmentParticipantList(){
+        return this.appointmentParticipantList;
+    }
 	
 	
 	ListSelectionListener pllsl = new ListSelectionListener() {
