@@ -5,6 +5,8 @@ import helperclasses.Request;
 import helperclasses.Response;
 import models.*;
 
+import java.util.ArrayList;
+
 /**
  * Created by Håkon Ødegård Løvdal on 11/03/14.
  */
@@ -30,6 +32,8 @@ public class DatabaseWorker {
 			System.out.println("DatabaseWorker.handleRequest: obj instanceof ParticipantStatus: " + (obj instanceof ParticipantStatus));
 			ParticipantStatus m = (ParticipantStatus) obj;
 			response = new Response("participantstatus", "post", m);
+		} else if (obj instanceof ArrayList) {
+			response = new Response("participantlistmodel", "post", (ArrayList<Participant>) obj);
 		} else {
 			System.out.println("DatabaseWorker.handleRequest: UNEXPECTED OBJECT");
 		}

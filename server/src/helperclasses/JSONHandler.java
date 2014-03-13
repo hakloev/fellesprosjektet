@@ -6,9 +6,13 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import models.*;
 
+import javax.swing.*;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
 
 /**
  * Created by Håkon Ødegård Løvdal on 12/03/14.
@@ -29,7 +33,11 @@ public class JSONHandler {
 			if (type.equals("\"appointment\"")) {
 				object = mapper.readValue(String.valueOf(root.path("object")), Appointment.class);
 			} else if (type.equals("\"participantlistmodel\"")) {
-				object = mapper.readValue(String.valueOf(root.path("object")), ParticipantListModel.class);
+				object = new ArrayList<Participant>();
+				ArrayList<LinkedHashMap<?, ?>> p = mapper.readValue(String.valueOf(root.path("object").path("getParticipants")), ArrayList.class);
+				for (int i = 0; i < p.size(); i++) {
+					((ArrayList<Participant>) object).add(new Participant(p.get(i).get("userName").toString(), p.get(i).get("name").toString(), ParticipantStatus.valueOf(p.get(i).get("participantStatus").toString())));
+				}
 			} else if (type.equals("\"participant\"")) {
 				object = mapper.readValue(String.valueOf(root.path("object")), Participant.class);
 			} else if (type.equals("\"participantstatus\"")) {

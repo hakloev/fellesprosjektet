@@ -3,9 +3,9 @@ package tests;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import helperclasses.Request;
 import models.Employee;
-import models.Groupname;
+import models.Participant;
+import models.ParticipantStatus;
 
 import java.io.*;
 import java.net.Socket;
@@ -19,17 +19,7 @@ public class TestObjectToFromServer {
 
 	public static void main(String[] args) {
 		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-		Employee e = new Employee("hakloev", "MittPW", "Håkon Løvdal");
-		Employee e1 = new Employee("derp", "ewrewrwr", "Derp King");
-		Employee e2 = new Employee("WOOP", "ewrwwqtad", "Woppedy Woop");
-		Groupname g = new Groupname("Gruppe 1");
-		ArrayList<Employee> emps = new ArrayList<Employee>();
-		emps.add(e);
-		emps.add(e1);
-		emps.add(e2);
-		g.setEmployeeList(emps);
-		RequestTest request = new RequestTest("employee","get", e);
-		RequestTest request1 = new RequestTest("groupname", "get", g);
+		RequestTest request1 = new RequestTest("groupname", "get", new Participant("uname", "derp", ParticipantStatus.participating));
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectMapper mapper1 = new ObjectMapper();
 		String userDataJSON = null;
@@ -38,7 +28,6 @@ public class TestObjectToFromServer {
 		try {
 			Writer strWriter = new StringWriter();
 			Writer strWriter1 = new StringWriter();
-			mapper.writeValue(strWriter, request);
 			mapper1.writeValue(strWriter1, request1);
 			userDataJSON = strWriter.toString();
 			groupJSON = strWriter1.toString();

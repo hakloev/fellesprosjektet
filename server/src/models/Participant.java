@@ -3,7 +3,7 @@ package models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Participant {
+public class Participant implements DBInterface {
 	
 	
 	private String userName;
@@ -45,8 +45,32 @@ public class Participant {
 		this.name = name;
 	}
 
+	@Override
 	public String toString() {
-		return name;
+		return "Participant{" +
+				"userName='" + userName + '\'' +
+				", name='" + name + '\'' +
+				", participantStatus=" + participantStatus +
+				'}';
 	}
-	
+
+	@Override
+	public void initialize() {
+
+	}
+
+	@Override
+	public void refresh() {
+
+	}
+
+	@Override
+	public void save() {
+
+	}
+
+	@Override
+	public void delete() {
+
+	}
 }
