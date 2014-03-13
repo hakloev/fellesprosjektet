@@ -1,8 +1,8 @@
 package gui;
 
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
+import javax.swing.JDialog;
 import javax.swing.JScrollPane;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -18,28 +18,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 @SuppressWarnings("serial")
-public class EditParticipants extends JFrame implements ActionListener{
+public class EditParticipants extends JDialog implements ActionListener{
 
 
 	private JPanel contentPane;
-	private ParticipantListModel appointmentParticipantList;
 	private JList<Participant> participantList;
 	private JList<Employee> employeeList;
-	private EmployeeListModel employeeListModel;
 	private JList<Group> groupList;
-	private ParticipantListModel temp;
+	private ParticipantListModel tempParticipantList;
 	private Appointment appointment;
 
 	/**
 	 * Create the frame.
 	 */
-	public EditParticipants(Appointment appointment) {
-		this.appointment = appointment;
-		this.appointmentParticipantList = appointment.getParticipantList();
-		temp = new ParticipantListModel(appointmentParticipantList);
+	public EditParticipants(JDialog parent, Appointment appointment) {
+		super(parent, true);
 		this.setTitle("Rediger deltagere");
 		this.setLocation(100, 100);
-		setResizable(false);
+		this.setResizable(false);
+		
+		this.appointment = appointment;
+		tempParticipantList = new ParticipantListModel(appointment.getParticipantList());
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(contentPane);
@@ -53,6 +53,8 @@ public class EditParticipants extends JFrame implements ActionListener{
 		addButtonPanel();
 
 		this.pack();
+		this.setLocationRelativeTo(parent);
+		this.setVisible(true);
 	}
 
 
@@ -94,7 +96,7 @@ public class EditParticipants extends JFrame implements ActionListener{
 		JLabel lblDeltagere = new JLabel("Deltagere");
 		participantScrollPane.setColumnHeaderView(lblDeltagere);
 
-		participantList = new JList<Participant>(appointmentParticipantList);
+		participantList = new JList<Participant>(tempParticipantList);
 		participantScrollPane.setViewportView(participantList);
 		GridBagConstraints gbc_participantScrollPane = new GridBagConstraints();
 		gbc_participantScrollPane.gridheight = 2;
@@ -130,7 +132,8 @@ public class EditParticipants extends JFrame implements ActionListener{
 
 		JLabel lblAnsatte = new JLabel("Ansatte");
 		employeeScrollPane.setColumnHeaderView(lblAnsatte);
-
+		
+		EmployeeListModel employeeListModel;
 		employeeListModel = new EmployeeListModel();
 		employeeListModel.initialize();
 		employeeList = new JList<Employee>(employeeListModel);
@@ -150,12 +153,10 @@ public class EditParticipants extends JFrame implements ActionListener{
 		JPanel panel = new JPanel();
 
 		JButton buttonOK = new JButton("OK");
-		buttonOK.setActionCommand("OK");
 		buttonOK.addActionListener(this);
 		panel.add(buttonOK);
 
 		JButton buttonAvbryt = new JButton("Avbryt");
-		buttonAvbryt.setActionCommand("avbryt");
 		buttonAvbryt.addActionListener(this);
 		panel.add(buttonAvbryt);
 
@@ -171,33 +172,27 @@ public class EditParticipants extends JFrame implements ActionListener{
 	}
 
 
-	public ParticipantListModel getAppointmentParticipantList() {
-		return appointmentParticipantList;
-	}
-
-
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		if (arg0.getActionCommand().equals("add participant")){
+	public void actionPerformed(ActionEvent ae) {
+		if (ae.getActionCommand().equals("add participant")){
 			Employee selected = employeeList.getSelectedValue();
-			appointmentParticipantList.addElement(new Participant(selected));
+			if (selected != null) tempParticipantList.addElement(new Participant(selected));
 			
 		}
-		else if (arg0.getActionCommand().equals("remove participant")){
-			appointmentParticipantList.removeElement(participantList.getSelectedValue());
+		else if (ae.getActionCommand().equals("remove participant")){
+			tempParticipantList.removeElement(participantList.getSelectedValue());
 		}
-		else if (arg0.getActionCommand().equals("add group")){
+		else if (ae.getActionCommand().equals("add group")){
 			Group selected = groupList.getSelectedValue();
-			for (Employee employee:selected){
-				appointmentParticipantList.addElement(new Participant(employee));
+			if (selected != null) for (Employee employee : selected){
+				tempParticipantList.addElement(new Participant(employee));
 			}
 		}
-		else if (arg0.getActionCommand().equals("OK")){
-			appointment.setParticipantList(appointmentParticipantList);
+		else if (ae.getActionCommand().equals("OK")){
+			appointment.setParticipantList(tempParticipantList);
 			this.dispose();
 		}
-		else if (arg0.getActionCommand().equals("avbryt")){
-			appointmentParticipantList = temp;
+		else if (ae.getActionCommand().equals("Avbryt")){
 			this.dispose();
 		}
 	}

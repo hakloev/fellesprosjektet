@@ -10,11 +10,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 public class Main {
 	
     public static void main(String[] args) {
-    	try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
+    	setupUIManager(); // do first
     	
     	new CalendarView();
     	
@@ -30,5 +26,17 @@ public class Main {
 			}
 		});
 		*/
+    }
+    
+    
+    private static void setupUIManager() {
+    	try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+    	
+    	UIManager.put("OptionPane.yesButtonText", "Ja");
+    	UIManager.put("OptionPane.noButtonText", "Nei");
     }
 }

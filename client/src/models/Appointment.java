@@ -6,7 +6,7 @@ public class Appointment implements NetInterface {
 	ParticipantListModel participantList;
 	
 	public Appointment() {
-		
+		participantList = new ParticipantListModel();
 	}
 	
 	

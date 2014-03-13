@@ -41,7 +41,17 @@ public class Participant {
 	public String toString() {
 		return name;
 	}
-	public boolean equals(Participant participant){
-		return (participant.userName.equals(this.userName) &&participant.name.equals(this.name));
+	
+	
+	@Override
+	public boolean equals(Object participant){
+		if (participant instanceof Participant) {
+			return (((Participant)participant).userName.equals(this.userName));
+		}
+		return false;
 	}
+	
 }
+
+
+
