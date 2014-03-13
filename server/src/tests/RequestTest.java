@@ -1,4 +1,4 @@
-package helperclasses;
+package tests;
 
 import models.Employee;
 

@@ -16,7 +16,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.ListModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -26,7 +25,7 @@ import models.*;
 class DetailsPanel extends JPanel implements PropertyChangeListener {
 	
 	
-	JDialog parent;
+	private JDialog parent;
 	
 	private JTextField dateTextField;
 	private JTextField startTimeTextField;
@@ -38,13 +37,18 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 	private JTextArea descriptionTextArea;
 	
 	private JList<Participant> participantList;
+
 	private Appointment appointment;
+
+	private ParticipantListModel appointmentParticipantList;
+
 	private JButton btnVelgRom;
 	
 	
 	DetailsPanel(JDialog parent, Appointment appointment) {
 		appointment.addPropertyChangeListener(this);
 		this.parent = parent;
+		this.appointmentParticipantList = appointment.getParticipantList();
 		
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);
@@ -223,6 +227,16 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		descriptionTextArea.setEditable(enabled);
 		participantList.setEnabled(enabled);
 		this.remove(btnVelgRom);
+	}
+	
+	
+	@Override
+	public void updateUI() {
+		super.updateUI();
+		if (participantList != null) participantList.updateUI();
+		if (participantList != null) for (Object jall : appointmentParticipantList.toArray()) {
+			System.out.println(jall);
+		}
 	}
 	
 	
