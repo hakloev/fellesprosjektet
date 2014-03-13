@@ -28,6 +28,7 @@ import controllers.SocketListener;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 
@@ -310,35 +311,9 @@ public class CalendarView extends JFrame {
 	};
 	
 	
-	WindowListener windowListener = new WindowListener() {
-		
-		@Override
-		public void windowOpened(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void windowIconified(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void windowDeiconified(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void windowDeactivated(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
+	WindowAdapter windowListener = new WindowAdapter() {
 		@Override
 		public void windowClosing(WindowEvent e) {
-			// TODO Auto-generated method stub
 			System.out.println("closing");
 			SocketListener.getClientSocketListener().closeSocket();
 			System.exit(0);
@@ -347,14 +322,7 @@ public class CalendarView extends JFrame {
 		
 		@Override
 		public void windowClosed(WindowEvent e) {
-			// TODO Auto-generated method stub
 			System.out.println("closed");
-		}
-		
-		@Override
-		public void windowActivated(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
 		}
 	};
 	
