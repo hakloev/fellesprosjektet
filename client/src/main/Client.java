@@ -2,6 +2,7 @@ package main;
 import controllers.OutboundWorker;
 import helperclasses.Request;
 import controllers.SocketListener;
+import models.Appointment;
 import models.Participant;
 import models.ParticipantListModel;
 import models.ParticipantStatus;
@@ -20,7 +21,9 @@ public class Client {
         ParticipantListModel plist = new ParticipantListModel();
         plist.addElement(new Participant("trulsmp","truls", ParticipantStatus.participating));
         plist.addElement(new Participant("hakloev","Haakon", ParticipantStatus.notParticipating));
-        //System.out.println(plist.toString());
+
+        Appointment appointment = new Appointment();
+
         Request request = new Request("participantlistmodel","POST", plist);
 
         OutboundWorker.sendRequest(request);
