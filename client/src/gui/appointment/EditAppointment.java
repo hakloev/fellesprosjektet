@@ -34,7 +34,7 @@ public class EditAppointment extends JDialog {
 		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
-		contentPane.add(new DetailsPanel(this, appointment.getParticipantList()), gbc_detailsPanel);
+		contentPane.add(new DetailsPanel(this, appointment), gbc_detailsPanel);
 		
 		// okButtonPanel
 		GridBagConstraints gbc_okButtonPanel = new GridBagConstraints();
