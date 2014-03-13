@@ -18,6 +18,7 @@ public class Alert extends JDialog implements ActionListener{
     private ButtonGroup btnGroup;
     private Calendar warningDate, startDate;
 
+
     public Alert(Frame parent, Calendar startDate){
         super(parent,"Alarm tidspunkt", true);
         this.startDate = startDate;
@@ -143,6 +144,7 @@ public class Alert extends JDialog implements ActionListener{
                 case "1 time før":
                     warningDate.add(Calendar.HOUR_OF_DAY, -1);
                     dispose();
+                    break;
                     break;
                 case "10 min før":
                     warningDate.add(Calendar.MINUTE,-10);
