@@ -1,6 +1,7 @@
 package gui.appointment;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,22 +10,23 @@ import java.util.Date;
 /**
  * Created by Tarald on 12.03.14.
  */
+@SuppressWarnings("serial")
 public class Alert extends JDialog implements ActionListener{
     private JRadioButton twentyFourButton, hourButton, minButton, customHoursButton, customDateTimeButton;
     private JLabel twentyFourLabel, hourLabel, minLabel, textLabel1;
     private JTextField customHoursTextField;
     private JButton okButton, cancelButton;
     private ButtonGroup btnGroup;
+    private JDialog parent;
 
-    public Alert(Frame parent){
+    public Alert(JDialog parent){
+    	super(parent,"Alarm tidspunkt", true);
+    	this.parent = parent;
 
-        super(parent,"Alarm tidspunkt", true);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        setTitle("Alarm tidspunkt");
 
-        setLocationRelativeTo(null);
-        setModal(true);
+        setLocationRelativeTo(parent);
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -116,6 +118,7 @@ public class Alert extends JDialog implements ActionListener{
 
 
         pack();
+        setVisible(true);
 
 
     }
