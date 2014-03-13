@@ -19,17 +19,20 @@ public class Client {
 
     public static void main(String[] args) {
         //Creating a SocketClient object
-        SocketListener client = new SocketListener ("78.91.29.166",4657);
+        SocketListener client = new SocketListener ("localhost",4657);
         //trying to establish connection to the server
         client.connect();
+
 
         ParticipantListModel plist = new ParticipantListModel();
         plist.addElement(new Participant("trulsmp","truls", ParticipantStatus.participating));
         plist.addElement(new Participant("hakloev", "Haakon", ParticipantStatus.notParticipating));
-
+		Request request = new Request("participantlistmodel", "POST", plist);
+		/*
         Appointment appointment = new Appointment();
-
-        Request request = new Request("participantlistmodel","POST", plist);
+		appointment.setDate("10:02:2000");
+        Request request = new Request("appointment","POST", appointment);
+		*/
 
         OutboundWorker.sendRequest(request); 
     	setupUIManager(); // do first

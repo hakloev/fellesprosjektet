@@ -1,12 +1,15 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 public class Appointment implements NetInterface {
 
 
-
+	@JsonProperty("participantList")
 	private ParticipantListModel participantList;
 	private PropertyChangeSupport pcs;
 

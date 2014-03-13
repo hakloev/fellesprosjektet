@@ -13,14 +13,11 @@ public class SocketListener {
 
     private String hostname;
     private int port;
-<<<<<<< HEAD
-=======
     private Socket socketClient;
     
     private static SocketListener clientSocketListener;
     private static boolean connected = false;
     
->>>>>>> master
 
     public SocketListener(String hostname, int port){
         this.hostname = hostname;
@@ -43,13 +40,7 @@ public class SocketListener {
             inWorker.start();
             OutboundWorker outbound = new OutboundWorker(socketClient);
             System.out.println("Response Thread STARTED");
-<<<<<<< HEAD
-
-=======
-            OutboundWorker outWorker = new OutboundWorker(socketClient);
-            outWorker.sendRequest();
             connected = true;
->>>>>>> master
 
         } catch (IOException e) {
         	JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
