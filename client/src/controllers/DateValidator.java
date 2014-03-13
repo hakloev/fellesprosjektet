@@ -3,13 +3,14 @@ package controllers;
 public class DateValidator {
 	
 	
-	
+	// Date string format: DD:MM:YYYY or DD.MM.YYYY 
+	//Both will work
 	public static boolean validateDate(String date){
-		int day = Integer.parseInt(date.substring(0,2)); // DD:MM:YYYY
+		int day = Integer.parseInt(date.substring(0,2)); 
 		if (day > 31|| day < 1){
 			return false;
 		}
-		int month = Integer.parseInt(date.substring(3,5)); // 01:34:6789
+		int month = Integer.parseInt(date.substring(3,5)); 
 		if(month > 12|| month < 1){
 			return false;
 		}
