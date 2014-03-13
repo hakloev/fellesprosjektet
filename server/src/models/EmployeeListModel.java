@@ -1,20 +1,17 @@
 package models;
 
-public class Appointment implements DBInterface {
-	
-	
-	ParticipantListModel participantList;
-	
-	
-	
-	public Appointment() {
-		
-	}
-	
-	
-	
-	
+import javax.swing.DefaultListModel;
 
+@SuppressWarnings("serial")
+public class EmployeeListModel extends DefaultListModel<Employee> implements DBInterface {
+	
+	
+	
+	
+	
+	
+	
+	
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
@@ -38,4 +35,5 @@ public class Appointment implements DBInterface {
 		// TODO Auto-generated method stub
 		
 	}
+
 }
