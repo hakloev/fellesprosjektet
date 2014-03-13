@@ -28,11 +28,7 @@ public class DatabaseWorker {
 			System.out.println("DatabaseWorker.handleRequest: obj instanceof Participant: " + (obj instanceof Participant));
 			Participant g = (Participant) obj;
 			response = new Response("participant", "post", g);
-		} else if (obj instanceof ParticipantStatus) {
-			System.out.println("DatabaseWorker.handleRequest: obj instanceof ParticipantStatus: " + (obj instanceof ParticipantStatus));
-			ParticipantStatus m = (ParticipantStatus) obj;
-			response = new Response("participantstatus", "post", m);
-		} else if (obj instanceof ArrayList) {
+		} else if (obj instanceof ArrayList) { // DETTE ER STYGT, IKKE BRA KODE
 			response = new Response("participantlistmodel", "post", (ArrayList<Participant>) obj);
 		} else {
 			System.out.println("DatabaseWorker.handleRequest: UNEXPECTED OBJECT");

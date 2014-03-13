@@ -43,7 +43,7 @@ public class JSONHandler {
 			} else if (type.equals("\"participantstatus\"")) {
 				object = mapper.readValue(String.valueOf(root.path("object")), ParticipantStatus.class);
 			} else {
-				System.out.println("ELSE IN Request.parseJSON");
+				System.out.println("Request.parseJSON: ELSE ");
 				return null;
 			}
 		} catch (IOException e1) {
