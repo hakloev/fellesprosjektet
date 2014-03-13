@@ -1,5 +1,7 @@
 package gui.appointment;
 
+import gui.ParticipantRenderer;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -161,6 +163,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		participantList = new JList<Participant>(appointment.getParticipantList());
 		participantScrollPane.setViewportView(participantList);
 		participantList.addListSelectionListener(pllsl);
+		participantList.setCellRenderer(new ParticipantRenderer());
 		
 		/* Sted */
 		JLabel lblSted = new JLabel("Sted");
