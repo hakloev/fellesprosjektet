@@ -26,6 +26,8 @@ public class DatabaseWorker {
 		} else if (obj instanceof Groupname) {
 			System.out.println("DatabaseWorker.handleRequest: obj instanceof Groupname: " + (obj instanceof Groupname));
 			Groupname g = (Groupname) obj;
+			g.setGruppeNavn("TILBAKE GRUPPE 1");
+			g.getEmployeeList().add(new Employee("test", "deprweprwepr", "Test Testesen"));
 			response = new Response("groupname", "post", g);
 		} else if (obj instanceof MeetingRoom) {
 			System.out.println("DatabaseWorker.handleRequest: obj instanceof MeetingRoom: " + (obj instanceof MeetingRoom));
