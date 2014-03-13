@@ -4,6 +4,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
 
+import controllers.SocketListener;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -87,6 +89,13 @@ public class LoginScreen extends JDialog implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand() == "Logg inn") {
+        	//Creating a SocketClient object
+            SocketListener client = new SocketListener();
+            //trying to establish connection to the server
+            client.connect();
+            SocketListener.setClientSocketListener(client);
+            
+            //if (SocketListener.isConnected()) this.dispose();
             this.dispose();
         }
         else if(e.getActionCommand() == "Avslutt") {

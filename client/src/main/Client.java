@@ -1,5 +1,4 @@
 package main;
-import controllers.SocketListener;
 import gui.CalendarView;
 
 import javax.swing.*;
@@ -11,11 +10,6 @@ public class Client {
 
     public static void main(String[] args) {
     	setupUIManager(); // do first
-    	
-        //Creating a SocketClient object
-        SocketListener client = new SocketListener ("localhost",4657);
-        //trying to establish connection to the server
-        client.connect();
 
         new CalendarView();
 
