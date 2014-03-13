@@ -1,6 +1,7 @@
 package gui.appointment;
 
 import javax.swing.*;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,27 +11,31 @@ import java.util.Date;
 /**
  * Created by Tarald on 12.03.14.
  */
+@SuppressWarnings("serial")
 public class Alert extends JDialog implements ActionListener{
     private JRadioButton twentyFourButton, hourButton, minButton, customHoursButton, customDateTimeButton;
     private JLabel twentyFourLabel, hourLabel, minLabel, textLabel1;
     private JTextField customHoursTextField;
     private JButton okButton, cancelButton;
     private ButtonGroup btnGroup;
+    private JDialog parent;
     private Calendar warningDate, startDate;
 
+    
 
-    public Alert(Frame parent, Calendar startDate){
+
+    public Alert(JDialog parent, Calendar startDate){
         super(parent,"Alarm tidspunkt", true);
+        this.parent = parent;
         this.startDate = startDate;
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        setTitle("Alarm tidspunkt");
-
-        setLocationRelativeTo(null);
-        setModal(true);
+        setLocationRelativeTo(parent);
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
+        
         btnGroup = new ButtonGroup();
 
         twentyFourButton = new JRadioButton();
@@ -124,10 +129,12 @@ public class Alert extends JDialog implements ActionListener{
 
 
         pack();
+        setVisible(true);
 
 
     }
 
+    
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Avbryt")){
@@ -144,7 +151,6 @@ public class Alert extends JDialog implements ActionListener{
                 case "1 time før":
                     warningDate.add(Calendar.HOUR_OF_DAY, -1);
                     dispose();
-                    break;
                     break;
                 case "10 min før":
                     warningDate.add(Calendar.MINUTE,-10);

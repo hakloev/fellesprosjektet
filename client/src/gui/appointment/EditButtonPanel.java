@@ -96,11 +96,15 @@ class EditButtonPanel extends JPanel implements ActionListener {
             ((EditAppointment)parent).getSelectedParticipant().setParticipantStatus(ParticipantStatus.participating);
             btnDeltar.setEnabled(false);
             btnDeltarIkke.setEnabled(true);
+            ((EditAppointment)parent).updateUI();
+            
         }
         else if( ae.getActionCommand().equals("Deltar ikke")){
             ((EditAppointment)parent).getSelectedParticipant().setParticipantStatus(ParticipantStatus.notParticipating);
             btnDeltarIkke.setEnabled(false);
             btnDeltar.setEnabled(true);
+            ((EditAppointment)parent).updateUI();
+            
         }
         else if(ae.getActionCommand().equals("Slett")){
              int choice = JOptionPane.showConfirmDialog(this,
