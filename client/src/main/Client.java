@@ -23,16 +23,16 @@ public class Client {
         //trying to establish connection to the server
         client.connect();
 
-
+	/*
         ParticipantListModel plist = new ParticipantListModel();
         plist.addElement(new Participant("trulsmp","truls", ParticipantStatus.participating));
         plist.addElement(new Participant("hakloev", "Haakon", ParticipantStatus.notParticipating));
 		Request request = new Request("participantlistmodel", "POST", plist);
-		/*
-        Appointment appointment = new Appointment();
+	*/
+	    Appointment appointment = new Appointment();
 		appointment.setDate("10:02:2000");
         Request request = new Request("appointment","POST", appointment);
-		*/
+
 
         OutboundWorker.sendRequest(request); 
     	setupUIManager(); // do first

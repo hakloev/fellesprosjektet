@@ -31,8 +31,7 @@ public class JSONHandler {
 			System.out.println("JSONHandler.parseJSON: TYPE " + type);
 
 			if (type.equals("\"appointment\"")) {
-				//object = mapper.readValue(String.valueOf(root.path("object")), Appointment.class);
-				object = new Appointment();
+				object = mapper.readValue(String.valueOf(root.path("object")), Appointment.class);
 				ArrayList<Participant> participants = new ArrayList<Participant>();
 				ArrayList<LinkedHashMap<?, ?>> p = mapper.readValue(String.valueOf(root.path("object").path("participantList").path("getParticipants")), ArrayList.class);
 				for (int i = 0; i < p.size(); i++) {
@@ -43,17 +42,14 @@ public class JSONHandler {
 					model.addElement(participant);
 				}
 				((Appointment) object).setParticipantList(model);
-
 			} else if (type.equals("\"participantlistmodel\"")) {
 				object = new ArrayList<Participant>();
 				ArrayList<LinkedHashMap<?, ?>> p = mapper.readValue(String.valueOf(root.path("object").path("getParticipants")), ArrayList.class);
 				for (int i = 0; i < p.size(); i++) {
 					((ArrayList<Participant>) object).add(new Participant(p.get(i).get("userName").toString(), p.get(i).get("name").toString(), ParticipantStatus.valueOf(p.get(i).get("participantStatus").toString())));
 				}
-
 			} else if (type.equals("\"participant\"")) {
 				object = mapper.readValue(String.valueOf(root.path("object")), Participant.class);
-
 			} else {
 				System.out.println("Request.parseJSON: ELSE ");
 				return null;

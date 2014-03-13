@@ -19,8 +19,16 @@ public class Appointment implements DBInterface {
 		return participantList;
 	}
 
+	@JsonProperty("getParticipants")
 	public void setParticipantList(ParticipantListModel participantList) {
 		this.participantList = participantList;
+	}
+
+	@Override
+	public String toString() {
+		return "Appointment{" +
+				"participantList=" + participantList +
+				'}';
 	}
 
 	@Override
