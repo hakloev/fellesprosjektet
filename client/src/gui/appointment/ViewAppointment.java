@@ -32,7 +32,7 @@ public class ViewAppointment extends JDialog {
 		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
-		DetailsPanel detailsPanel = new DetailsPanel(this, appointment.getParticipantList());
+		DetailsPanel detailsPanel = new DetailsPanel(this, appointment);
 		contentPane.add(detailsPanel, gbc_detailsPanel);
 		detailsPanel.setEnabled(false);
 		
