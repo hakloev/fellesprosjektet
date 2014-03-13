@@ -42,6 +42,11 @@ class OKButtonPanel extends JPanel implements ActionListener {
 		
 		if(actionCommand.equals("OK")){
 			//JOptionPane.showMessageDialog(null, "Ny avtale lagt til i kalenderen", "Avtaleendring", JOptionPane.INFORMATION_MESSAGE);
+			if (parent instanceof EditAppointment) {
+				
+			} else if (parent instanceof ViewAppointment) {
+				
+			}
 			parent.dispose();
 			
 		} else if(actionCommand.equals("Avbryt")){

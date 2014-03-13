@@ -16,7 +16,7 @@ public class EditAppointment extends JDialog {
 
 	
 	EditButtonPanel editButtonPanel;
-	DetailsPanel detailsPanel;
+	private DetailsPanel detailsPanel;
 	
 	
 	public EditAppointment(JFrame parent, Appointment appointment) {
