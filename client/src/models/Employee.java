@@ -22,4 +22,9 @@ public class Employee {
 		return name;
 	}
 
+
+	public String getName() {
+		return name;
+	}
+
 }

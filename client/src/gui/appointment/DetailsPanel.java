@@ -1,24 +1,33 @@
 package gui.appointment;
 
+import gui.ParticipantRenderer;
+
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import models.*;
 
 @SuppressWarnings("serial")
-class DetailsPanel extends JPanel {
+class DetailsPanel extends JPanel implements PropertyChangeListener {
 	
+	
+	private JDialog parent;
 	
 	private JTextField dateTextField;
 	private JTextField startTimeTextField;
@@ -29,8 +38,19 @@ class DetailsPanel extends JPanel {
 	
 	private JTextArea descriptionTextArea;
 	
+	private JList<Participant> participantList;
+
+	private Appointment appointment;
+
+	private ParticipantListModel appointmentParticipantList;
+
+	private JButton btnVelgRom;
 	
-	DetailsPanel(ParticipantListModel appointmentParticipantList) {
+	
+	DetailsPanel(JDialog parent, Appointment appointment) {
+		appointment.addPropertyChangeListener(this);
+		this.parent = parent;
+		this.appointmentParticipantList = appointment.getParticipantList();
 		
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);
@@ -140,8 +160,10 @@ class DetailsPanel extends JPanel {
 		JLabel lblDeltagere = new JLabel("Deltagere");
 		participantScrollPane.setColumnHeaderView(lblDeltagere);
 		
-		JList<Participant> participantList = new JList<Participant>(appointmentParticipantList);
+		participantList = new JList<Participant>(appointment.getParticipantList());
 		participantScrollPane.setViewportView(participantList);
+		participantList.addListSelectionListener(pllsl);
+		participantList.setCellRenderer(new ParticipantRenderer());
 		
 		/* Sted */
 		JLabel lblSted = new JLabel("Sted");
@@ -161,7 +183,7 @@ class DetailsPanel extends JPanel {
 		gbc_placeTextField.gridy = 4;
 		this.add(placeTextField, gbc_placeTextField);
 		
-		JButton btnVelgRom = new JButton("Velg rom");
+		btnVelgRom = new JButton("Velg rom");
 		GridBagConstraints gbc_btnVelgRom = new GridBagConstraints();
 		gbc_btnVelgRom.anchor = GridBagConstraints.WEST;
 		gbc_btnVelgRom.insets = new Insets(0, 0, 5, 5);
@@ -196,4 +218,79 @@ class DetailsPanel extends JPanel {
 		this.add(btnVelgTid, gbc_btnVelgTid);
 		
 	}
+	
+	
+	@Override
+	public void setEnabled(boolean enabled) {
+		dateTextField.setEditable(enabled);
+		startTimeTextField.setEditable(enabled);
+		stopTimeTextField.setEditable(enabled);
+		durationTextField.setEditable(enabled);
+		placeTextField.setEditable(enabled);
+		descriptionTextArea.setEditable(enabled);
+		participantList.setEnabled(enabled);
+		this.remove(btnVelgRom);
+	}
+	
+	
+	@Override
+	public void updateUI() {
+		super.updateUI();
+		if (participantList != null) participantList.updateUI();
+		if (participantList != null) for (Object jall : appointmentParticipantList.toArray()) {
+			System.out.println(jall);
+		}
+	}
+    public Participant getSelectedParticipant(){
+        return this.participantList.getSelectedValue();
+    }
+    public ParticipantListModel getAppointmentParticipantList(){
+        return this.appointmentParticipantList;
+    }
+	
+	
+	ListSelectionListener pllsl = new ListSelectionListener() {
+		
+		@Override
+		public void valueChanged(ListSelectionEvent lse) {
+			if (! (parent instanceof EditAppointment)) return;
+			EditAppointment editParent = (EditAppointment)parent;
+			
+			if (participantList.getSelectedValue() == null) {
+				editParent.editButtonPanel.setBothStatusButtonsEnabled(false);
+				editParent.editButtonPanel.setButtonSlettEnabled(false);
+				return;
+			}
+			
+			ParticipantStatus status = ((Participant)participantList.getSelectedValue()).getParticipantStatus();
+			
+			if (status == null) {
+				editParent.editButtonPanel.setBothStatusButtonsEnabled(true);
+				editParent.editButtonPanel.setButtonSlettEnabled(true);
+				
+			} else if (status == ParticipantStatus.participating) {
+				editParent.editButtonPanel.setParticipatingEnabled_notParticipatingDisabled(false);
+				editParent.editButtonPanel.setButtonSlettEnabled(true);
+				
+			} else if (status == ParticipantStatus.notParticipating) {
+				editParent.editButtonPanel.setParticipatingEnabled_notParticipatingDisabled(true);
+				editParent.editButtonPanel.setButtonSlettEnabled(true);
+				
+			}
+			
+			
+		}
+	};
+
+
+	@Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (evt.getPropertyName().equals("participantList")){
+			participantList.setModel((ParticipantListModel) evt.getNewValue());
+			
+		}
+		
+	}
+	
+	
 }
