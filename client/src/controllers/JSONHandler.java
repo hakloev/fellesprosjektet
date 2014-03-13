@@ -1,7 +1,11 @@
 package controllers;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import models.Appointment;
+import models.Employee;
+import models.Notification;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -12,7 +16,27 @@ import java.io.Writer;
  */
 public class JSONHandler {
 
-    public String toJson(Object object) {
+
+    public static Object parseJSON(String rec) { // this is supposed to return any given object, must be casted
+
+        ObjectMapper mapper = new ObjectMapper();
+        Response response = null; // Will cast in DatabaseWorker
+        try {
+            response = mapper.readValue(rec, Response.class);
+
+            // TODO: behandle forskjellige typer response
+
+
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+        return response;
+    }
+
+
+
+
+    public static String toJson(Object object) {
         ObjectMapper mapper = new ObjectMapper();
         String userDataJSON = null;
 

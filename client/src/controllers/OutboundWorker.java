@@ -10,7 +10,7 @@ import java.net.Socket;
  * Created by Torgeir on 11.03.14.
  */
 public class OutboundWorker {
-    Socket socketClient;
+    private Socket socketClient;
 
     public OutboundWorker(Socket socket) {
         this.socketClient = socket;
@@ -18,9 +18,7 @@ public class OutboundWorker {
     }
 
 
-    public void sendRequest() {
-        Employee employee = new Employee("Lars","truls");
-        Request request = new Request("employee","update", employee);
+    public void sendRequest(Request request) {
         JSONHandler jsonHandler = new JSONHandler();
 
         try {

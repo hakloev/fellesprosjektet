@@ -37,6 +37,8 @@ public class InboundWorker extends Thread implements Runnable {
 
                 System.out.println(rec);
 
+                JSONHandler.parseJSON(rec);
+
                 // TODO: call to json handler to handle the response message
 
             }
