@@ -1,6 +1,7 @@
 package controllers;
 
-import models.Employee;
+import helperclasses.JSONHandler;
+import helperclasses.Request;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

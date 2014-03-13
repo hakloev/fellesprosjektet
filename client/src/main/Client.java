@@ -1,14 +1,10 @@
 package main;
 import controllers.OutboundWorker;
-import controllers.Request;
+import helperclasses.Request;
 import controllers.SocketListener;
-import gui.CalendarView;
-import models.Appointment;
 import models.Participant;
 import models.ParticipantListModel;
 import models.ParticipantStatus;
-
-import javax.swing.*;
 
 /**
  * Created by Truls on 13.03.14.
@@ -24,7 +20,7 @@ public class Client {
         ParticipantListModel plist = new ParticipantListModel();
         plist.addElement(new Participant("trulsmp","truls", ParticipantStatus.participating));
         plist.addElement(new Participant("hakloev","Haakon", ParticipantStatus.notParticipating));
-        System.out.println(plist.toString());
+        //System.out.println(plist.toString());
         Request request = new Request("participantlistmodel","POST", plist);
 
         OutboundWorker.sendRequest(request);
