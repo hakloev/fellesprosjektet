@@ -26,20 +26,24 @@ public class InboundWorker extends Thread implements Runnable {
             while(connected) {
 
                 readFromServer = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
-                System.out.println("Response from server:");
 
-                String rec = readFromServer.readLine();
 
-                if (rec == null) {
+                String responseString = readFromServer.readLine();
+
+                if (responseString == null) {
                     System.out.println("CLOSED WHEN RECEIVING NO DATA");
                     break;
                 }
 
-                System.out.println(rec);
+                Response response = new Response(readFromServer.readLine());
 
-                JSONHandler.parseJSON(rec);
+                System.out.println("Received response from Server: ");
+                System.out.println(response.get_JSONRESPONSE());
 
-                // TODO: call to json handler to handle the response message
+                Object object = JSONHandler.parseJSON(response);
+
+
+                // TODO: SENDE VIDERE TIL KLASSE SOM OPPDATER KLIENT
 
             }
 
