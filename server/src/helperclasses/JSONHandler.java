@@ -51,7 +51,7 @@ public class JSONHandler {
 			} else if (type.equals("\"employee\"")) {
 				object = mapper.readValue(String.valueOf(root.path("object")), Employee.class);
 			} else if (type.equals("\"login\"")) {
-					
+
 			} else {
 				System.out.println("Request.parseJSON: ELSE ");
 				return null;
