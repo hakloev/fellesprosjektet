@@ -45,6 +45,7 @@ public class CalendarView extends JFrame {
 	private JFrame thisFrame;
 	
 	private String[] loggedInUser = new String[1]; // point to something mutable so we can give to login screen
+	private Employee loggedInEmployee;
 
 
 	/**
@@ -291,10 +292,10 @@ public class CalendarView extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			String actionCommand = e.getActionCommand();
 			if (actionCommand.equals("Ny avtale")) {
-				new EditAppointment(thisFrame, new Appointment());
+				new EditAppointment(thisFrame, new Appointment(loggedInEmployee));
 				
 			} else if (actionCommand.equals("Avtalevisning")) {
-				new ViewAppointment(thisFrame, new Appointment());
+				new ViewAppointment(thisFrame, new Appointment(loggedInEmployee));
 				
 			} else if(actionCommand.equals("Slett avtale")) {
 				int choice = JOptionPane.showConfirmDialog(thisFrame,
@@ -314,8 +315,8 @@ public class CalendarView extends JFrame {
 			} else if(actionCommand.equals("Logg ut")) {
 				SocketListener sl = SocketListener.getClientSocketListener();
 				if (sl != null) {
-					OutboundWorker ow = sl.getOutboundWorker();
-					if (ow != null) ow.logout();
+					//OutboundWorker ow = sl.getOutboundWorker();
+					//if (ow != null) ow.logout();
 					sl.closeSocket();
 				}
 				
