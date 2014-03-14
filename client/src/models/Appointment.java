@@ -29,13 +29,11 @@ public class Appointment implements NetInterface {
 	}
 
 	public void setDate(String date){
-		String oldDate = getDate();
 		day = Integer.parseInt(date.substring(0,2)); // DD.MM.YYYY
 		month = Integer.parseInt(date.substring(3,5)); // 01.34.6789
 		year = Integer.parseInt(date.substring(6,10));
 	}
 	public void setStart(String start){
-		String oldStart = getStart();
 		starthour = Integer.parseInt(start.substring(0,2));
 		startmin = Integer.parseInt(start.substring(3,5));
 		startset = true;
