@@ -48,6 +48,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 	private ParticipantListModel appointmentParticipantList;
 
 	private JButton btnVelgRom;
+
+    private Calendar[] alarmCalendar = new Calendar[1];
 	
 	
 	DetailsPanel(JDialog parent, Appointment appointment) {
@@ -210,6 +212,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_alarmTextField.gridx = 1;
 		gbc_alarmTextField.gridy = 5;
 		this.add(alarmTextField, gbc_alarmTextField);
+        alarmTextField.setEnabled(false);
 		//alarmTextField.setColumns(10);
 		
 		JButton btnVelgTid = new JButton("Velg tid");
@@ -286,13 +289,26 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 			
 		}
 	};
+    public void setAlarmTextField(){
+        String alarmText = new String();
+        alarmText += alarmCalendar[0].get(Calendar.DAY_OF_MONTH) + ".";
+        alarmText += alarmCalendar[0].get(Calendar.MONTH) + ".";
+        alarmText += alarmCalendar[0].get(Calendar.YEAR) + " ";
+        alarmText += alarmCalendar[0].get(Calendar.HOUR_OF_DAY) + ":";
+        alarmText += alarmCalendar[0].get(Calendar.MINUTE);
+        alarmTextField.setText(alarmText);
+    }
 	
 	
 	ActionListener actionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			if (ae.getActionCommand().equals("Velg tid")) {
-				new Alarm(parent, Calendar.getInstance());
+
+				new Alarm(parent, Calendar.getInstance(), alarmCalendar);
+                System.out.println(alarmCalendar[0].toString());
+                setAlarmTextField();
+
 			}
 		}
 	};

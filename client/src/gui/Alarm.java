@@ -1,5 +1,7 @@
 package gui;
 
+import com.sun.swing.internal.plaf.synth.resources.synth_sv;
+
 import javax.swing.*;
 
 import java.awt.*;
@@ -16,28 +18,32 @@ public class Alarm extends JDialog implements ActionListener{
     private JRadioButton twentyFourButton, hourButton, minButton, customHoursButton, customDateTimeButton;
     private JLabel twentyFourLabel, hourLabel, minLabel, textLabel1;
     private JTextField customHoursTextField;
+    private JSpinner dateSpinner;
     private JButton okButton, cancelButton;
     private ButtonGroup btnGroup;
     private JDialog parent;
     private Calendar warningDate, startDate;
+    private Calendar[] alarmCalendar;
 
     
 
 
-    public Alarm(JDialog parent, Calendar startDate){
+    public Alarm(JDialog parent, Calendar startDate, Calendar[] alarmCalendar){
         super(parent, true);
         this.setTitle("Alarm tidspunkt");
         this.setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        
+
+
         this.parent = parent;
         this.startDate = startDate;
-        
+        this.alarmCalendar = alarmCalendar;
+
         JPanel buttonPanel = new JPanel(new GridBagLayout());
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
-        
+
         btnGroup = new ButtonGroup();
 
         twentyFourButton = new JRadioButton();
@@ -86,19 +92,19 @@ public class Alarm extends JDialog implements ActionListener{
         c.gridy = 0;
         c.gridx = 1;
         c.gridwidth = 2;
-        buttonPanel.add(twentyFourLabel,c);
+        buttonPanel.add(twentyFourLabel, c);
 
         hourLabel = new JLabel("1 time før");
         c.gridy = 1;
         c.gridx = 1;
         c.gridwidth = 2;
-        buttonPanel.add(hourLabel,c);
+        buttonPanel.add(hourLabel, c);
 
         minLabel = new JLabel("10 min før");
         c.gridy = 2;
         c.gridx = 1;
         c.gridwidth = 2;
-        buttonPanel.add(minLabel,c);
+        buttonPanel.add(minLabel, c);
 
         customHoursTextField = new JTextField("HH:MM");
         c.gridy = 3;
@@ -108,16 +114,17 @@ public class Alarm extends JDialog implements ActionListener{
         textLabel1 = new JLabel("Før");
         c.gridy = 3;
         c.gridx = GridBagConstraints.RELATIVE;
-        buttonPanel.add(textLabel1,c);
+        buttonPanel.add(textLabel1, c);
 
-        JSpinner spinner = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(spinner, "dd.MM.yyyy  HH:mm");
-        spinner.setEditor(timeEditor);
-        spinner.setValue(new Date());
+        dateSpinner = new JSpinner(new SpinnerDateModel());
+        JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(dateSpinner, "dd.MM.yyyy  HH:mm");
+        dateSpinner.setEditor(timeEditor);
+        dateSpinner.setValue(new Date());
         c.gridy = 4;
         c.gridx = 1;
         c.gridwidth = 2;
-        buttonPanel.add(spinner,c);
+        buttonPanel.add(dateSpinner, c);
+
 
         okButton = new JButton("Ok");
         infoPanel.add(okButton);
@@ -156,14 +163,17 @@ public class Alarm extends JDialog implements ActionListener{
             switch (command){
                 case "24 timer før":
                     warningDate.add(Calendar.DAY_OF_MONTH, -1);
+                    alarmCalendar[0] = warningDate;
                     dispose();  
                     break;
                 case "1 time før":
                     warningDate.add(Calendar.HOUR_OF_DAY, -1);
+                    alarmCalendar[0] = warningDate;
                     dispose();
                     break;
                 case "10 min før":
                     warningDate.add(Calendar.MINUTE, -10);
+                    alarmCalendar[0] = warningDate;
                     dispose();
                     break;
                 case "customHoursButton":
@@ -176,9 +186,15 @@ public class Alarm extends JDialog implements ActionListener{
                     warningDate.add(Calendar.HOUR_OF_DAY, -hours);
                     int minutes = Integer.parseInt(time[1]);
                     warningDate.add(Calendar.MINUTE, -minutes);
+                    alarmCalendar[0] = warningDate;
                     dispose();
                     break;
                 case "customDateTimeButton":
+                    Date midDate = (Date) dateSpinner.getValue();
+                    warningDate = Calendar.getInstance();
+                    warningDate.setTimeInMillis(midDate.getTime());
+                    alarmCalendar[0] = warningDate;
+                    dispose();
                     break;
 
 
