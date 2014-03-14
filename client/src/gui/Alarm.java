@@ -196,9 +196,6 @@ public class Alarm extends JDialog implements ActionListener{
                     alarmCalendar[0] = warningDate;
                     dispose();
                     break;
-
-
-
             }
         }
     }
