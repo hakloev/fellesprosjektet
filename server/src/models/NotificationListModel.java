@@ -3,9 +3,13 @@ package models;
 import javax.swing.DefaultListModel;
 
 @SuppressWarnings("serial")
-public class NotificationListModel extends DefaultListModel<Notification> implements DBInterface {
+public class NotificationListModel extends DefaultListModel<Notification> implements NetInterface {
 	
-
+	
+	
+	
+	
+	
 	
 	@Override
 	public void initialize() {
@@ -15,7 +19,7 @@ public class NotificationListModel extends DefaultListModel<Notification> implem
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
+		this.initialize();
 
 	}
 

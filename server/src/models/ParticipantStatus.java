@@ -1,20 +1,22 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import javax.swing.ImageIcon;
 
 public enum ParticipantStatus {
 	
 	
-	participating("deltar"),
-	notParticipating("deltar_ikke");
+	participating("Deltar", "resources/participating-14.png"),
+	notParticipating("Deltar ikke", "resources/notParticipating-14.png");
 	
 	
 	private String status;
+	public static final ImageIcon noStatusIcon = new ImageIcon("resources/noStatus-14.png");
+	private final ImageIcon statusIcon;
 	
-	@JsonCreator
-	private ParticipantStatus(@JsonProperty("status") String status) {
+	
+	private ParticipantStatus(String status, String iconPath) {
 		this.status = status;
+		this.statusIcon = new ImageIcon(iconPath);
 	}
 	
 	
@@ -22,17 +24,15 @@ public enum ParticipantStatus {
 		ParticipantStatus[] statusList = {ParticipantStatus.participating, ParticipantStatus.notParticipating};
 		return statusList;
 	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-	}
-
+	
+	
 	public String toString() {
 		return status;
+	}
+	
+	
+	public ImageIcon getStatusIcon() {
+		return statusIcon;
 	}
 	
 }

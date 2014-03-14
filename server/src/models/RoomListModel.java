@@ -3,35 +3,36 @@ package models;
 import javax.swing.DefaultListModel;
 
 @SuppressWarnings("serial")
-public class RoomListModel extends DefaultListModel<Room> implements DBInterface {
+public class RoomListModel extends DefaultListModel<Room> implements NetInterface {
 	
-
-
-
+	
+	
+	
+	
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
-
+		
+		/* test code */
+		this.addElement(new Room("B1-183C", 6));
+		this.addElement(new Room("Rill", 50));
+		this.addElement(new Room("Rall", 50));
+		/* end test code */
 	}
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-
+		this.initialize();
 	}
 
 	@Override
 	public void save() {
-		/* Keep empty!
-		 * This method should not be saved
-		 */
+		// Do not add code. This model should not be sent to server
 	}
 
 	@Override
 	public void delete() {
-		/* Keep empty!
-		 * This method should not be saved
-		 */
+		// Do not add code. This model can not be deleted from server
 	}
 	
 	

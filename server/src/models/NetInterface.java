@@ -1,6 +1,6 @@
 package models;
 
-public interface DBInterface {
+public interface NetInterface {
 
 	public void initialize();
 	public void refresh();

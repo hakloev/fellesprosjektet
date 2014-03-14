@@ -3,35 +3,36 @@ package models;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Participant implements DBInterface {
-	
-	
-	private String userName;
-	private String name;
-	private ParticipantStatus participantStatus;
-	
-	@JsonCreator
-	public Participant(@JsonProperty("userName" )String userName, @JsonProperty("name") String name,
-	                   @JsonProperty("participantStatus") ParticipantStatus participantStatus) {
-		this.userName = userName;
-		this.name = name;
-		this.participantStatus = participantStatus;
-	}
+public class Participant {
 
 
-	public String getUserName() {
-		return userName;
-	}
+    private String userName;
+    private String name;
+    private ParticipantStatus participantStatus;
 
+    @JsonCreator
+    public Participant(@JsonProperty("userName" )String userName, @JsonProperty("name") String name,
+                       @JsonProperty("participantStatus") ParticipantStatus participantStatus) {
+        this.userName = userName;
+        this.name = name;
+        this.participantStatus = participantStatus;
+    }
 
-	public ParticipantStatus getParticipantStatus() {
-		return participantStatus;
-	}
+    @Override
+    public String toString() {
+        return "Participant{" +
+                "userName='" + userName + '\'' +
+                ", name='" + name + '\'' +
+                ", participantStatus=" + participantStatus +
+                '}';
+    }
 
+    public Participant(Employee employee) {
+        this.userName = employee.getUserName();
+        this.name = employee.getName();
+        participantStatus = null;
 
-	public void setParticipantStatus(ParticipantStatus participantStatus) {
-		this.participantStatus = participantStatus;
-	}
+    }
 
 	public void setUserName(String userName) {
 		this.userName = userName;
@@ -45,32 +46,28 @@ public class Participant implements DBInterface {
 		this.name = name;
 	}
 
-	@Override
-	public String toString() {
-		return "Participant{" +
-				"userName='" + userName + '\'' +
-				", name='" + name + '\'' +
-				", participantStatus=" + participantStatus +
-				'}';
+	public String getUserName() {
+		return userName;
 	}
 
-	@Override
-	public void initialize() {
+    public ParticipantStatus getParticipantStatus() {
+        return participantStatus;
+    }
 
-	}
 
-	@Override
-	public void refresh() {
+    public void setParticipantStatus(ParticipantStatus participantStatus) {
+        this.participantStatus = participantStatus;
+    }
 
-	}
 
-	@Override
-	public void save() {
 
-	}
+    @Override
+    public boolean equals(Object participant){
+        if (participant instanceof Participant) {
+            return (((Participant)participant).userName.equals(this.userName));
+        }
+        return false;
+    }
 
-	@Override
-	public void delete() {
-
-	}
 }
+
