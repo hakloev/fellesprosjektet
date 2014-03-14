@@ -61,7 +61,7 @@ public class Appointment implements NetInterface {
 		/* TODO
 		 * Possibly fix so that duration or end is calculated again if one of those fields are set before start
 		if(endset){
-			
+		
 			pcs.firePropertyChange("duration", duration, newduration);
 		}
 		else if(durationset){
@@ -98,7 +98,6 @@ public class Appointment implements NetInterface {
 	
 	
 	public void setDuration(Date duration){
-		
 		if (startDateTime != null) {
 			String oldValue = this.getDuration();
 			
