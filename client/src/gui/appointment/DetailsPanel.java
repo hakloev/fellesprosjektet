@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -21,23 +23,24 @@ import javax.swing.JTextField;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import controllers.DateValidator;
 import models.*;
 
 @SuppressWarnings("serial")
-class DetailsPanel extends JPanel implements PropertyChangeListener {
-	
-	
+class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListener {
+
+
 	private JDialog parent;
-	
+
 	private JTextField dateTextField;
 	private JTextField startTimeTextField;
 	private JTextField stopTimeTextField;
 	private JTextField durationTextField;
 	private JTextField placeTextField;
 	private JTextField alarmTextField;
-	
+
 	private JTextArea descriptionTextArea;
-	
+
 	private JList<Participant> participantList;
 
 	private Appointment appointment;
@@ -45,26 +48,27 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 	private ParticipantListModel appointmentParticipantList;
 
 	private JButton btnVelgRom;
-	
-	
+
+
 	DetailsPanel(JDialog parent, Appointment appointment) {
 		appointment.addPropertyChangeListener(this);
 		this.parent = parent;
 		this.appointmentParticipantList = appointment.getParticipantList();
-		
+
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);
-		
+
 		/* Dato */
-		JLabel lblDato = new JLabel("Dato");
+		JLabel lblDato = new JLabel("Dato[DD.MM.YYYY]");
 		GridBagConstraints gbc_lblDato = new GridBagConstraints();
 		gbc_lblDato.anchor = GridBagConstraints.EAST;
 		gbc_lblDato.insets = new Insets(5, 5, 5, 5);
 		gbc_lblDato.gridx = 0;
 		gbc_lblDato.gridy = 0;
 		this.add(lblDato, gbc_lblDato);
-		
+
 		dateTextField = new JTextField();
+		dateTextField.addFocusListener(this);
 		GridBagConstraints gbc_dateTextField = new GridBagConstraints();
 		gbc_dateTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_dateTextField.insets = new Insets(5, 0, 5, 5);
@@ -72,17 +76,18 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_dateTextField.gridy = 0;
 		this.add(dateTextField, gbc_dateTextField);
 		dateTextField.setColumns(10);
-		
+
 		/* Start tid */
-		JLabel lblStart = new JLabel("Start");
+		JLabel lblStart = new JLabel("Start[TT:MM]");
 		GridBagConstraints gbc_lblStart = new GridBagConstraints();
 		gbc_lblStart.anchor = GridBagConstraints.EAST;
 		gbc_lblStart.insets = new Insets(0, 5, 5, 5);
 		gbc_lblStart.gridx = 0;
 		gbc_lblStart.gridy = 1;
 		this.add(lblStart, gbc_lblStart);
-		
+
 		startTimeTextField = new JTextField();
+		startTimeTextField.addFocusListener(this);
 		GridBagConstraints gbc_startTimeTextField = new GridBagConstraints();
 		gbc_startTimeTextField.insets = new Insets(0, 0, 5, 5);
 		gbc_startTimeTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -90,17 +95,18 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_startTimeTextField.gridy = 1;
 		this.add(startTimeTextField, gbc_startTimeTextField);
 		startTimeTextField.setColumns(10);
-		
+
 		/* Slutt tid */
-		JLabel lblSlutt = new JLabel("Slutt");
+		JLabel lblSlutt = new JLabel("Slutt[TT:MM]");
 		GridBagConstraints gbc_lblSlutt = new GridBagConstraints();
 		gbc_lblSlutt.anchor = GridBagConstraints.EAST;
 		gbc_lblSlutt.insets = new Insets(0, 5, 5, 5);
 		gbc_lblSlutt.gridx = 0;
 		gbc_lblSlutt.gridy = 2;
 		this.add(lblSlutt, gbc_lblSlutt);
-		
+
 		stopTimeTextField = new JTextField();
+		stopTimeTextField.addFocusListener(this);
 		GridBagConstraints gbc_stopTimeTextField = new GridBagConstraints();
 		gbc_stopTimeTextField.insets = new Insets(0, 0, 5, 5);
 		gbc_stopTimeTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -108,7 +114,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_stopTimeTextField.gridy = 2;
 		this.add(stopTimeTextField, gbc_stopTimeTextField);
 		stopTimeTextField.setColumns(10);
-		
+
 		/* Varighet */
 		JLabel lblVarighet = new JLabel("Varighet");
 		GridBagConstraints gbc_lblVarighet = new GridBagConstraints();
@@ -117,8 +123,9 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_lblVarighet.gridx = 0;
 		gbc_lblVarighet.gridy = 3;
 		this.add(lblVarighet, gbc_lblVarighet);
-		
+
 		durationTextField = new JTextField();
+		durationTextField.addFocusListener(this);
 		GridBagConstraints gbc_durationTextField = new GridBagConstraints();
 		gbc_durationTextField.insets = new Insets(0, 0, 5, 5);
 		gbc_durationTextField.anchor = GridBagConstraints.NORTH;
@@ -127,7 +134,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_durationTextField.gridy = 3;
 		this.add(durationTextField, gbc_durationTextField);
 		durationTextField.setColumns(10);
-		
+
 		/* Beskrivelse */
 		JScrollPane descriptionScrollPane = new JScrollPane();
 		GridBagConstraints gbc_descriptionScrollPane = new GridBagConstraints();
@@ -138,14 +145,14 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_descriptionScrollPane.gridy = 0;
 		this.add(descriptionScrollPane, gbc_descriptionScrollPane);
 		descriptionScrollPane.setPreferredSize(new Dimension(120, 120));
-		
+
 		JLabel lblBeskrivelse = new JLabel("Beskrivelse");
 		descriptionScrollPane.setColumnHeaderView(lblBeskrivelse);
-		
+
 		descriptionTextArea = new JTextArea();
 		descriptionTextArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		descriptionScrollPane.setViewportView(descriptionTextArea);
-		
+
 		/* Deltagere */
 		JScrollPane participantScrollPane = new JScrollPane();
 		GridBagConstraints gbc_participantScrollPane = new GridBagConstraints();
@@ -156,15 +163,15 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_participantScrollPane.gridy = 0;
 		this.add(participantScrollPane, gbc_participantScrollPane);
 		participantScrollPane.setPreferredSize(new Dimension(120, 120));
-		
+
 		JLabel lblDeltagere = new JLabel("Deltagere");
 		participantScrollPane.setColumnHeaderView(lblDeltagere);
-		
+
 		participantList = new JList<Participant>(appointment.getParticipantList());
 		participantScrollPane.setViewportView(participantList);
 		participantList.addListSelectionListener(pllsl);
 		participantList.setCellRenderer(new ParticipantRenderer());
-		
+
 		/* Sted */
 		JLabel lblSted = new JLabel("Sted");
 		GridBagConstraints gbc_lblSted = new GridBagConstraints();
@@ -173,7 +180,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_lblSted.gridx = 0;
 		gbc_lblSted.gridy = 4;
 		this.add(lblSted, gbc_lblSted);
-		
+
 		placeTextField = new JTextField();
 		GridBagConstraints gbc_placeTextField = new GridBagConstraints();
 		gbc_placeTextField.gridwidth = 2;
@@ -182,7 +189,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_placeTextField.gridx = 1;
 		gbc_placeTextField.gridy = 4;
 		this.add(placeTextField, gbc_placeTextField);
-		
+
 		btnVelgRom = new JButton("Velg rom");
 		GridBagConstraints gbc_btnVelgRom = new GridBagConstraints();
 		gbc_btnVelgRom.anchor = GridBagConstraints.WEST;
@@ -190,7 +197,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_btnVelgRom.gridx = 3;
 		gbc_btnVelgRom.gridy = 4;
 		this.add(btnVelgRom, gbc_btnVelgRom);
-		
+
 		/* Alarm */
 		JLabel lblAlarm = new JLabel("Alarm");
 		GridBagConstraints gbc_lblAlarm = new GridBagConstraints();
@@ -199,7 +206,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_lblAlarm.gridx = 0;
 		gbc_lblAlarm.gridy = 5;
 		this.add(lblAlarm, gbc_lblAlarm);
-		
+
 		alarmTextField = new JTextField();
 		GridBagConstraints gbc_alarmTextField = new GridBagConstraints();
 		gbc_alarmTextField.insets = new Insets(0, 0, 5, 5);
@@ -208,7 +215,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_alarmTextField.gridy = 5;
 		this.add(alarmTextField, gbc_alarmTextField);
 		//alarmTextField.setColumns(10);
-		
+
 		JButton btnVelgTid = new JButton("Velg tid");
 		GridBagConstraints gbc_btnVelgTid = new GridBagConstraints();
 		gbc_btnVelgTid.insets = new Insets(0, 0, 5, 5);
@@ -216,10 +223,10 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		gbc_btnVelgTid.gridx = 2;
 		gbc_btnVelgTid.gridy = 5;
 		this.add(btnVelgTid, gbc_btnVelgTid);
-		
+
 	}
-	
-	
+
+
 	@Override
 	public void setEnabled(boolean enabled) {
 		dateTextField.setEditable(enabled);
@@ -231,8 +238,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		participantList.setEnabled(enabled);
 		this.remove(btnVelgRom);
 	}
-	
-	
+
+
 	@Override
 	public void updateUI() {
 		super.updateUI();
@@ -241,44 +248,44 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 			System.out.println(jall);
 		}
 	}
-    public Participant getSelectedParticipant(){
-        return this.participantList.getSelectedValue();
-    }
-    public ParticipantListModel getAppointmentParticipantList(){
-        return this.appointmentParticipantList;
-    }
-	
-	
+	public Participant getSelectedParticipant(){
+		return this.participantList.getSelectedValue();
+	}
+	public ParticipantListModel getAppointmentParticipantList(){
+		return this.appointmentParticipantList;
+	}
+
+
 	ListSelectionListener pllsl = new ListSelectionListener() {
-		
+
 		@Override
 		public void valueChanged(ListSelectionEvent lse) {
 			if (! (parent instanceof EditAppointment)) return;
 			EditAppointment editParent = (EditAppointment)parent;
-			
+
 			if (participantList.getSelectedValue() == null) {
 				editParent.editButtonPanel.setBothStatusButtonsEnabled(false);
 				editParent.editButtonPanel.setButtonSlettEnabled(false);
 				return;
 			}
-			
+
 			ParticipantStatus status = ((Participant)participantList.getSelectedValue()).getParticipantStatus();
-			
+
 			if (status == null) {
 				editParent.editButtonPanel.setBothStatusButtonsEnabled(true);
 				editParent.editButtonPanel.setButtonSlettEnabled(true);
-				
+
 			} else if (status == ParticipantStatus.participating) {
 				editParent.editButtonPanel.setParticipatingEnabled_notParticipatingDisabled(false);
 				editParent.editButtonPanel.setButtonSlettEnabled(true);
-				
+
 			} else if (status == ParticipantStatus.notParticipating) {
 				editParent.editButtonPanel.setParticipatingEnabled_notParticipatingDisabled(true);
 				editParent.editButtonPanel.setButtonSlettEnabled(true);
-				
+
 			}
-			
-			
+
+
 		}
 	};
 
@@ -287,10 +294,54 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("participantList")){
 			participantList.setModel((ParticipantListModel) evt.getNewValue());
-			
+
 		}
-		
+		if (evt.getPropertyName().equals("End")){
+			stopTimeTextField.setText((String) evt.getNewValue());
+		}
+		if (evt.getPropertyName().equals("Duration")){
+			durationTextField.setText(Integer.toString((int) evt.getNewValue()));
+		}
 	}
-	
-	
+
+
+	@Override
+	public void focusGained(FocusEvent arg0) {
+		// TODO Auto-generated method stub
+
+	}
+
+
+	@Override
+	public void focusLost(FocusEvent arg0) {
+		if (arg0.getSource() == dateTextField){
+			String date = dateTextField.getText();
+			if (DateValidator.validateDate(date)){
+				appointment.setDate(date);
+			}
+		}
+		if (arg0.getSource() == startTimeTextField);{
+			System.out.println(startTimeTextField.getText());
+			String start = startTimeTextField.getText();
+			if (DateValidator.validateTime(start)){
+				appointment.setStart(start);
+			}
+		}
+		if (arg0.getSource() == stopTimeTextField);{
+			String end = stopTimeTextField.getText();
+			if (DateValidator.validateTime(end)){
+				appointment.setEnd(end);
+			}
+		}
+		if (arg0.getSource() == durationTextField);{
+			if (!durationTextField.getText().equals("")){
+				int duration = Integer.parseInt(durationTextField.getText());
+				if (DateValidator.validateDuration(duration)){
+					appointment.setDuration(duration);
+				}
+			}
+		}
+	}
+
+
 }

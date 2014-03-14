@@ -27,20 +27,21 @@ public class Appointment implements NetInterface {
 		pcs = new PropertyChangeSupport(this);
 		participantList = new ParticipantListModel();
 	}
-
+	
 	public void setDate(String date){
 		day = Integer.parseInt(date.substring(0,2)); // DD.MM.YYYY
 		month = Integer.parseInt(date.substring(3,5)); // 01.34.6789
 		year = Integer.parseInt(date.substring(6,10));
 	}
 	public void setStart(String start){
+		System.out.println("calling setstart");
 		starthour = Integer.parseInt(start.substring(0,2));
 		startmin = Integer.parseInt(start.substring(3,5));
 		startset = true;
 
 		if(endset){
 			int newduration = (endhour -starthour)*60 + endmin - startmin;
-			pcs.firePropertyChange("duration", duration, newduration);
+			pcs.firePropertyChange("Duration", duration, newduration);
 			duration = newduration;
 			durationset = true;
 		}
@@ -68,17 +69,7 @@ public class Appointment implements NetInterface {
 			durationset = true;
 			pcs.firePropertyChange("Duration", oldDuration, getDuration());
 		}
-		else if(durationset){
-			String oldStart = getStart();
-			startmin = endmin - duration;
-			starthour = endhour;
-			while (startmin < 0){
-				starthour -= 1;
-				startmin += 60;
-			}
-			startset = true;
-			pcs.firePropertyChange("Start", oldStart, getStart());
-		}
+		
 	}
 	public void setDuration(int duration){
 		this.duration = duration;
@@ -97,20 +88,7 @@ public class Appointment implements NetInterface {
 			durationset = true;
 			pcs.firePropertyChange("End", oldEnd, getEnd());
 		}
-		else if (!startset && endset){
-			String oldStart = getStart();
-			int reminder = endmin - duration;
-			starthour = endhour;
-			while (reminder < 0){
-				starthour -= 1;
-				reminder += 60;
-
-			}
-			startmin = reminder;
-			startset = true;
-			durationset = true;
-			pcs.firePropertyChange("Start", oldStart, getStart());
-		}
+		
 		
 	}
 	public String getDate(){

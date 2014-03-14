@@ -6,6 +6,9 @@ public class DateValidator {
 	// Date string format: DD:MM:YYYY or DD.MM.YYYY 
 	//Both will work in the validator
 	public static boolean validateDate(String date){
+		if (date.length() != 10){
+			return false;
+		}
 		int day = Integer.parseInt(date.substring(0,2)); 
 		if (day > 31|| day < 1){
 			return false;
@@ -49,5 +52,21 @@ public class DateValidator {
 		else {
 			return false;
 		}
+	}
+	public static boolean validateTime(String time){
+		if(time.length() != 6){
+			return false;
+		}
+		int hour = Integer.parseInt(time.substring(0,2));
+		int min = Integer.parseInt(time.substring(3,5));
+		if (hour >= 0 && hour < 24){
+			if (min >= 0 && min < 60){
+				return true;
+			}
+		}
+		return false;
+	}
+	public static boolean validateDuration(int duration){
+		return duration > 0;
 	}
 }
