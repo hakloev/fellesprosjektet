@@ -1,8 +1,5 @@
 package controllers;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import helperclasses.JSONHandler;
 import helperclasses.Request;
 import helperclasses.Response;
@@ -26,12 +23,13 @@ public class ClientHandler extends Thread implements Runnable {
 		this._SOCKET = socket;
 		this._CONNECTIONID = connectionID;
 		this._SERVING = true;
-		System.out.println(_CONNECTIONID + ": ClientHandler.ClientHandler: INITIATED CONNECTIONID " + _CONNECTIONID);
+		System.out.println(": ClientHandler.ClientHandler " + _CONNECTIONID + ": INITIATED CONNECTIONID " + _CONNECTIONID);
 	}
 
+	@Override
 	public void run() {
 		try {
-			System.out.println(_CONNECTIONID + ": ClientHandler.run: SERVING " +
+			System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
 					 _SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 
 			writeToClient = new DataOutputStream(_SOCKET.getOutputStream());
@@ -41,7 +39,7 @@ public class ClientHandler extends Thread implements Runnable {
 
 				Request request = acceptIncomingRequest(readFromClient.readLine());
 				if (request == null) {
-					System.out.println(_CONNECTIONID + ": ClientHandler.run: " +
+					System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
 							_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " CLOSED WHEN RECEIVING NO DATA");
 					break;
 				}
@@ -53,25 +51,27 @@ public class ClientHandler extends Thread implements Runnable {
 				if (response != null) {
 					sendOutgoingResponse(JSONHandler.createJSON(response));
 				} else {
-					System.out.println(_CONNECTIONID + ": ClientHandler.run: " +
+					System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
 							_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " GOT NULL RESPONSE, NOTHING TO SEND");
 				}
 			}
 
 		} catch (SocketException e) {
-			System.out.println(_CONNECTIONID + ": ClientHandler.run: " +
-					 _SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + "CLOSED UNEXPECTEDLY (SocketException)");
+			System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
+					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + "CLOSED UNEXPECTEDLY (SocketException)");
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			System.out.println(_CONNECTIONID + ": ClientHandler.run: " +
-					 _SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " FINISHED (finally CLAUSE)");
+			System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
+					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " FINISHED (finally CLAUSE)");
 		}
 	}
 
 	private void sendOutgoingResponse(String response) {
 		try {
+			System.out.println("ClientHandler.sendOutgoingResponse " + _CONNECTIONID + ": SENDING " + response + " TO " +
+					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 			writeToClient.writeBytes(response + "\n");
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -83,7 +83,7 @@ public class ClientHandler extends Thread implements Runnable {
 		if (incomingJSON == null) {
 			return null;
 		}
-		System.out.println(_CONNECTIONID + ": ClientHandler.run: RECEIVED " + incomingJSON + " FROM " +
+		System.out.println("ClientHandler.acceptIncomingRequest " + _CONNECTIONID + ": RECEIVED " + incomingJSON + " FROM " +
 				_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 		return new Request(incomingJSON);
 	}

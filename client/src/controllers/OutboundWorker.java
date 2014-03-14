@@ -1,6 +1,7 @@
 package controllers;
 
-import models.Employee;
+import helperclasses.JSONHandler;
+import helperclasses.Request;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.net.Socket;
  * Created by Torgeir on 11.03.14.
  */
 public class OutboundWorker {
-    Socket socketClient;
+    private static Socket socketClient;
 
     public OutboundWorker(Socket socket) {
         this.socketClient = socket;
@@ -18,9 +19,7 @@ public class OutboundWorker {
     }
 
 
-    public void sendRequest() {
-        Employee employee = new Employee("Lars","truls");
-        Request request = new Request("employee","update", employee);
+    public static void sendRequest(Request request) {
         JSONHandler jsonHandler = new JSONHandler();
 
         try {

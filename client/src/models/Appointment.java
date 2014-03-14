@@ -1,30 +1,38 @@
 package models;
 
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import controllers.OutboundWorker;
+import helperclasses.Request;
+
+
+
+
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Appointment implements NetInterface {
 
 
+
+	@JsonProperty("participantList")
+	private ParticipantListModel participantList;
+
 	private PropertyChangeSupport pcs;
 	
-	private ParticipantListModel participantList;
 	private Employee appointmentLeader;
 	private String description;
-	private String location;
-
-	private int year;
-	private int month;
-	private int day;
-	private int starthour;
-	private int startmin;
-	private int endhour;
-	private int endmin;
-	private int duration;
-	private boolean startset;
-	private boolean endset;
-	private boolean durationset;
-
+	private Room location;
+	private String locationText;
+	
+	private Calendar startDateTime;
+	private Calendar endDateTime;
 
 
 	/**
@@ -35,133 +43,126 @@ public class Appointment implements NetInterface {
 		pcs = new PropertyChangeSupport(this);
 		participantList = new ParticipantListModel();
 	}
-
-	public void setDate(String date){
-		day = Integer.parseInt(date.substring(0,2)); // DD.MM.YYYY
-		month = Integer.parseInt(date.substring(3,5)); // 01.34.6789
-		year = Integer.parseInt(date.substring(6,10));
-	}
-	public void setStart(String start){
-		starthour = Integer.parseInt(start.substring(0,2));
-		startmin = Integer.parseInt(start.substring(3,5));
-		startset = true;
-
-		if(endset){
-			int newduration = (endhour -starthour)*60 + endmin - startmin;
-			pcs.firePropertyChange("duration", duration, newduration);
-			duration = newduration;
-			durationset = true;
-		}
-		else if(durationset){
-			String oldEnd = getEnd();
-			endmin = startmin + duration;
-			endhour = starthour;
-			while (endmin > 59){
-				endhour += 1;
-				endmin -= 60;
-			}
-			endset = true;
-			pcs.firePropertyChange("End", oldEnd, getEnd());
-		}
-
-	}
-	public void setEnd(String end){
-		endhour = Integer.parseInt(end.substring(0,2));
-		endmin = Integer.parseInt(end.substring(3,5));
-		endset = true;
-
-		if(startset){
-			int oldDuration = getDuration();
-			duration = (endhour -starthour)*60 + endmin - startmin;
-			durationset = true;
-			pcs.firePropertyChange("Duration", oldDuration, getDuration());
-		}
-		else if(durationset){
-			String oldStart = getStart();
-			startmin = endmin - duration;
-			starthour = endhour;
-			while (startmin < 0){
-				starthour -= 1;
-				startmin += 60;
-			}
-			startset = true;
-			pcs.firePropertyChange("Start", oldStart, getStart());
-		}
-	}
-	public void setDuration(int duration){
-		this.duration = duration;
-		durationset = true;
-		if (startset){
-			String oldEnd = getEnd();
-			int reminder = startmin + duration;
-			endhour = starthour;
-			while (reminder > 59){
-				endhour += 1;
-				reminder -= 60;
-
-			}
-			endmin = reminder;
-			endset = true;
-			durationset = true;
-			pcs.firePropertyChange("End", oldEnd, getEnd());
-		}
-		else if (!startset && endset){
-			String oldStart = getStart();
-			int reminder = endmin - duration;
-			starthour = endhour;
-			while (reminder < 0){
-				starthour -= 1;
-				reminder += 60;
-
-			}
-			startmin = reminder;
-			startset = true;
-			durationset = true;
-			pcs.firePropertyChange("Start", oldStart, getStart());
-		}
+	
+	
+	public void setDate(Date date) {
+		if (startDateTime == null) startDateTime = Calendar.getInstance();
 		
+		startDateTime.set(date.getYear(), date.getMonth(), date.getDate());
 	}
+	
+	
+	public void setStart(Date start){
+		if (startDateTime == null) startDateTime = Calendar.getInstance();
+		
+		startDateTime.set(Calendar.HOUR_OF_DAY, start.getHours());
+		startDateTime.set(Calendar.MINUTE, start.getMinutes());
+		
+		/* TODO
+		 * Possibly fix so that duration or end is calculated again if one of those fields are set before start
+		if(endset){
+			
+			pcs.firePropertyChange("duration", duration, newduration);
+		}
+		else if(durationset){
+			
+			pcs.firePropertyChange("End", oldEnd, getEnd());
+		}
+		*/
+
+	}
+	
+	
+	public void setEnd(Date end){
+		if (endDateTime == null) endDateTime = Calendar.getInstance();
+		
+		String oldDuration = this.getDuration();
+		
+		if (startDateTime != null) {
+			endDateTime.set(
+					startDateTime.get(Calendar.YEAR),
+					startDateTime.get(Calendar.MONTH),
+					startDateTime.get(Calendar.DAY_OF_MONTH),
+					end.getHours(),
+					end.getMinutes());
+			
+			if (startDateTime != null) {
+				pcs.firePropertyChange("Duration", oldDuration, getDuration());
+			}
+			
+		} else {
+			endDateTime.set(Calendar.HOUR_OF_DAY, end.getHours());
+			endDateTime.set(Calendar.MINUTE, end.getMinutes());
+		}
+	}
+	
+	
+	public void setDuration(Date duration){
+		
+		if (startDateTime != null) {
+			String oldValue = this.getDuration();
+			
+			if (endDateTime == null) endDateTime = Calendar.getInstance();
+			
+			endDateTime.set(startDateTime.get(Calendar.YEAR),
+					startDateTime.get(Calendar.MONTH),
+					startDateTime.get(Calendar.DAY_OF_MONTH),
+					startDateTime.get(Calendar.HOUR_OF_DAY) + duration.getHours(),
+					startDateTime.get(Calendar.MINUTE) + duration.getMinutes());
+			
+			pcs.firePropertyChange("End", oldValue, this.getDuration());
+		}
+	}
+	
+	
 	public String getDate(){
-		String ret = "";
-		ret += day/10;
-		ret += day % 10;
-		ret += ".";
-		ret += month/10;
-		ret += month % 10;
-		ret += ".";
-		ret += year;
-		return ret;
+		if (startDateTime != null) {
+			return startDateTime.get(Calendar.DAY_OF_MONTH) + "." +
+					startDateTime.get(Calendar.MONTH) + "." +
+					startDateTime.get(Calendar.YEAR);
+		}
+		return "01.01.1970";
 	}
+	
+	
 	public String getStart(){
-		String ret = "";
-		ret += starthour/10;
-		ret += starthour % 10;
-		ret += ":";
-		ret += startmin/10;
-		ret += startmin%10;
-		return ret;
-
+		if (startDateTime != null) {
+			return startDateTime.get(Calendar.HOUR_OF_DAY) + ":" +
+					startDateTime.get(Calendar.MINUTE);
+		}
+		return "00:00";
 	}
+	
+	
 	public String getEnd(){
-		String ret = "";
-		ret += endhour/10;
-		ret += endhour % 10;
-		ret += ":";
-		ret += endmin/10;
-		ret += endmin%10;
-		return ret;
+		if (endDateTime != null) {
+			return endDateTime.get(Calendar.HOUR_OF_DAY) + ":" +
+					endDateTime.get(Calendar.MINUTE);
+		}
+		return "00:00";
 	}
-	public int getDuration(){
-		return duration;
+	
+	
+	public String getDuration(){
+		if (startDateTime != null && endDateTime != null) {
+			long difference = endDateTime.getTimeInMillis() - startDateTime.getTimeInMillis();
+			difference /= 60000;
+			return difference / 60 + ":" + difference % 60;
+		}
+		return "00:00";
 	}
 
+	
 	public void addPropertyChangeListener(PropertyChangeListener listener){
 		pcs.addPropertyChangeListener(listener);
 	}
+	
+	
 	public void removePropertyChangeListener(PropertyChangeListener listener){
 		pcs.removePropertyChangeListener(listener);
 	}
 
+	
 	public ParticipantListModel getParticipantList() {
 		return participantList;
 	}
@@ -191,12 +192,24 @@ public class Appointment implements NetInterface {
 	
 	
 	public void setLocation(String location) {
+		this.locationText = location;
+	}
+	
+	
+	public void setLocation(Room location) {
 		this.location = location;
+		this.locationText = location.getRoomCode();
 	}
 	
 	
 	public String getLocation() {
-		return location;
+		return locationText;
+	}
+	
+	
+	@Override
+	public String toString() {
+		return appointmentLeader.getName().split(" ")[0] + " : " + locationText;
 	}
 
 
@@ -215,13 +228,14 @@ public class Appointment implements NetInterface {
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
-
+        Request request = new Request("appointment","post",this);
+        OutboundWorker.sendRequest(request);
 	}
 
 	@Override
 	public void delete() {
-		// TODO Auto-generated method stub
+      Request request = new Request("appointment","delete",this);
+      OutboundWorker.sendRequest(request);
 
 	}
 }
