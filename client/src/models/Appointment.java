@@ -117,9 +117,20 @@ public class Appointment implements NetInterface {
 	
 	public String getDate(){
 		if (startDateTime != null) {
-			return startDateTime.get(Calendar.DAY_OF_MONTH) + "." +
-					startDateTime.get(Calendar.MONTH) + "." +
-					startDateTime.get(Calendar.YEAR);
+			int day = startDateTime.get(Calendar.DAY_OF_MONTH);
+			int month = startDateTime.get(Calendar.MONTH);
+			int year = startDateTime.get(Calendar.YEAR);
+			String ret = "";
+			ret += day/10;
+			ret += day % 10;
+			ret += ".";
+			ret += month/10;
+			ret += month%10;
+			ret += ".";
+			ret += year;
+			return ret;
+					
+					
 		}
 		return "01.01.1970";
 	}
@@ -127,8 +138,15 @@ public class Appointment implements NetInterface {
 	
 	public String getStart(){
 		if (startDateTime != null) {
-			return startDateTime.get(Calendar.HOUR_OF_DAY) + ":" +
-					startDateTime.get(Calendar.MINUTE);
+			int hour = startDateTime.get(Calendar.HOUR_OF_DAY);
+			int min = startDateTime.get(Calendar.MINUTE);
+			String ret = "";
+			ret += hour /10;
+			ret += hour % 10;
+			ret += ":";
+			ret += min /10;
+			ret += min%10;
+			return ret;
 		}
 		return "00:00";
 	}
@@ -136,8 +154,15 @@ public class Appointment implements NetInterface {
 	
 	public String getEnd(){
 		if (endDateTime != null) {
-			return endDateTime.get(Calendar.HOUR_OF_DAY) + ":" +
-					endDateTime.get(Calendar.MINUTE);
+			int hour = endDateTime.get(Calendar.HOUR_OF_DAY);
+			int min = endDateTime.get(Calendar.MINUTE);
+			String ret = "";
+			ret += hour /10;
+			ret += hour % 10;
+			ret += ":";
+			ret += min /10;
+			ret += min%10;
+			return ret;
 		}
 		return "00:00";
 	}
@@ -147,7 +172,15 @@ public class Appointment implements NetInterface {
 		if (startDateTime != null && endDateTime != null) {
 			long difference = endDateTime.getTimeInMillis() - startDateTime.getTimeInMillis();
 			difference /= 60000;
-			return difference / 60 + ":" + difference % 60;
+			long hour = difference /60;
+			long min = difference % 60;
+			String ret = "";
+			ret += hour /10;
+			ret += hour % 10;
+			ret += ":";
+			ret += min /10;
+			ret += min%10;
+			return ret;
 		}
 		return "00:00";
 	}

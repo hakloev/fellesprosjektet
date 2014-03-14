@@ -17,6 +17,8 @@ import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.xml.transform.sax.SAXSource;
@@ -25,7 +27,7 @@ import controllers.DateValidator;
 import models.*;
 
 @SuppressWarnings("serial")
-class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListener {
+class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListener, ChangeListener{
 
 
 	private JDialog parent;
@@ -47,8 +49,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 	private JButton btnVelgRom;
 
-    private Calendar[] alarmCalendar = new Calendar[1];
-	
+	private Calendar[] alarmCalendar = new Calendar[1];
+
 
 	DetailsPanel(JDialog parent, Appointment appointment) {
 		this.appointment = appointment;
@@ -69,17 +71,18 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.add(lblDato, gbc_lblDato);
 
 		dateSpinner = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor timeEditor01 = new JSpinner.DateEditor(dateSpinner, "dd.MM.yyyy");
-        dateSpinner.setEditor(timeEditor01);
-        dateSpinner.setValue(new Date());
+		dateSpinner.addChangeListener(this);
+		JSpinner.DateEditor timeEditor01 = new JSpinner.DateEditor(dateSpinner, "dd.MM.yyyy");
+		dateSpinner.setEditor(timeEditor01);
+		dateSpinner.setValue(new Date());
 		dateSpinner.addFocusListener(this);
-        GridBagConstraints gbc_dateTextField = new GridBagConstraints();
-        gbc_dateTextField.fill = GridBagConstraints.HORIZONTAL;
-        gbc_dateTextField.insets = new Insets(5, 0, 5, 5);
-        gbc_dateTextField.gridx = 1;
-        gbc_dateTextField.gridy = 0;
-        this.add(dateSpinner, gbc_dateTextField);
-        //dateSpinner.setColumns(10);
+		GridBagConstraints gbc_dateTextField = new GridBagConstraints();
+		gbc_dateTextField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_dateTextField.insets = new Insets(5, 0, 5, 5);
+		gbc_dateTextField.gridx = 1;
+		gbc_dateTextField.gridy = 0;
+		this.add(dateSpinner, gbc_dateTextField);
+		//dateSpinner.setColumns(10);
 
 		/* Start tid */
 		JLabel lblStart = new JLabel("Start[TT:MM]");
@@ -91,9 +94,10 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.add(lblStart, gbc_lblStart);
 
 		startTimeSpinner = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor timeEditor02 = new JSpinner.DateEditor(startTimeSpinner, "HH:mm");
-        startTimeSpinner.setEditor(timeEditor02);
-        startTimeSpinner.setValue(new Date());
+		startTimeSpinner.addChangeListener(this);
+		JSpinner.DateEditor timeEditor02 = new JSpinner.DateEditor(startTimeSpinner, "HH:mm");
+		startTimeSpinner.setEditor(timeEditor02);
+		startTimeSpinner.setValue(new Date());
 		startTimeSpinner.addFocusListener(this);
 		GridBagConstraints gbc_startTimeTextField = new GridBagConstraints();
 		gbc_startTimeTextField.insets = new Insets(0, 0, 5, 5);
@@ -101,7 +105,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_startTimeTextField.gridx = 1;
 		gbc_startTimeTextField.gridy = 1;
 		this.add(startTimeSpinner, gbc_startTimeTextField);
-        //startTimeSpinner.setColumns(10);
+		//startTimeSpinner.setColumns(10);
 
 		/* Slutt tid */
 		JLabel lblSlutt = new JLabel("Slutt[TT:MM]");
@@ -113,9 +117,10 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.add(lblSlutt, gbc_lblSlutt);
 
 		stopTimeSpinner = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor timeEditor03 = new JSpinner.DateEditor(stopTimeSpinner, "HH:mm");
-        stopTimeSpinner.setEditor(timeEditor03);
-        stopTimeSpinner.setValue(new Date());
+		stopTimeSpinner.addChangeListener(this);
+		JSpinner.DateEditor timeEditor03 = new JSpinner.DateEditor(stopTimeSpinner, "HH:mm");
+		stopTimeSpinner.setEditor(timeEditor03);
+		stopTimeSpinner.setValue(new Date());
 		stopTimeSpinner.addFocusListener(this);
 		GridBagConstraints gbc_stopTimeTextField = new GridBagConstraints();
 		gbc_stopTimeTextField.insets = new Insets(0, 0, 5, 5);
@@ -123,7 +128,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_stopTimeTextField.gridx = 1;
 		gbc_stopTimeTextField.gridy = 2;
 		this.add(stopTimeSpinner, gbc_stopTimeTextField);
-        //stopTimeSpinner.setColumns(10);
+		//stopTimeSpinner.setColumns(10);
 
 		/* Varighet */
 		JLabel lblVarighet = new JLabel("Varighet[TT:MM]");
@@ -135,9 +140,10 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.add(lblVarighet, gbc_lblVarighet);
 
 		durationSpinner = new JSpinner(new SpinnerDateModel());
-        JSpinner.DateEditor timeEditor04 = new JSpinner.DateEditor(durationSpinner, "HH:mm");
-        durationSpinner.setEditor(timeEditor04);
-        durationSpinner.setValue(new Date());
+		durationSpinner.addChangeListener(this);
+		JSpinner.DateEditor timeEditor04 = new JSpinner.DateEditor(durationSpinner, "HH:mm");
+		durationSpinner.setEditor(timeEditor04);
+		durationSpinner.setValue(new Date());
 		durationSpinner.addFocusListener(this);
 		GridBagConstraints gbc_durationTextField = new GridBagConstraints();
 		gbc_durationTextField.insets = new Insets(0, 0, 5, 5);
@@ -146,7 +152,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_durationTextField.gridx = 1;
 		gbc_durationTextField.gridy = 3;
 		this.add(durationSpinner, gbc_durationTextField);
-        //durationSpinner.setColumns(10);
+		//durationSpinner.setColumns(10);
 
 		/* Beskrivelse */
 		JScrollPane descriptionScrollPane = new JScrollPane();
@@ -227,7 +233,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_alarmTextField.gridx = 1;
 		gbc_alarmTextField.gridy = 5;
 		this.add(alarmTextField, gbc_alarmTextField);
-        alarmTextField.setEnabled(false);
+		alarmTextField.setEnabled(false);
 		//alarmTextField.setColumns(10);
 
 		JButton btnVelgTid = new JButton("Velg tid");
@@ -303,15 +309,15 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 		}
 	};
-    public void setAlarmTextField(){
-        String alarmText = new String();
-        alarmText += alarmCalendar[0].get(Calendar.DAY_OF_MONTH) + ".";
-        alarmText += alarmCalendar[0].get(Calendar.MONTH) + ".";
-        alarmText += alarmCalendar[0].get(Calendar.YEAR) + " ";
-        alarmText += alarmCalendar[0].get(Calendar.HOUR_OF_DAY) + ":";
-        alarmText += alarmCalendar[0].get(Calendar.MINUTE);
-        alarmTextField.setText(alarmText);
-    }
+	public void setAlarmTextField(){
+		String alarmText = new String();
+		alarmText += alarmCalendar[0].get(Calendar.DAY_OF_MONTH) + ".";
+		alarmText += alarmCalendar[0].get(Calendar.MONTH) + ".";
+		alarmText += alarmCalendar[0].get(Calendar.YEAR) + " ";
+		alarmText += alarmCalendar[0].get(Calendar.HOUR_OF_DAY) + ":";
+		alarmText += alarmCalendar[0].get(Calendar.MINUTE);
+		alarmTextField.setText(alarmText);
+	}
 
 
 	ActionListener actionListener = new ActionListener() {
@@ -320,8 +326,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 			if (ae.getActionCommand().equals("Velg tid")) {
 
 				new Alarm(parent, Calendar.getInstance(), alarmCalendar);
-                System.out.println(alarmCalendar[0].toString());
-                setAlarmTextField();
+				System.out.println(alarmCalendar[0].toString());
+				setAlarmTextField();
 
 			}
 		}
@@ -335,10 +341,22 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 		}
 		if (evt.getPropertyName().equals("End")){
-			stopTimeSpinner.setValue((Date) evt.getNewValue());
+			if(stopTimeSpinner != null){
+				String end = (String) evt.getNewValue();
+				Date date = new Date();
+				date.setHours(Integer.parseInt(end.substring(0,2)));
+				date.setMinutes(Integer.parseInt(end.substring(3,5)));
+				stopTimeSpinner.setValue(date);
+			}
 		}
 		if (evt.getPropertyName().equals("Duration")){
-			durationSpinner.setValue((Date) evt.getNewValue());
+			if(durationSpinner != null){
+				String duration = (String) evt.getNewValue();
+				Date date = new Date();
+				date.setHours(Integer.parseInt(duration.substring(0,2)));
+				date.setMinutes(Integer.parseInt(duration.substring(3,5)));
+				durationSpinner.setValue(date);
+			}
 		}
 	}
 
@@ -352,21 +370,22 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 	@Override
 	public void focusLost(FocusEvent arg0) {
-		if (arg0.getSource() == dateSpinner){
-			Date date = (Date) dateSpinner.getValue();
-			appointment.setDate(date);
+
+	}
+
+	@Override
+	public void stateChanged(ChangeEvent arg0) {
+		if(arg0.getSource() == dateSpinner){
+			appointment.setDate((Date) dateSpinner.getValue());
 		}
-		if (arg0.getSource() == startTimeSpinner);{
-			Date start = (Date) startTimeSpinner.getValue();
-			appointment.setStart(start);
+		else if (arg0.getSource() == startTimeSpinner){
+			appointment.setStart((Date) startTimeSpinner.getValue());
 		}
-		if (arg0.getSource() == stopTimeSpinner);{
-			Date end = (Date)stopTimeSpinner.getValue();
-            appointment.setEnd(end);
+		else if (arg0.getSource() == stopTimeSpinner){
+			appointment.setEnd((Date) stopTimeSpinner.getValue());
 		}
-		if (arg0.getSource() == durationSpinner);{
-			Date duration = (Date) (durationSpinner.getValue());
-			appointment.setDuration(duration);
+		else if (arg0.getSource() == durationSpinner){
+			appointment.setDuration((Date) durationSpinner.getValue());
 		}
 	}
 
