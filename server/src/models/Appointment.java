@@ -1,8 +1,12 @@
 package models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.swing.*;
+
+//@JsonIgnoreProperties({"participantList", "getParticipants", "size"})
 public class Appointment implements DBInterface {
 
 
@@ -150,7 +154,6 @@ public class Appointment implements DBInterface {
 	}
 
 
-
 	public ParticipantListModel getParticipantList() {
 		return participantList;
 	}
@@ -163,6 +166,23 @@ public class Appointment implements DBInterface {
 	}
 
 
+	@Override
+	public String toString() {
+		return "Appointment{" +
+				"participantList=" + participantList +
+				", year=" + year +
+				", month=" + month +
+				", day=" + day +
+				", starthour=" + starthour +
+				", startmin=" + startmin +
+				", endhour=" + endhour +
+				", endmin=" + endmin +
+				", duration=" + duration +
+				", startset=" + startset +
+				", endset=" + endset +
+				", durationset=" + durationset +
+				'}';
+	}
 
 	@Override
 	public void initialize() {
