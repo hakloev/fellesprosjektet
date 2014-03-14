@@ -120,7 +120,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		stopTimeTextField.setColumns(10);
 
 		/* Varighet */
-		JLabel lblVarighet = new JLabel("Varighet");
+		JLabel lblVarighet = new JLabel("Varighet[TT:MM]");
 		GridBagConstraints gbc_lblVarighet = new GridBagConstraints();
 		gbc_lblVarighet.anchor = GridBagConstraints.NORTHEAST;
 		gbc_lblVarighet.insets = new Insets(0, 5, 5, 5);
@@ -315,7 +315,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 			stopTimeTextField.setText((String) evt.getNewValue());
 		}
 		if (evt.getPropertyName().equals("Duration")){
-			durationTextField.setText(Integer.toString((int) evt.getNewValue()));
+			durationTextField.setText((String) evt.getNewValue());
 		}
 	}
 
@@ -349,10 +349,9 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		}
 		if (arg0.getSource() == durationTextField);{
 			if (!durationTextField.getText().equals("")){
-				int duration = Integer.parseInt(durationTextField.getText());
-				if (DateValidator.validateDuration(duration)){
-					appointment.setDuration(duration);
-				}
+				String duration = (durationTextField.getText());
+				appointment.setDuration(duration);
+
 			}
 		}
 	}
