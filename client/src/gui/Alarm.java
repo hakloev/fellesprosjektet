@@ -1,4 +1,4 @@
-package gui.appointment;
+package gui;
 
 import javax.swing.*;
 
@@ -12,7 +12,7 @@ import java.util.Date;
  * Created by Tarald on 12.03.14.
  */
 @SuppressWarnings("serial")
-public class Alert extends JDialog implements ActionListener{
+public class Alarm extends JDialog implements ActionListener{
     private JRadioButton twentyFourButton, hourButton, minButton, customHoursButton, customDateTimeButton;
     private JLabel twentyFourLabel, hourLabel, minLabel, textLabel1;
     private JTextField customHoursTextField;
@@ -24,14 +24,16 @@ public class Alert extends JDialog implements ActionListener{
     
 
 
-    public Alert(JDialog parent, Calendar startDate){
-        super(parent,"Alarm tidspunkt", true);
-        this.parent = parent;
-        this.startDate = startDate;
+    public Alarm(JDialog parent, Calendar startDate){
+        super(parent, true);
+        this.setTitle("Alarm tidspunkt");
+        this.setResizable(false);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         
+        this.parent = parent;
+        this.startDate = startDate;
+        
         JPanel buttonPanel = new JPanel(new GridBagLayout());
-        setLocationRelativeTo(parent);
 
         GridBagConstraints c = new GridBagConstraints();
         c.fill = GridBagConstraints.HORIZONTAL;
@@ -119,16 +121,18 @@ public class Alert extends JDialog implements ActionListener{
 
         okButton = new JButton("Ok");
         infoPanel.add(okButton);
+        okButton.addActionListener(this);
 
         cancelButton = new JButton("Avbryt");
         infoPanel.add(cancelButton);
-
+        cancelButton.addActionListener(this);
 
         add(buttonPanel, BorderLayout.WEST);
         add(infoPanel, BorderLayout.SOUTH);
 
 
         pack();
+        setLocationRelativeTo(parent);
         setVisible(true);
 
 
@@ -141,11 +145,17 @@ public class Alert extends JDialog implements ActionListener{
             dispose();
         }
         else if(e.getActionCommand().equals("Ok")){
+            if (btnGroup.getSelection() == null) {
+            	this.dispose();
+            	return;
+            }
+            
             String command = btnGroup.getSelection().getActionCommand();
             warningDate = startDate;
+            
             switch (command){
                 case "24 timer før":
-                    warningDate.add(Calendar.DAY_OF_MONTH,-1);
+                    warningDate.add(Calendar.DAY_OF_MONTH, -1);
                     dispose();  
                     break;
                 case "1 time før":
@@ -153,7 +163,7 @@ public class Alert extends JDialog implements ActionListener{
                     dispose();
                     break;
                 case "10 min før":
-                    warningDate.add(Calendar.MINUTE,-10);
+                    warningDate.add(Calendar.MINUTE, -10);
                     dispose();
                     break;
                 case "customHoursButton":

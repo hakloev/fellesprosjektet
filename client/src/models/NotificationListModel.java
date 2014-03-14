@@ -19,7 +19,7 @@ public class NotificationListModel extends DefaultListModel<Notification> implem
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
+		this.initialize();
 
 	}
 

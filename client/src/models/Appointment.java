@@ -179,6 +179,7 @@ public class Appointment implements NetInterface {
 	@Override
 	public void refresh() {
 		// TODO Auto-generated method stub
+		this.initialize();
 
 	}
 

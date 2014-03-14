@@ -1,6 +1,6 @@
 package gui.appointment;
 
-import gui.ParticipantRenderer;
+import gui.*;
 
 import java.awt.Dimension;
 import java.awt.Font;
@@ -292,7 +292,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			if (ae.getActionCommand().equals("Velg tid")) {
-				new Alert(parent, Calendar.getInstance());
+				new Alarm(parent, Calendar.getInstance());
 			}
 		}
 	};
