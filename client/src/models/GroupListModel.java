@@ -28,6 +28,7 @@ public class GroupListModel extends DefaultListModel<Group> implements NetInterf
 
 	@Override
 	public void refresh() {
+		this.clear();
 		this.initialize();
 	}
 

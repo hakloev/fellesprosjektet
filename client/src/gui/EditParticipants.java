@@ -67,7 +67,7 @@ public class EditParticipants extends JDialog implements ActionListener{
 		JScrollPane groupSscrollPane = new JScrollPane();
 		groupSscrollPane.setPreferredSize(new Dimension(120, 0));
 
-		JLabel lblGrupper = new JLabel("Grupper");
+		JLabel lblGrupper = new JLabel(" Grupper");
 		groupSscrollPane.setColumnHeaderView(lblGrupper);
 
 		GroupListModel groupListModel = new GroupListModel();
@@ -97,7 +97,7 @@ public class EditParticipants extends JDialog implements ActionListener{
 		JScrollPane participantScrollPane = new JScrollPane();
 		participantScrollPane.setPreferredSize(new Dimension(120, 0));
 
-		JLabel lblDeltagere = new JLabel("Deltagere");
+		JLabel lblDeltagere = new JLabel(" Deltagere");
 		participantScrollPane.setColumnHeaderView(lblDeltagere);
 
 		participantList = new JList<Participant>(tempParticipantList);
@@ -134,12 +134,13 @@ public class EditParticipants extends JDialog implements ActionListener{
 		JScrollPane employeeScrollPane = new JScrollPane();
 		employeeScrollPane.setPreferredSize(new Dimension(120, 0));
 
-		JLabel lblAnsatte = new JLabel("Ansatte");
+		JLabel lblAnsatte = new JLabel(" Ansatte");
 		employeeScrollPane.setColumnHeaderView(lblAnsatte);
 		
 		EmployeeListModel employeeListModel;
 		employeeListModel = new EmployeeListModel();
 		employeeListModel.initialize();
+		
 		employeeList = new JList<Employee>(employeeListModel);
 		employeeScrollPane.setViewportView(employeeList);
 		GridBagConstraints gbc_employeeScrollPane = new GridBagConstraints();

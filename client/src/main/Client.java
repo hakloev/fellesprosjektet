@@ -16,9 +16,9 @@ public class Client {
 
     public static void main(String[] args) {
         //Creating a SocketClient object
-        SocketListener client = new SocketListener ("localhost",4657);
+        //SocketListener client = new SocketListener ("localhost",4657);
         //trying to establish connection to the server
-        client.connect();
+        //client.connect();
 
 	/*
         ParticipantListModel plist = new ParticipantListModel();

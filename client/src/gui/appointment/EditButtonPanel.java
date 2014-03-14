@@ -108,7 +108,7 @@ class EditButtonPanel extends JPanel implements ActionListener {
             
         }
         else if(ae.getActionCommand().equals("Slett")){
-             int choice = JOptionPane.showConfirmDialog(this,
+             int choice = JOptionPane.showConfirmDialog(null,
                 "Er du sikker på at du vil slette " + ((EditAppointment)parent).getSelectedParticipant().getName() + " fra avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
 
             if (choice == 0) {
