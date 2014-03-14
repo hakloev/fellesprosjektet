@@ -2,6 +2,7 @@ package gui.appointment;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Date;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -32,7 +33,7 @@ public class ViewAppointment extends JDialog {
 		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
-		DetailsPanel detailsPanel = new DetailsPanel(this, appointment);
+		DetailsPanel detailsPanel = new DetailsPanel(this, appointment, new Date());
 		contentPane.add(detailsPanel, gbc_detailsPanel);
 		detailsPanel.setEnabled(false);
 		
