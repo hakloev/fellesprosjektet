@@ -1,7 +1,12 @@
 package models;
 
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import controllers.OutboundWorker;
+import helperclasses.Request;
+
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
@@ -188,13 +193,14 @@ public class Appointment implements NetInterface {
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
-
+        Request request = new Request("appointment","post",this);
+        OutboundWorker.sendRequest(request);
 	}
 
 	@Override
 	public void delete() {
-		// TODO Auto-generated method stub
+      Request request = new Request("appointment","delete",this);
+      OutboundWorker.sendRequest(request);
 
 	}
 }

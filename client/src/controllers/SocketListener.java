@@ -14,7 +14,8 @@ public class SocketListener{
     private OutboundWorker outWorker;
     
     private static SocketListener clientSocketListener;
-    
+    private static boolean connected = false;
+
 
     public SocketListener(String hostname, int port){
         this.hostname = hostname;
@@ -35,10 +36,9 @@ public class SocketListener{
             System.out.println("Connection Established \n");
             InboundWorker inWorker = new InboundWorker(socketClient);
             inWorker.start();
-            OutboundWorker outbound = new OutboundWorker(socketClient);
+            outWorker= new OutboundWorker(socketClient);
             System.out.println("Response Thread STARTED");
-            outWorker = new OutboundWorker(socketClient);
-            outWorker.sendRequest();
+
             
             return true;
 
@@ -53,11 +53,7 @@ public class SocketListener{
         }
 
     }
-    
-    
-    public OutboundWorker getOutboundWorker() {
-    	return outWorker;
-    }
+
     
     
     public void closeSocket() {

@@ -1,6 +1,11 @@
 package main;
 
+
+import controllers.OutboundWorker;
+import controllers.SocketListener;
 import gui.CalendarView;
+import helperclasses.Request;
+import models.Appointment;
 
 import javax.swing.*;
 
@@ -22,12 +27,7 @@ public class Client {
         plist.addElement(new Participant("hakloev", "Haakon", ParticipantStatus.notParticipating));
 		Request request = new Request("participantlistmodel", "POST", plist);
 	*/
-	    Appointment appointment = new Appointment();
-		appointment.setDate("10:02:2000");
-        Request request = new Request("appointment","POST", appointment);
 
-
-        OutboundWorker.sendRequest(request); 
     	setupUIManager(); // do first
         new CalendarView();
 

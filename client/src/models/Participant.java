@@ -49,11 +49,6 @@ public class Participant {
 	public String getUserName() {
 		return userName;
 	}
-	
-	
-	public String getName() {
-		return name;
-	}
 
 
     public ParticipantStatus getParticipantStatus() {
@@ -74,7 +69,6 @@ public class Participant {
         }
         return false;
     }
+
 }
-
-
 

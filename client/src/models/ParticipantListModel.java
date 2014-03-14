@@ -17,6 +17,11 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 	
 	public ParticipantListModel() {
 		super();
+		/* test code */
+		this.addElement(new Participant("siri", "Siri Gundersen", ParticipantStatus.participating));
+		this.addElement(new Participant("arvid", "Arvid Pettersen", ParticipantStatus.participating));
+		this.addElement(new Participant("per", "Per Haraldsen", ParticipantStatus.notParticipating));
+		/* end test code */
 	}
 
 
