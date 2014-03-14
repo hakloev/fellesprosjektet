@@ -3,7 +3,7 @@ package models;
 import javax.swing.DefaultListModel;
 
 @SuppressWarnings("serial")
-public class RoomListModel extends DefaultListModel<Room> implements NetInterface {
+public class RoomListModel extends DefaultListModel<Room> implements DBInterface {
 	
 	
 	

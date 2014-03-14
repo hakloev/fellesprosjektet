@@ -1,44 +1,29 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import javax.swing.table.DefaultTableModel;
 
 @SuppressWarnings("serial")
-public class WeekCalendar extends DefaultTableModel implements NetInterface, Iterator<Appointment>{
+public class WeekCalendar extends DefaultTableModel implements DBInterface, Iterator<Appointment>{
 	
-	
+
+	@JsonProperty("employee")
 	private Employee employee;
+	@JsonProperty("appointmentList")
 	private ArrayList<Appointment> appointmentList;
+	@JsonProperty("weekNumber")
 	private int weekNumber;
 	private int iteratorIndex;
 	
 	
-	private static Object[][] emptyCalendar = new Object[][] {
-			{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
-			{"07.00", null, null, null, null, null, null, null},
-			{"08.00", null, null, null, null, null, null, null},
-			{"09.00", null, null, null, null, null, null, null},
-			{"10.00", null, null, null, null, null, null, null},
-			{"11.00", null, null, null, null, null, null, null},
-			{"12.00", null, null, null, null, null, null, null},
-			{"13.00", null, null, null, null, null, null, null},
-			{"14.00", null, null, null, null, null, null, null},
-			{"15.00", null, null, null, null, null, null, null},
-			{"16.00", null, null, null, null, null, null, null},
-			{"17.00", null, null, null, null, null, null, null},
-			{"18.00", null, null, null, null, null, null, null},
-			{"19.00", null, null, null, null, null, null, null},
-			{"20.00", null, null, null, null, null, null, null},
-		};
-	private static Object[] columnTitles = new String[] {
-			"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
-	
+
 	
 	public WeekCalendar() {
-		super(emptyCalendar, columnTitles);
-		
+		super();
 	}
 	
 	
@@ -94,30 +79,5 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	public void addAppointment(Appointment appointment) {
 		appointmentList.add(appointment);
 	}
-	
-	
-	/* Don't ask.. */
-	public void resetDefaultCalendar() {
-		emptyCalendar = new Object[][] {
-			{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
-			{"07.00", null, null, null, null, null, null, null},
-			{"08.00", null, null, null, null, null, null, null},
-			{"09.00", null, null, null, null, null, null, null},
-			{"10.00", null, null, null, null, null, null, null},
-			{"11.00", null, null, null, null, null, null, null},
-			{"12.00", null, null, null, null, null, null, null},
-			{"13.00", null, null, null, null, null, null, null},
-			{"14.00", null, null, null, null, null, null, null},
-			{"15.00", null, null, null, null, null, null, null},
-			{"16.00", null, null, null, null, null, null, null},
-			{"17.00", null, null, null, null, null, null, null},
-			{"18.00", null, null, null, null, null, null, null},
-			{"19.00", null, null, null, null, null, null, null},
-			{"20.00", null, null, null, null, null, null, null},
-		};
-	columnTitles = new String[] {
-			"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
-	}
-	
 	
 }

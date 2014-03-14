@@ -3,13 +3,8 @@ package models;
 import javax.swing.DefaultListModel;
 
 @SuppressWarnings("serial")
-public class NotificationListModel extends DefaultListModel<Notification> implements NetInterface {
-	
-	
-	
-	
-	
-	
+public class NotificationListModel extends DefaultListModel<Notification> implements DBInterface {
+
 	
 	@Override
 	public void initialize() {

@@ -1,30 +1,29 @@
 package models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import controllers.OutboundWorker;
-import helperclasses.Request;
-
-
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
-
-public class Appointment implements NetInterface {
+public class Appointment implements DBInterface {
 
 
 	@JsonProperty("participantList")
 	private ParticipantListModel participantList;
-	private PropertyChangeSupport pcs;
 
+	@JsonProperty("year")
 	private int year;
+	@JsonProperty("month")
 	private int month;
+	@JsonProperty("day")
 	private int day;
+	@JsonProperty("starthour")
 	private int starthour;
+	@JsonProperty("startmin")
 	private int startmin;
+	@JsonProperty("endhour")
 	private int endhour;
+	@JsonProperty("endmin")
 	private int endmin;
+
 	private int duration;
 	private boolean startset;
 	private boolean endset;
@@ -34,7 +33,6 @@ public class Appointment implements NetInterface {
 
 	public Appointment() {
 
-		pcs = new PropertyChangeSupport(this);
 		participantList = new ParticipantListModel();
 	}
 
@@ -50,7 +48,6 @@ public class Appointment implements NetInterface {
 
 		if(endset){
 			int newduration = (endhour -starthour)*60 + endmin - startmin;
-			pcs.firePropertyChange("duration", duration, newduration);
 			duration = newduration;
 			durationset = true;
 		}
@@ -63,7 +60,6 @@ public class Appointment implements NetInterface {
 				endmin -= 60;
 			}
 			endset = true;
-			pcs.firePropertyChange("End", oldEnd, getEnd());
 		}
 
 	}
@@ -76,7 +72,6 @@ public class Appointment implements NetInterface {
 			int oldDuration = getDuration();
 			duration = (endhour -starthour)*60 + endmin - startmin;
 			durationset = true;
-			pcs.firePropertyChange("Duration", oldDuration, getDuration());
 		}
 		else if(durationset){
 			String oldStart = getStart();
@@ -87,7 +82,6 @@ public class Appointment implements NetInterface {
 				startmin += 60;
 			}
 			startset = true;
-			pcs.firePropertyChange("Start", oldStart, getStart());
 		}
 	}
 	public void setDuration(int duration){
@@ -105,7 +99,6 @@ public class Appointment implements NetInterface {
 			endmin = reminder;
 			endset = true;
 			durationset = true;
-			pcs.firePropertyChange("End", oldEnd, getEnd());
 		}
 		else if (!startset && endset){
 			String oldStart = getStart();
@@ -119,7 +112,6 @@ public class Appointment implements NetInterface {
 			startmin = reminder;
 			startset = true;
 			durationset = true;
-			pcs.firePropertyChange("Start", oldStart, getStart());
 		}
 		
 	}
@@ -157,12 +149,7 @@ public class Appointment implements NetInterface {
 		return duration;
 	}
 
-	public void addPropertyChangeListener(PropertyChangeListener listener){
-		pcs.addPropertyChangeListener(listener);
-	}
-	public void removePropertyChangeListener(PropertyChangeListener listener){
-		pcs.removePropertyChangeListener(listener);
-	}
+
 
 	public ParticipantListModel getParticipantList() {
 		return participantList;
@@ -171,7 +158,6 @@ public class Appointment implements NetInterface {
 
 	public void setParticipantList(ParticipantListModel participantList) {
 		if (participantList != null){
-			pcs.firePropertyChange("participantList", this.participantList, participantList);
 			this.participantList = participantList;
 		}
 	}
@@ -187,20 +173,16 @@ public class Appointment implements NetInterface {
 	@Override
 	public void refresh() {
 		// TODO Auto-generated method stub
-		this.initialize();
 
 	}
 
 	@Override
 	public void save() {
-        Request request = new Request("appointment","post",this);
-        OutboundWorker.sendRequest(request);
+
 	}
 
 	@Override
 	public void delete() {
-      Request request = new Request("appointment","delete",this);
-      OutboundWorker.sendRequest(request);
 
 	}
 }

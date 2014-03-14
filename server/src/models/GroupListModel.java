@@ -3,13 +3,7 @@ package models;
 import javax.swing.DefaultListModel;
 
 @SuppressWarnings("serial")
-public class GroupListModel extends DefaultListModel<Group> implements NetInterface {
-	
-	
-	
-	
-	
-	
+public class GroupListModel extends DefaultListModel<Group> implements DBInterface {
 	
 	@Override
 	public void initialize() {
