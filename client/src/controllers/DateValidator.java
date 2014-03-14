@@ -4,7 +4,7 @@ public class DateValidator {
 	
 	
 	// Date string format: DD:MM:YYYY or DD.MM.YYYY 
-	//Both will work
+	//Both will work in the validator
 	public static boolean validateDate(String date){
 		int day = Integer.parseInt(date.substring(0,2)); 
 		if (day > 31|| day < 1){
