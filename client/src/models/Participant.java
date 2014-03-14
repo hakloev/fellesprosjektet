@@ -18,14 +18,6 @@ public class Participant {
         this.participantStatus = participantStatus;
     }
 
-    @Override
-    public String toString() {
-        return "Participant{" +
-                "userName='" + userName + '\'' +
-                ", name='" + name + '\'' +
-                ", participantStatus=" + participantStatus +
-                '}';
-    }
 
     public Participant(Employee employee) {
         this.userName = employee.getUserName();
@@ -61,6 +53,11 @@ public class Participant {
     }
 
 
+    @Override
+    public String toString() {
+        return name;
+    }
+    
 
     @Override
     public boolean equals(Object participant){
