@@ -149,7 +149,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_stopTimeTextField.gridx = 1;
 		gbc_stopTimeTextField.gridy = 2;
 		this.add(stopTimeSpinner, gbc_stopTimeTextField);
-		//stopTimeSpinner.setColumns(10);
+        //stopTimeSpinner.setColumns(10);
 		
 		/* Beskrivelse */
 		JScrollPane descriptionScrollPane = new JScrollPane();
@@ -326,7 +326,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		public void actionPerformed(ActionEvent ae) {
 			if (ae.getActionCommand().equals("Velg tid")) {
 				new Alarm(parent, Calendar.getInstance(), alarmCalendar);
-				setAlarmTextField();
+                setAlarmTextField();
                 
 			} else if (ae.getActionCommand().equals("Velg rom")) {
 				Room[] room = new Room[1];
