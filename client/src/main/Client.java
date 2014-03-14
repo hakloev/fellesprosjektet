@@ -1,6 +1,10 @@
 package main;
 
+import controllers.OutboundWorker;
+import controllers.SocketListener;
 import gui.CalendarView;
+import helperclasses.Request;
+import models.Appointment;
 
 import javax.swing.*;
 
@@ -27,7 +31,7 @@ public class Client {
         Request request = new Request("appointment","POST", appointment);
 
 
-        OutboundWorker.sendRequest(request); 
+        OutboundWorker.sendRequest(request);
     	setupUIManager(); // do first
         new CalendarView();
 

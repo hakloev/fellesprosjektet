@@ -31,6 +31,10 @@ public class DatabaseWorker {
 			g.setName("TRRRRULLLSS");
 			System.out.println(g.toString());
 			response = new Response("participant", "post", g);
+		} else if (obj instanceof Employee) {
+			System.out.println("DatabaseWorker.handleRequest: obj instance Participant: " + (obj instanceof Employee));
+			Employee e = (Employee) obj;
+			response = new Response("employee", "post", e);
 		} else if (obj instanceof ArrayList) { // DETTE ER STYGT, IKKE BRA KODE
 			for (int i = 0; i < ((ArrayList) obj).size(); i++) {
 				insertParticipant((Participant)((ArrayList) obj).get(i));
