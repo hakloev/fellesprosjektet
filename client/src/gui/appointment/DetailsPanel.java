@@ -54,6 +54,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 
 	DetailsPanel(JDialog parent, Appointment appointment) {
+		this.appointment = appointment;
 		appointment.addPropertyChangeListener(this);
 		this.parent = parent;
 		this.appointmentParticipantList = appointment.getParticipantList();
@@ -335,7 +336,6 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 			}
 		}
 		if (arg0.getSource() == startTimeTextField);{
-			System.out.println(startTimeTextField.getText());
 			String start = startTimeTextField.getText();
 			if (DateValidator.validateTime(start)){
 				appointment.setStart(start);

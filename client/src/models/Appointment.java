@@ -34,7 +34,6 @@ public class Appointment implements NetInterface {
 		year = Integer.parseInt(date.substring(6,10));
 	}
 	public void setStart(String start){
-		System.out.println("calling setstart");
 		starthour = Integer.parseInt(start.substring(0,2));
 		startmin = Integer.parseInt(start.substring(3,5));
 		startset = true;

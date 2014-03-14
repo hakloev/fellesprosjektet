@@ -54,7 +54,7 @@ public class DateValidator {
 		}
 	}
 	public static boolean validateTime(String time){
-		if(time.length() != 6){
+		if(time.length() != 5){
 			return false;
 		}
 		int hour = Integer.parseInt(time.substring(0,2));
