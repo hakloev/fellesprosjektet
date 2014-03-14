@@ -7,7 +7,6 @@ import models.Participant;
 import models.ParticipantListModel;
 import models.ParticipantStatus;
 
-import gui.CalendarView;
 
 import javax.swing.*;
 
@@ -28,12 +27,14 @@ public class Client {
         plist.addElement(new Participant("hakloev", "Haakon", ParticipantStatus.notParticipating));
 
         Appointment appointment = new Appointment();
+        appointment.setParticipantList(plist);
 
-        Request request = new Request("participantlistmodel","POST", plist);
+        Request request = new Request("appointment","POST", appointment);
 
-        OutboundWorker.sendRequest(request); 
-    	setupUIManager(); // do first
-        new CalendarView();
+        OutboundWorker.sendRequest(request);
+
+    	// setupUIManager(); // do first
+        // new CalendarView();
 
     }
     

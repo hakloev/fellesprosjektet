@@ -58,6 +58,10 @@ public class Participant {
         }
         return false;
     }
+
+    public String getName() {
+        return name;
+    }
 }
 
 
