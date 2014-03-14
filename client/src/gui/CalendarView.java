@@ -23,21 +23,28 @@ import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
-import controllers.SocketListener;
+import controllers.*;
 
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 @SuppressWarnings("serial")
 public class CalendarView extends JFrame {
 
 	private JTable calendarTable;
 	private JPanel contentPane;
-	private JComboBox<Integer> weekComboBox = new JComboBox<Integer>();
+	private JComboBox<Integer> weekComboBox;
+	private JComboBox<Employee> employeeComboBox;
+	private JLabel usernameLabel;
+	private WeekCalendar calendarTableModel;
+	private JList<Notification> notificationList;
+	
 	private JFrame thisFrame;
+	
+	private String[] loggedInUser = new String[1]; // point to something mutable so we can give to login screen
 
 
 	/**
@@ -65,9 +72,10 @@ public class CalendarView extends JFrame {
 		
 		this.pack();
 		this.setLocationRelativeTo(null);
-		this.setVisible(true);
 		
-		new LoginScreen(this);
+		new LoginScreen(this, loggedInUser);
+		usernameLabel.setText(loggedInUser[0]);
+		this.setVisible(true);
 		
 	}
 
@@ -75,6 +83,7 @@ public class CalendarView extends JFrame {
 	private void addTopPanel() {
 		JPanel topPanel = new JPanel();
 		GridBagConstraints gbc_topPanel = new GridBagConstraints();
+		gbc_topPanel.fill = GridBagConstraints.HORIZONTAL;
 		gbc_topPanel.gridx = 0;
 		gbc_topPanel.gridy = 0;
 		gbc_topPanel.gridwidth = 2;
@@ -84,7 +93,7 @@ public class CalendarView extends JFrame {
 		GridBagLayout gbl_topPanel = new GridBagLayout();
 		//gbl_topPanel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
 		//gbl_topPanel.rowHeights = new int[]{0};
-		gbl_topPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0};
+		gbl_topPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0, 0};
 		//gbl_topPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		topPanel.setLayout(gbl_topPanel);
 
@@ -117,13 +126,13 @@ public class CalendarView extends JFrame {
 		gbc_weekLabel.gridy = 0;
 		topPanel.add(weekLabel, gbc_weekLabel);
 
+		weekComboBox = new JComboBox<Integer>();
 		GridBagConstraints gbc_weekComboBox = new GridBagConstraints();
 		gbc_weekComboBox.anchor = GridBagConstraints.WEST;
 		gbc_weekComboBox.insets = new Insets(5, 0, 5, 5);
 		gbc_weekComboBox.gridx = 3;
 		gbc_weekComboBox.gridy = 0;
 		topPanel.add(weekComboBox, gbc_weekComboBox);
-		//weekComboBox.setPreferredSize(new Dimension(50, 0));
 		for (int week = 1; week <= 52; week++) {
 			weekComboBox.addItem(week);
 		}
@@ -142,34 +151,52 @@ public class CalendarView extends JFrame {
 		topPanel.add(yearSpinner, gbc_yearSpinner);
 		
 		/* Showing calendar of employee */
-		JLabel showingLabel = new JLabel("Viser:");
+		JLabel showingLabel = new JLabel("Viser kalender for");
 		GridBagConstraints gbc_showingLabel = new GridBagConstraints();
 		gbc_showingLabel.anchor = GridBagConstraints.WEST;
-		gbc_showingLabel.insets = new Insets(5, 0, 5, 5);
+		gbc_showingLabel.insets = new Insets(5, 25, 5, 5);
 		gbc_showingLabel.gridx = 5;
 		gbc_showingLabel.gridy = 0;
 		topPanel.add(showingLabel, gbc_showingLabel);
 
-		JComboBox<Employee> employeeComboBox = new JComboBox<Employee>();
+		employeeComboBox = new JComboBox<Employee>();
 		GridBagConstraints gbc_employeeComboBox = new GridBagConstraints();
 		gbc_employeeComboBox.anchor = GridBagConstraints.WEST;
 		gbc_showingLabel.insets = new Insets(5, 0, 5, 5);
 		gbc_employeeComboBox.gridx = 6;
 		gbc_employeeComboBox.gridy = 0;
 		topPanel.add(employeeComboBox, gbc_employeeComboBox);
-		employeeComboBox.setPreferredSize(new Dimension(200, 20));
-		/* test code */
-		employeeComboBox.addItem(new Employee("kristian", "Kristian Volden"));
-		/* end test code */
+		employeeComboBox.setPreferredSize(new Dimension(200, 23));
+		EmployeeComboBoxModel ecbModel = new EmployeeComboBoxModel();
+		employeeComboBox.setModel(ecbModel);
 		
 		/* Logged in user */
 		JLabel loginLabel = new JLabel("Innlogget som:");
 		GridBagConstraints gbc_loginLabel = new GridBagConstraints();
-		gbc_loginLabel.anchor = GridBagConstraints.WEST;
+		gbc_loginLabel.anchor = GridBagConstraints.EAST;
 		gbc_loginLabel.insets = new Insets(5, 0, 5, 5);
-		gbc_loginLabel.gridx = 8;
+		gbc_loginLabel.gridx = 7;
 		gbc_loginLabel.gridy = 0;
 		topPanel.add(loginLabel, gbc_loginLabel);
+		
+		usernameLabel = new JLabel();
+		GridBagConstraints gbc_usernameLabel = new GridBagConstraints();
+		gbc_usernameLabel.anchor = GridBagConstraints.EAST;
+		gbc_usernameLabel.insets = new Insets(5, 0, 5, 5);
+		gbc_usernameLabel.gridx = 8;
+		gbc_usernameLabel.gridy = 0;
+		topPanel.add(usernameLabel, gbc_usernameLabel);
+		//usernameLabel.setPreferredSize(new Dimension(50, 14));
+		usernameLabel.setForeground(new Color(150, 0, 0));
+		
+		JButton logoutButton = new JButton("Logg ut");
+		GridBagConstraints gbc_logoutButton = new GridBagConstraints();
+		gbc_logoutButton.anchor = GridBagConstraints.EAST;
+		gbc_logoutButton.insets = new Insets(5, 0, 5, 5);
+		gbc_logoutButton.gridx = 9;
+		gbc_logoutButton.gridy = 0;
+		topPanel.add(logoutButton, gbc_logoutButton);
+		logoutButton.addActionListener(actionListener);
 		
 	}
 	
@@ -178,15 +205,14 @@ public class CalendarView extends JFrame {
 		JPanel rightPanel = new JPanel();
 		GridBagConstraints gbc_rightPanel = new GridBagConstraints();
 		gbc_rightPanel.anchor = GridBagConstraints.EAST;
+		gbc_rightPanel.fill = GridBagConstraints.VERTICAL;
 		gbc_rightPanel.gridx = 1;
 		gbc_rightPanel.gridy = 1;
 		contentPane.add(rightPanel, gbc_rightPanel);
 		
 		GridBagLayout gbl_rightPanel = new GridBagLayout();
-		//gbl_panel.columnWidths = new int[]{0};
-		//gbl_rightPanel.rowHeights = new int[]{0, 0, 0, 0, 0, 0};
-		//gbl_panel.columnWeights = new double[]{1.0};
-		gbl_rightPanel.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 1.0};
+		gbl_rightPanel.rowHeights = new int[]{0, 0, 0, 0, 30, 0, 0};
+		gbl_rightPanel.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
 		rightPanel.setLayout(gbl_rightPanel);
 
 		JButton newAppointmentButton = new JButton("Ny avtale");
@@ -222,13 +248,12 @@ public class CalendarView extends JFrame {
 		JScrollPane notificationScrollPane = new JScrollPane();
 		GridBagConstraints gbc_notificationScrollPane = new GridBagConstraints();
 		gbc_notificationScrollPane.insets = new Insets(0, 0, 5, 5);
-		//gbc_notificationScrollPane.fill = GridBagConstraints.BOTH;
 		gbc_notificationScrollPane.gridx = 0;
-		gbc_notificationScrollPane.gridy = 4;
+		gbc_notificationScrollPane.gridy = 5;
 		rightPanel.add(notificationScrollPane, gbc_notificationScrollPane);
 		notificationScrollPane.setPreferredSize(new Dimension(180, 200));
 		
-		JList<Notification> notificationList = new JList<Notification>(new NotificationListModel());
+		notificationList = new JList<Notification>(new NotificationListModel());
 		notificationScrollPane.setViewportView(notificationList);
 		
 		JLabel notificationLabel = new JLabel("Varsler:");
@@ -246,37 +271,18 @@ public class CalendarView extends JFrame {
 		gbc_calendarPanel.gridx = 0;
 		gbc_calendarPanel.gridy = 1;
 		contentPane.add(calendarPanel, gbc_calendarPanel);
-
+		
 		calendarTable = new JTable();
 		//calendarTable.setColumnSelectionAllowed(true);
 		calendarTable.setCellSelectionEnabled(true);
-		calendarTable.setPreferredSize(new Dimension(800, 433));
+		//calendarTable.setFillsViewportHeight(true);
+		calendarTable.setPreferredSize(new Dimension(800, 435));
 		calendarTable.setRowHeight(29);
-		calendarTable.setGridColor(new Color(192, 192, 192));
+		calendarTable.setGridColor(new Color(200, 200, 200));
 		calendarPanel.add(calendarTable);
 		
-		calendarTable.setModel(new DefaultTableModel(
-			new Object[][] {
-				{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
-				{"07.00", null, null, null, null, null, null, null},
-				{"08.00", null, null, null, null, null, null, null},
-				{"09.00", null, null, null, null, null, null, null},
-				{"10.00", null, null, null, null, null, null, null},
-				{"11.00", null, null, null, null, null, null, null},
-				{"12.00", null, null, null, null, null, null, null},
-				{"13.00", null, null, null, null, null, null, null},
-				{"14.00", null, null, null, null, null, null, null},
-				{"15.00", null, null, null, null, null, null, null},
-				{"16.00", null, null, null, null, null, null, null},
-				{"17.00", null, null, null, null, null, null, null},
-				{"18.00", null, null, null, null, null, null, null},
-				{"19.00", null, null, null, null, null, null, null},
-				{"20.00", null, null, null, null, null, null, null},
-			},
-			new String[] {
-				"New column", "Mandag", "New column", "New column", "New column", "New column", "New column", "New column"
-			}
-		));
+		calendarTableModel = new WeekCalendar();
+		calendarTable.setModel(calendarTableModel);
 	}
 
 	
@@ -305,58 +311,55 @@ public class CalendarView extends JFrame {
 			} else if(actionCommand.equals("<-")) {
 				weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() - 1);
 				
+			} else if(actionCommand.equals("Logg ut")) {
+				SocketListener sl = SocketListener.getClientSocketListener();
+				if (sl != null) {
+					OutboundWorker ow = sl.getOutboundWorker();
+					if (ow != null) ow.logout();
+					sl.closeSocket();
+				}
+				
+				employeeComboBox.setSelectedItem(null);
+				loggedInUser[0] = "";
+				usernameLabel.setText("");
+				
+				// TODO
+				// clear calendar table
+				calendarTableModel.resetDefaultCalendar();
+				calendarTable.setModel(new WeekCalendar());
+				// clear notifications
+				notificationList.setModel(new NotificationListModel());
+				// reset week / year to current
+				
+				new LoginScreen(thisFrame, loggedInUser);
+				usernameLabel.setText(loggedInUser[0]);
+				
 			}
 		}
 	};
 	
 	
-	WindowListener windowListener = new WindowListener() {
-		
+	WindowAdapter windowListener = new WindowAdapter() {
 		@Override
-		public void windowOpened(WindowEvent e) {
-			// TODO Auto-generated method stub
+		public void windowClosing(WindowEvent we) {
+			SocketListener listener = SocketListener.getClientSocketListener();
+			if (listener != null) listener.closeSocket();
 			
-		}
-		
-		@Override
-		public void windowIconified(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void windowDeiconified(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void windowDeactivated(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
-		
-		@Override
-		public void windowClosing(WindowEvent e) {
-			// TODO Auto-generated method stub
-			System.out.println("closing");
-			SocketListener.getClientSocketListener().closeSocket();
 			System.exit(0);
 			
 		}
 		
 		@Override
-		public void windowClosed(WindowEvent e) {
-			// TODO Auto-generated method stub
+		public void windowClosed(WindowEvent we) {
 			System.out.println("closed");
 		}
-		
-		@Override
-		public void windowActivated(WindowEvent e) {
-			// TODO Auto-generated method stub
-			
-		}
 	};
+	
+	
+	public String getLoggedInUser() {
+		return loggedInUser[0]; // return non-mutable string
+	}
+	
 	
 }
 

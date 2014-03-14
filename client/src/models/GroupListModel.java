@@ -15,24 +15,30 @@ public class GroupListModel extends DefaultListModel<Group> implements NetInterf
 	public void initialize() {
 		// TODO Auto-generated method stub
 		
+		/* test code */
+		Group group = new Group("Alle ansatte");
+		EmployeeListModel tempList = new EmployeeListModel();
+		tempList.initialize();
+		for (Object employee : tempList.toArray()) {
+			group.add((Employee)employee);
+		}
+		this.addElement(group);
+		/* end test code */
 	}
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-		
+		this.initialize();
 	}
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
-		
+		// Do not add code. This model should not be sent to server
 	}
 
 	@Override
 	public void delete() {
-		// TODO Auto-generated method stub
-		
+		// Do not add code. This model can not be deleted from server
 	}
 
 }
