@@ -43,7 +43,7 @@ public class Appointment implements NetInterface {
 		pcs = new PropertyChangeSupport(this);
 		participantList = new ParticipantListModel();
 	}
-	
+
 	
 	public void setDate(Date date) {
 		if (startDateTime == null) startDateTime = Calendar.getInstance();
@@ -63,6 +63,7 @@ public class Appointment implements NetInterface {
 		if(endset){
 		
 			pcs.firePropertyChange("duration", duration, newduration);
+			
 		}
 		else if(durationset){
 			
