@@ -1,9 +1,13 @@
 package controllers;
 
+import helperclasses.JSONHandler;
+import helperclasses.Response;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Created by Truls on 12.03.14.
@@ -26,18 +30,26 @@ public class InboundWorker extends Thread implements Runnable {
             while(connected) {
 
                 readFromServer = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
-                System.out.println("Response from server:");
 
-                String rec = readFromServer.readLine();
 
-                if (rec == null) {
+                String responseString = readFromServer.readLine();
+
+                if (responseString == null) {
                     System.out.println("CLOSED WHEN RECEIVING NO DATA");
                     break;
                 }
 
-                System.out.println(rec);
+                Response response = new Response(responseString);
 
-                // TODO: call to json handler to handle the response message
+                System.out.println("Received response from Server: ");
+                System.out.println(response.get_JSONRESPONSE() + "\n");
+
+                Object object = JSONHandler.parseJSON(response);
+
+                System.out.println("ParsedObjectOutput: " + object);
+
+
+                // TODO: SENDE VIDERE TIL KLASSE SOM OPPDATER KLIENT
 
             }
 

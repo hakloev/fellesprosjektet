@@ -3,6 +3,7 @@ package controllers;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketAddress;
 
 /**
  * Created by hakloev on 10/03/14.
@@ -18,6 +19,7 @@ public class SocketListener extends Thread implements Runnable {
 		int connectionID = 1;
 		try {
 			ServerSocket serverSocket = new ServerSocket(_PORT);
+			System.out.println("SocketListener.run: SERVING ON " + serverSocket.getInetAddress() + " PORT " + serverSocket.getLocalPort());
 			while (_SERVING) {
 				System.out.println("SocketListener.run: SERVERSOCKET WAITING FOR INCOMING CONNECTION");
 				Socket incomingConnection = serverSocket.accept();

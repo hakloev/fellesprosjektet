@@ -1,5 +1,7 @@
-package controllers;
+package helperclasses;
 
+
+import models.Participant;
 
 /**
  * Created by Truls on 11.03.14.

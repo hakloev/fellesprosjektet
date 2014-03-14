@@ -315,8 +315,8 @@ public class CalendarView extends JFrame {
 			} else if(actionCommand.equals("Logg ut")) {
 				SocketListener sl = SocketListener.getClientSocketListener();
 				if (sl != null) {
-					OutboundWorker ow = sl.getOutboundWorker();
-					if (ow != null) ow.logout();
+					//OutboundWorker ow = sl.getOutboundWorker();
+					//if (ow != null) ow.logout();
 					sl.closeSocket();
 				}
 				

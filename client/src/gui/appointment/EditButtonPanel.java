@@ -90,6 +90,7 @@ class EditButtonPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getActionCommand().equals("Rediger liste")) {
 			new EditParticipants(parent, appointment);
+			
 		}
         else if(ae.getActionCommand().equals(("Deltar"))){
 

@@ -7,6 +7,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import controllers.DatabaseWorker;
 import helperclasses.Request;
 import models.Employee;
+import models.Participant;
+import models.ParticipantStatus;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -18,8 +20,7 @@ import java.io.Writer;
 public class TestJson {
 
 	public static void main(String[] args) {
-		Employee employee = new Employee("Lars", "password", "truls");
-		RequestTest request = new RequestTest("employee","get", employee);
+		RequestTest request = new RequestTest("employee","get",  new Participant("uname", "derp", ParticipantStatus.participating));
 		ObjectMapper mapper = new ObjectMapper();
 
 		try {
