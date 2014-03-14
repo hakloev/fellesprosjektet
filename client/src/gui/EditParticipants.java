@@ -197,7 +197,7 @@ public class EditParticipants extends JDialog implements ActionListener{
 			System.out.println("OK");
 			appointment.setParticipantList(tempParticipantList);
 			this.dispose();
-			((EditAppointment)parent).updateUI();
+			//((EditAppointment)parent).updateUI();
 		}
 		else if (ae.getActionCommand().equals("Avbryt")){
 			this.dispose();

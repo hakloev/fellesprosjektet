@@ -9,8 +9,11 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.util.Calendar;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -224,8 +227,9 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_btnVelgTid.gridy = 5;
 		this.add(btnVelgTid, gbc_btnVelgTid);
 
-	}
+		btnVelgTid.addActionListener(actionListener);
 
+	}
 
 	@Override
 	public void setEnabled(boolean enabled) {
@@ -286,6 +290,16 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 			}
 
 
+		}
+	};
+
+
+	ActionListener actionListener = new ActionListener() {
+		@Override
+		public void actionPerformed(ActionEvent ae) {
+			if (ae.getActionCommand().equals("Velg tid")) {
+				new Alert(parent, Calendar.getInstance());
+			}
 		}
 	};
 
