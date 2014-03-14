@@ -1,6 +1,5 @@
 package main;
 
-
 import controllers.OutboundWorker;
 import controllers.SocketListener;
 import gui.CalendarView;

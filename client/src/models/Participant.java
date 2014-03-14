@@ -50,7 +50,6 @@ public class Participant {
 		return userName;
 	}
 
-
     public ParticipantStatus getParticipantStatus() {
         return participantStatus;
     }
