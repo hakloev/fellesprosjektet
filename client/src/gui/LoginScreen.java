@@ -90,7 +90,7 @@ public class LoginScreen extends JDialog implements ActionListener{
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand() == "Logg inn") {
         	//Creating a SocketClient object
-            SocketListener client = new SocketListener();
+            //SocketListener client = new SocketListener();
             //trying to establish connection to the server
             
             /* test code */

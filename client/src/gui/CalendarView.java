@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.Calendar;
 
 @SuppressWarnings("serial")
 public class CalendarView extends JFrame {
@@ -41,10 +42,11 @@ public class CalendarView extends JFrame {
 	private JLabel usernameLabel;
 	private WeekCalendar calendarTableModel;
 	private JList<Notification> notificationList;
+	private JSpinner yearSpinner;
 	
 	private JFrame thisFrame;
 	
-	private String[] loggedInUser = new String[1]; // point to something mutable so we can give to login screen
+	private String loggedInUsername;
 	private Employee loggedInEmployee;
 
 
@@ -74,8 +76,19 @@ public class CalendarView extends JFrame {
 		this.pack();
 		this.setLocationRelativeTo(null);
 		
-		new LoginScreen(this, loggedInUser);
-		usernameLabel.setText(loggedInUser[0]);
+		/* login stuff */
+		String[] username = new String[1]; // point to something mutable so we can get it back
+		new LoginScreen(this, username);
+		usernameLabel.setText(username[0]);
+		loggedInUsername = username[0];
+		
+		EmployeeComboBoxModel ecbModel = new EmployeeComboBoxModel();
+		employeeComboBox.setModel(ecbModel);
+		
+		NotificationListModel notiListModel = new NotificationListModel();
+		notiListModel.initialize();
+		notificationList.setModel(notiListModel);
+		
 		this.setVisible(true);
 		
 	}
@@ -92,10 +105,7 @@ public class CalendarView extends JFrame {
 		contentPane.add(topPanel, gbc_topPanel);
 		
 		GridBagLayout gbl_topPanel = new GridBagLayout();
-		//gbl_topPanel.columnWidths = new int[]{0, 0, 0, 0, 0, 0, 0, 0};
-		//gbl_topPanel.rowHeights = new int[]{0};
 		gbl_topPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0, 0};
-		//gbl_topPanel.rowWeights = new double[]{0.0, Double.MIN_VALUE};
 		topPanel.setLayout(gbl_topPanel);
 
 		/* Previous week */
@@ -137,19 +147,21 @@ public class CalendarView extends JFrame {
 		for (int week = 1; week <= 52; week++) {
 			weekComboBox.addItem(week);
 		}
-		/* test code */
-		weekComboBox.setSelectedItem(11);
-		/* end test code */
 		
 		/* Year */
-		JSpinner yearSpinner = new JSpinner();
-		yearSpinner.setModel(new SpinnerNumberModel(new Integer(2014), new Integer(1970), new Integer(2114), new Integer(1)));
+		yearSpinner = new JSpinner();
+		yearSpinner.setModel(new SpinnerNumberModel(1970, 1970, 2114, 1));
 		GridBagConstraints gbc_yearSpinner = new GridBagConstraints();
 		gbc_yearSpinner.anchor = GridBagConstraints.WEST;
 		gbc_yearSpinner.insets = new Insets(5, 0, 5, 5);
 		gbc_yearSpinner.gridx = 4;
 		gbc_yearSpinner.gridy = 0;
 		topPanel.add(yearSpinner, gbc_yearSpinner);
+		
+		/* Set current week and year */
+		Calendar currentCal = Calendar.getInstance();
+		weekComboBox.setSelectedIndex(currentCal.get(Calendar.WEEK_OF_YEAR) - 1);
+		yearSpinner.setValue(currentCal.get(Calendar.YEAR));
 		
 		/* Showing calendar of employee */
 		JLabel showingLabel = new JLabel("Viser kalender for");
@@ -163,13 +175,11 @@ public class CalendarView extends JFrame {
 		employeeComboBox = new JComboBox<Employee>();
 		GridBagConstraints gbc_employeeComboBox = new GridBagConstraints();
 		gbc_employeeComboBox.anchor = GridBagConstraints.WEST;
-		gbc_showingLabel.insets = new Insets(5, 0, 5, 5);
+		gbc_employeeComboBox.insets = new Insets(5, 0, 5, 5);
 		gbc_employeeComboBox.gridx = 6;
 		gbc_employeeComboBox.gridy = 0;
 		topPanel.add(employeeComboBox, gbc_employeeComboBox);
 		employeeComboBox.setPreferredSize(new Dimension(200, 23));
-		EmployeeComboBoxModel ecbModel = new EmployeeComboBoxModel();
-		employeeComboBox.setModel(ecbModel);
 		
 		/* Logged in user */
 		JLabel loginLabel = new JLabel("Innlogget som:");
@@ -187,7 +197,6 @@ public class CalendarView extends JFrame {
 		gbc_usernameLabel.gridx = 8;
 		gbc_usernameLabel.gridy = 0;
 		topPanel.add(usernameLabel, gbc_usernameLabel);
-		//usernameLabel.setPreferredSize(new Dimension(50, 14));
 		usernameLabel.setForeground(new Color(150, 0, 0));
 		
 		JButton logoutButton = new JButton("Logg ut");
@@ -254,10 +263,10 @@ public class CalendarView extends JFrame {
 		rightPanel.add(notificationScrollPane, gbc_notificationScrollPane);
 		notificationScrollPane.setPreferredSize(new Dimension(180, 200));
 		
-		notificationList = new JList<Notification>(new NotificationListModel());
+		notificationList = new JList<Notification>();
 		notificationScrollPane.setViewportView(notificationList);
 		
-		JLabel notificationLabel = new JLabel("Varsler:");
+		JLabel notificationLabel = new JLabel(" Varsler");
 		notificationScrollPane.setColumnHeaderView(notificationLabel);
 	}
 	
@@ -320,20 +329,28 @@ public class CalendarView extends JFrame {
 					sl.closeSocket();
 				}
 				
+				// clear text
 				employeeComboBox.setSelectedItem(null);
-				loggedInUser[0] = "";
+				loggedInUsername = "";
 				usernameLabel.setText("");
 				
-				// TODO
 				// clear calendar table
 				calendarTableModel.resetDefaultCalendar();
 				calendarTable.setModel(new WeekCalendar());
+				
 				// clear notifications
 				notificationList.setModel(new NotificationListModel());
-				// reset week / year to current
 				
-				new LoginScreen(thisFrame, loggedInUser);
-				usernameLabel.setText(loggedInUser[0]);
+				// reset week and year to current
+				Calendar currentCal = Calendar.getInstance();
+				weekComboBox.setSelectedIndex(currentCal.get(Calendar.WEEK_OF_YEAR) - 1);
+				yearSpinner.setValue(currentCal.get(Calendar.YEAR));
+				
+				// show login screen
+				String[] username = new String[1]; // point to something mutable so we can get it back
+				new LoginScreen(thisFrame, username);
+				usernameLabel.setText(username[0]);
+				loggedInUsername = username[0];
 				
 			}
 		}
@@ -349,7 +366,6 @@ public class CalendarView extends JFrame {
 			System.exit(0);
 			
 		}
-		
 		@Override
 		public void windowClosed(WindowEvent we) {
 			System.out.println("closed");
@@ -358,7 +374,7 @@ public class CalendarView extends JFrame {
 	
 	
 	public String getLoggedInUser() {
-		return loggedInUser[0]; // return non-mutable string
+		return loggedInUsername;
 	}
 	
 	

@@ -59,6 +59,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	
 	@Override
 	public void refresh() {
+		// TODO Clear first maybe?
 		this.initialize();
 	}
 	

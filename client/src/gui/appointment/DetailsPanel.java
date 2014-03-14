@@ -43,8 +43,6 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 	private Appointment appointment;
 
-	private ParticipantListModel appointmentParticipantList;
-
 	private JButton btnVelgRom;
 
     private Calendar[] alarmCalendar = new Calendar[1];
@@ -54,13 +52,12 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.appointment = appointment;
 		appointment.addPropertyChangeListener(this);
 		this.parent = parent;
-		this.appointmentParticipantList = appointment.getParticipantList();
 
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);
 
 		/* Dato */
-		JLabel lblDato = new JLabel("Dato[DD.MM.YYYY]");
+		JLabel lblDato = new JLabel("Dato");
 		GridBagConstraints gbc_lblDato = new GridBagConstraints();
 		gbc_lblDato.anchor = GridBagConstraints.EAST;
 		gbc_lblDato.insets = new Insets(5, 5, 5, 5);
@@ -82,7 +79,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
         //dateSpinner.setColumns(10);
 
 		/* Start tid */
-		JLabel lblStart = new JLabel("Start[TT:MM]");
+		JLabel lblStart = new JLabel("Start");
 		GridBagConstraints gbc_lblStart = new GridBagConstraints();
 		gbc_lblStart.anchor = GridBagConstraints.EAST;
 		gbc_lblStart.insets = new Insets(0, 5, 5, 5);
@@ -104,7 +101,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
         //startTimeSpinner.setColumns(10);
 
 		/* Slutt tid */
-		JLabel lblSlutt = new JLabel("Slutt[TT:MM]");
+		JLabel lblSlutt = new JLabel("Slutt");
 		GridBagConstraints gbc_lblSlutt = new GridBagConstraints();
 		gbc_lblSlutt.anchor = GridBagConstraints.EAST;
 		gbc_lblSlutt.insets = new Insets(0, 5, 5, 5);
@@ -126,7 +123,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
         //stopTimeSpinner.setColumns(10);
 
 		/* Varighet */
-		JLabel lblVarighet = new JLabel("Varighet[TT:MM]");
+		JLabel lblVarighet = new JLabel("Varighet");
 		GridBagConstraints gbc_lblVarighet = new GridBagConstraints();
 		gbc_lblVarighet.anchor = GridBagConstraints.NORTHEAST;
 		gbc_lblVarighet.insets = new Insets(0, 5, 5, 5);
@@ -152,14 +149,14 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		JScrollPane descriptionScrollPane = new JScrollPane();
 		GridBagConstraints gbc_descriptionScrollPane = new GridBagConstraints();
 		gbc_descriptionScrollPane.gridheight = 4;
-		gbc_descriptionScrollPane.insets = new Insets(5, 0, 5, 5);
+		gbc_descriptionScrollPane.insets = new Insets(5, 5, 5, 5);
 		gbc_descriptionScrollPane.fill = GridBagConstraints.BOTH;
 		gbc_descriptionScrollPane.gridx = 2;
 		gbc_descriptionScrollPane.gridy = 0;
 		this.add(descriptionScrollPane, gbc_descriptionScrollPane);
 		descriptionScrollPane.setPreferredSize(new Dimension(120, 120));
 
-		JLabel lblBeskrivelse = new JLabel("Beskrivelse");
+		JLabel lblBeskrivelse = new JLabel(" Beskrivelse");
 		descriptionScrollPane.setColumnHeaderView(lblBeskrivelse);
 
 		descriptionTextArea = new JTextArea();
@@ -170,14 +167,14 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		JScrollPane participantScrollPane = new JScrollPane();
 		GridBagConstraints gbc_participantScrollPane = new GridBagConstraints();
 		gbc_participantScrollPane.gridheight = 4;
-		gbc_participantScrollPane.insets = new Insets(5, 0, 5, 5);
+		gbc_participantScrollPane.insets = new Insets(5, 5, 5, 5);
 		gbc_participantScrollPane.fill = GridBagConstraints.BOTH;
 		gbc_participantScrollPane.gridx = 3;
 		gbc_participantScrollPane.gridy = 0;
 		this.add(participantScrollPane, gbc_participantScrollPane);
 		participantScrollPane.setPreferredSize(new Dimension(120, 120));
 
-		JLabel lblDeltagere = new JLabel("Deltagere");
+		JLabel lblDeltagere = new JLabel(" Deltagere");
 		participantScrollPane.setColumnHeaderView(lblDeltagere);
 
 		participantList = new JList<Participant>(appointment.getParticipantList());
@@ -189,7 +186,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		JLabel lblSted = new JLabel("Sted");
 		GridBagConstraints gbc_lblSted = new GridBagConstraints();
 		gbc_lblSted.anchor = GridBagConstraints.EAST;
-		gbc_lblSted.insets = new Insets(0, 5, 5, 5);
+		gbc_lblSted.insets = new Insets(5, 5, 5, 5);
 		gbc_lblSted.gridx = 0;
 		gbc_lblSted.gridy = 4;
 		this.add(lblSted, gbc_lblSted);
@@ -197,7 +194,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		placeTextField = new JTextField();
 		GridBagConstraints gbc_placeTextField = new GridBagConstraints();
 		gbc_placeTextField.gridwidth = 2;
-		gbc_placeTextField.insets = new Insets(0, 0, 5, 5);
+		gbc_placeTextField.insets = new Insets(5, 0, 5, 5);
 		gbc_placeTextField.fill = GridBagConstraints.HORIZONTAL;
 		gbc_placeTextField.gridx = 1;
 		gbc_placeTextField.gridy = 4;
@@ -206,10 +203,11 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		btnVelgRom = new JButton("Velg rom");
 		GridBagConstraints gbc_btnVelgRom = new GridBagConstraints();
 		gbc_btnVelgRom.anchor = GridBagConstraints.WEST;
-		gbc_btnVelgRom.insets = new Insets(0, 0, 5, 5);
+		gbc_btnVelgRom.insets = new Insets(5, 0, 5, 5);
 		gbc_btnVelgRom.gridx = 3;
 		gbc_btnVelgRom.gridy = 4;
 		this.add(btnVelgRom, gbc_btnVelgRom);
+		btnVelgRom.addActionListener(actionListener);
 
 		/* Alarm */
 		JLabel lblAlarm = new JLabel("Alarm");
@@ -228,7 +226,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_alarmTextField.gridy = 5;
 		this.add(alarmTextField, gbc_alarmTextField);
         alarmTextField.setEnabled(false);
-		//alarmTextField.setColumns(10);
+		alarmTextField.setColumns(11);
 
 		JButton btnVelgTid = new JButton("Velg tid");
 		GridBagConstraints gbc_btnVelgTid = new GridBagConstraints();
@@ -251,7 +249,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		placeTextField.setEditable(enabled);
 		descriptionTextArea.setEditable(enabled);
 		participantList.setEnabled(enabled);
-		this.remove(btnVelgRom);
+		if (! enabled) this.remove(btnVelgRom);
 	}
 
 
@@ -259,20 +257,20 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 	public void updateUI() {
 		super.updateUI();
 		if (participantList != null) participantList.updateUI();
-		if (participantList != null) for (Object jall : appointmentParticipantList.toArray()) {
-			System.out.println(jall);
-		}
 	}
+	
+	
 	public Participant getSelectedParticipant(){
 		return this.participantList.getSelectedValue();
 	}
+	
+	
 	public ParticipantListModel getAppointmentParticipantList(){
-		return this.appointmentParticipantList;
+		return this.appointment.getParticipantList();
 	}
 
 
 	ListSelectionListener pllsl = new ListSelectionListener() {
-
 		@Override
 		public void valueChanged(ListSelectionEvent lse) {
 			if (! (parent instanceof EditAppointment)) return;
@@ -303,14 +301,18 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 		}
 	};
+	
+	
     public void setAlarmTextField(){
-        String alarmText = new String();
-        alarmText += alarmCalendar[0].get(Calendar.DAY_OF_MONTH) + ".";
-        alarmText += alarmCalendar[0].get(Calendar.MONTH) + ".";
-        alarmText += alarmCalendar[0].get(Calendar.YEAR) + " ";
-        alarmText += alarmCalendar[0].get(Calendar.HOUR_OF_DAY) + ":";
-        alarmText += alarmCalendar[0].get(Calendar.MINUTE);
-        alarmTextField.setText(alarmText);
+    	if (alarmCalendar[0] != null) {
+    		String alarmText = new String();
+    		alarmText += alarmCalendar[0].get(Calendar.DAY_OF_MONTH) + ".";
+    		alarmText += alarmCalendar[0].get(Calendar.MONTH) + ".";
+    		alarmText += alarmCalendar[0].get(Calendar.YEAR) + " ";
+    		alarmText += alarmCalendar[0].get(Calendar.HOUR_OF_DAY) + ":";
+    		alarmText += alarmCalendar[0].get(Calendar.MINUTE);
+    		alarmTextField.setText(alarmText);
+    	}
     }
 
 
@@ -318,11 +320,16 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			if (ae.getActionCommand().equals("Velg tid")) {
-
 				new Alarm(parent, Calendar.getInstance(), alarmCalendar);
-                System.out.println(alarmCalendar[0].toString());
                 setAlarmTextField();
-
+                
+			} else if (ae.getActionCommand().equals("Velg rom")) {
+				Room[] room = new Room[1];
+				new RoomChooser(parent, appointment.getParticipantList().getSize(), room);
+				if (room[0] != null) {
+					appointment.setLocation(room[0]);
+					placeTextField.setText(room[0].toString());
+				}
 			}
 		}
 	};
