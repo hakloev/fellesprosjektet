@@ -1,22 +1,19 @@
 package controllers;
 import java.io.*;
 import java.net.Socket;
-import java.net.UnknownHostException;
-
-import javax.swing.JOptionPane;
 
 
 /**
  * Created by Torgeir on 11.03.14.
  */
-public class SocketListener {
+public class SocketListener{
 
     private String hostname;
     private int port;
     private Socket socketClient;
+    private OutboundWorker outWorker;
     
     private static SocketListener clientSocketListener;
-    private static boolean connected = false;
     
 
     public SocketListener(String hostname, int port){
@@ -31,7 +28,7 @@ public class SocketListener {
     }
 
 
-    public void connect(){
+    public boolean connect(){
         System.out.println("Attempting to connect to "+hostname+":"+port);
         try {
             Socket socketClient = new Socket(hostname,port);
@@ -40,15 +37,35 @@ public class SocketListener {
             inWorker.start();
             OutboundWorker outbound = new OutboundWorker(socketClient);
             System.out.println("Response Thread STARTED");
-            connected = true;
+            outWorker = new OutboundWorker(socketClient);
+            outWorker.sendRequest();
+            
+            return true;
 
         } catch (IOException e) {
-        	JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
-        	connected = false;
             e.printStackTrace();
+            
+            return false;
+            
+            /* just return true for testing purposes */
+            //return true;
             
         }
 
+    }
+    
+    
+    public OutboundWorker getOutboundWorker() {
+    	return outWorker;
+    }
+    
+    
+    public void closeSocket() {
+    	if (socketClient != null) try {
+    		socketClient.close();
+    	} catch (IOException e) {
+    		e.printStackTrace();
+    	}
     }
     
     
@@ -62,18 +79,7 @@ public class SocketListener {
     }
     
     
-    public static boolean isConnected() {
-    	return connected;
-    }
     
-    
-    public void closeSocket() {
-    	if (socketClient != null) try {
-			socketClient.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-    }
     
 }
 

@@ -35,4 +35,17 @@ public class OutboundWorker {
 
 
     }
+    
+    
+    public boolean login(String username, char[] password) {
+    	//TODO login logic
+    	return true;
+    }
+    
+    
+    public boolean logout() {
+    	// TODO logout logic
+    	return true;
+    }
+    
 }

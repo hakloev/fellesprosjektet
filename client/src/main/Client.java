@@ -1,11 +1,4 @@
 package main;
-import controllers.OutboundWorker;
-import helperclasses.Request;
-import controllers.SocketListener;
-import models.Appointment;
-import models.Participant;
-import models.ParticipantListModel;
-import models.ParticipantStatus;
 
 import gui.CalendarView;
 

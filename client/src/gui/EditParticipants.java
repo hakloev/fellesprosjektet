@@ -38,7 +38,6 @@ public class EditParticipants extends JDialog implements ActionListener{
 	public EditParticipants(JDialog parent, Appointment appointment) {
 		super(parent, true);
 		this.setTitle("Rediger deltagere");
-		this.setLocation(100, 100);
 		this.setResizable(false);
 		
 		this.parent = parent;
@@ -194,10 +193,8 @@ public class EditParticipants extends JDialog implements ActionListener{
 			}
 		}
 		else if (ae.getActionCommand().equals("OK")){
-			System.out.println("OK");
 			appointment.setParticipantList(tempParticipantList);
 			this.dispose();
-			((EditAppointment)parent).updateUI();
 		}
 		else if (ae.getActionCommand().equals("Avbryt")){
 			this.dispose();

@@ -14,23 +14,23 @@ import models.*;
 
 @SuppressWarnings("serial")
 class EditButtonPanel extends JPanel implements ActionListener {
-	
-	
+
+
 	private Appointment appointment;
 	private JDialog parent;
-	
+
 	private JButton btnDeltar;
 	private JButton btnDeltarIkke;
 	private JButton btnSlett;
 
-	
+
 	EditButtonPanel(JDialog parent, Appointment appointment) {
 		this.appointment = appointment;
 		this.parent = parent;
-		
+
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);
-		
+
 		JButton btnRedigerListe = new JButton("Rediger liste");
 		GridBagConstraints gbc_btnRedigerListe = new GridBagConstraints();
 		gbc_btnRedigerListe.insets = new Insets(5, 0, 5, 5);
@@ -38,7 +38,7 @@ class EditButtonPanel extends JPanel implements ActionListener {
 		gbc_btnRedigerListe.gridy = 0;
 		this.add(btnRedigerListe, gbc_btnRedigerListe);
 		btnRedigerListe.addActionListener(this);
-		
+
 		btnDeltar = new JButton("Deltar");
 		GridBagConstraints gbc_btnDeltar = new GridBagConstraints();
 		gbc_btnDeltar.insets = new Insets(0, 0, 5, 5);
@@ -47,7 +47,7 @@ class EditButtonPanel extends JPanel implements ActionListener {
 		gbc_btnDeltar.gridy = 1;
 		this.add(btnDeltar, gbc_btnDeltar);
 		btnDeltar.addActionListener(this);
-		
+
 		btnDeltarIkke = new JButton("Deltar ikke");
 		GridBagConstraints gbc_btnDeltarIkke = new GridBagConstraints();
 		gbc_btnDeltarIkke.insets = new Insets(0, 0, 5, 5);
@@ -56,7 +56,7 @@ class EditButtonPanel extends JPanel implements ActionListener {
 		gbc_btnDeltarIkke.gridy = 2;
 		this.add(btnDeltarIkke, gbc_btnDeltarIkke);
 		btnDeltarIkke.addActionListener(this);
-		
+
 		btnSlett = new JButton("Slett");
 		GridBagConstraints gbc_btnSlett = new GridBagConstraints();
 		gbc_btnSlett.insets = new Insets(0, 0, 5, 5);
@@ -65,22 +65,22 @@ class EditButtonPanel extends JPanel implements ActionListener {
 		gbc_btnSlett.gridy = 3;
 		this.add(btnSlett, gbc_btnSlett);
 		btnSlett.addActionListener(this);
-		
+
 	}
-	
-	
+
+
 	void setBothStatusButtonsEnabled(boolean enabled) {
 		btnDeltar.setEnabled(enabled);
 		btnDeltarIkke.setEnabled(enabled);
 	}
-	
-	
+
+
 	void setParticipatingEnabled_notParticipatingDisabled(boolean enabled) {
 		btnDeltar.setEnabled(enabled);
 		btnDeltarIkke.setEnabled(! enabled);
 	}
-	
-	
+
+
 	void setButtonSlettEnabled(boolean enabled) {
 		btnSlett.setEnabled(enabled);
 	}
@@ -90,31 +90,35 @@ class EditButtonPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getActionCommand().equals("Rediger liste")) {
 			new EditParticipants(parent, appointment);
+			
 		}
         else if(ae.getActionCommand().equals(("Deltar"))){
 
             ((EditAppointment)parent).getSelectedParticipant().setParticipantStatus(ParticipantStatus.participating);
             btnDeltar.setEnabled(false);
             btnDeltarIkke.setEnabled(true);
+            ((EditAppointment)parent).updateUI();
+            
         }
         else if( ae.getActionCommand().equals("Deltar ikke")){
             ((EditAppointment)parent).getSelectedParticipant().setParticipantStatus(ParticipantStatus.notParticipating);
             btnDeltarIkke.setEnabled(false);
             btnDeltar.setEnabled(true);
+            ((EditAppointment)parent).updateUI();
+            
         }
         else if(ae.getActionCommand().equals("Slett")){
              int choice = JOptionPane.showConfirmDialog(this,
-                "Er du sikker på at du vil slette " + ((EditAppointment)parent).getSelectedParticipant().getUserName() + " fra avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
+                "Er du sikker på at du vil slette " + ((EditAppointment)parent).getSelectedParticipant().getName() + " fra avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
 
             if (choice == 0) {
                 // slett Deltager
-                System.out.println("Deltager slettet");
                 ((EditAppointment)parent).getParticipantList().removeElement(((EditAppointment) parent).getSelectedParticipant());
             }
         }
 
 	}
-	
+
 }
 
 

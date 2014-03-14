@@ -7,8 +7,10 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements Net
 	
 	
 	
-	public EmployeeListModel() {
-		super();
+	
+	@Override
+	public void initialize() {
+		// TODO Auto-generated method stub
 		
 		/* test code */
 		this.addElement(new Employee("siri", "Siri Gundersen"));
@@ -16,32 +18,20 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements Net
 		this.addElement(new Employee("per", "Per Haraldsen"));
 		/* end test code */
 	}
-	
-	
-	
-	
-	@Override
-	public void initialize() {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-		
+		this.initialize();
 	}
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
-		
+		// Do not add code. This model should not be sent to server
 	}
 
 	@Override
 	public void delete() {
-		// TODO Auto-generated method stub
-		
+		// Do not add code. This model can not be deleted from server
 	}
 
 }
