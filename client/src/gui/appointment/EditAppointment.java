@@ -7,6 +7,7 @@ import models.*;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class EditAppointment extends JDialog {
@@ -35,7 +36,7 @@ public class EditAppointment extends JDialog {
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
 
-		detailsPanel = new DetailsPanel(this, appointment);
+		detailsPanel = new DetailsPanel(this, appointment, new Date());   // Temporary use of new date, date can be fetched from the Calendar View
 		contentPane.add(detailsPanel, gbc_detailsPanel);
 
 		

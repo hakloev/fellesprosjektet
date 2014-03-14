@@ -52,7 +52,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 	private Calendar[] alarmCalendar = new Calendar[1];
 
 
-	DetailsPanel(JDialog parent, Appointment appointment) {
+	DetailsPanel(JDialog parent, Appointment appointment, Date date) {
 		this.appointment = appointment;
 		appointment.addPropertyChangeListener(this);
 		this.parent = parent;
@@ -97,7 +97,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		startTimeSpinner.addChangeListener(this);
 		JSpinner.DateEditor timeEditor02 = new JSpinner.DateEditor(startTimeSpinner, "HH:mm");
 		startTimeSpinner.setEditor(timeEditor02);
-		startTimeSpinner.setValue(new Date());
+		startTimeSpinner.setValue(date);
 		startTimeSpinner.addFocusListener(this);
 		GridBagConstraints gbc_startTimeTextField = new GridBagConstraints();
 		gbc_startTimeTextField.insets = new Insets(0, 0, 5, 5);
@@ -106,6 +106,30 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_startTimeTextField.gridy = 1;
 		this.add(startTimeSpinner, gbc_startTimeTextField);
 		//startTimeSpinner.setColumns(10);
+		
+		/* Varighet */  // durationSpinner must exist before endTime is set in Appointment!!!
+		JLabel lblVarighet = new JLabel("Varighet[TT:MM]");
+		GridBagConstraints gbc_lblVarighet = new GridBagConstraints();
+		gbc_lblVarighet.anchor = GridBagConstraints.NORTHEAST;
+		gbc_lblVarighet.insets = new Insets(0, 5, 5, 5);
+		gbc_lblVarighet.gridx = 0;
+		gbc_lblVarighet.gridy = 3;
+		this.add(lblVarighet, gbc_lblVarighet);
+		
+		durationSpinner = new JSpinner(new SpinnerDateModel());
+		durationSpinner.addChangeListener(this);
+		JSpinner.DateEditor timeEditor04 = new JSpinner.DateEditor(durationSpinner, "HH:mm");
+		durationSpinner.setEditor(timeEditor04);
+		//durationSpinner.setValue(new Date());    This should be set via propertyChange
+		durationSpinner.addFocusListener(this);
+		GridBagConstraints gbc_durationTextField = new GridBagConstraints();
+		gbc_durationTextField.insets = new Insets(0, 0, 5, 5);
+		gbc_durationTextField.anchor = GridBagConstraints.NORTH;
+		gbc_durationTextField.fill = GridBagConstraints.HORIZONTAL;
+		gbc_durationTextField.gridx = 1;
+		gbc_durationTextField.gridy = 3;
+		this.add(durationSpinner, gbc_durationTextField);
+		//durationSpinner.setColumns(10);
 
 		/* Slutt tid */
 		JLabel lblSlutt = new JLabel("Slutt[TT:MM]");
@@ -120,7 +144,10 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		stopTimeSpinner.addChangeListener(this);
 		JSpinner.DateEditor timeEditor03 = new JSpinner.DateEditor(stopTimeSpinner, "HH:mm");
 		stopTimeSpinner.setEditor(timeEditor03);
-		stopTimeSpinner.setValue(new Date());
+		Date endDate = new Date(date.getTime());
+		endDate.setHours(date.getHours()+1);
+		this.appointment.setEnd(endDate);
+		stopTimeSpinner.setValue(endDate);
 		stopTimeSpinner.addFocusListener(this);
 		GridBagConstraints gbc_stopTimeTextField = new GridBagConstraints();
 		gbc_stopTimeTextField.insets = new Insets(0, 0, 5, 5);
@@ -130,30 +157,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.add(stopTimeSpinner, gbc_stopTimeTextField);
 		//stopTimeSpinner.setColumns(10);
 
-		/* Varighet */
-		JLabel lblVarighet = new JLabel("Varighet[TT:MM]");
-		GridBagConstraints gbc_lblVarighet = new GridBagConstraints();
-		gbc_lblVarighet.anchor = GridBagConstraints.NORTHEAST;
-		gbc_lblVarighet.insets = new Insets(0, 5, 5, 5);
-		gbc_lblVarighet.gridx = 0;
-		gbc_lblVarighet.gridy = 3;
-		this.add(lblVarighet, gbc_lblVarighet);
-
-		durationSpinner = new JSpinner(new SpinnerDateModel());
-		durationSpinner.addChangeListener(this);
-		JSpinner.DateEditor timeEditor04 = new JSpinner.DateEditor(durationSpinner, "HH:mm");
-		durationSpinner.setEditor(timeEditor04);
-		durationSpinner.setValue(new Date());
-		durationSpinner.addFocusListener(this);
-		GridBagConstraints gbc_durationTextField = new GridBagConstraints();
-		gbc_durationTextField.insets = new Insets(0, 0, 5, 5);
-		gbc_durationTextField.anchor = GridBagConstraints.NORTH;
-		gbc_durationTextField.fill = GridBagConstraints.HORIZONTAL;
-		gbc_durationTextField.gridx = 1;
-		gbc_durationTextField.gridy = 3;
-		this.add(durationSpinner, gbc_durationTextField);
-		//durationSpinner.setColumns(10);
-
+		
+		
 		/* Beskrivelse */
 		JScrollPane descriptionScrollPane = new JScrollPane();
 		GridBagConstraints gbc_descriptionScrollPane = new GridBagConstraints();
