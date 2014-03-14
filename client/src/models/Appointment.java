@@ -6,8 +6,12 @@ import java.beans.PropertyChangeSupport;
 public class Appointment implements NetInterface {
 
 
-	private ParticipantListModel participantList;
 	private PropertyChangeSupport pcs;
+	
+	private ParticipantListModel participantList;
+	private Employee appointmentLeader;
+	private String description;
+	private String location;
 
 	private int year;
 	private int month;
@@ -23,7 +27,11 @@ public class Appointment implements NetInterface {
 
 
 
-	public Appointment() {
+	/**
+	 *  Constructor for new appointment
+	 */
+	public Appointment(Employee appointmentLeader) {
+		this.appointmentLeader = appointmentLeader;
 		pcs = new PropertyChangeSupport(this);
 		participantList = new ParticipantListModel();
 	}
@@ -165,7 +173,31 @@ public class Appointment implements NetInterface {
 			this.participantList = participantList;
 		}
 	}
-
+	
+	
+	public Employee getAppointmentLeader() {
+		return appointmentLeader;
+	}
+	
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
+	
+	public String getDescription() {
+		return description;
+	}
+	
+	
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	
+	
+	public String getLocation() {
+		return location;
+	}
 
 
 	@Override
