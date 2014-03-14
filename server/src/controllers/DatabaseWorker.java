@@ -25,18 +25,11 @@ public class DatabaseWorker {
 		} else if (obj instanceof Participant) {
 			System.out.println("DatabaseWorker.handleRequest: obj instanceof Participant: " + (obj instanceof Participant));
 			Participant g = (Participant) obj;
-			g.setName("TRRRRULLLSS");
-			System.out.println(g.toString());
 			response = new Response("participant", "post", g);
 		} else if (obj instanceof Employee) {
 			System.out.println("DatabaseWorker.handleRequest: obj instance Participant: " + (obj instanceof Employee));
 			Employee e = (Employee) obj;
 			response = new Response("employee", "post", e);
-		} else if (obj instanceof ArrayList) { // DETTE ER STYGT, IKKE BRA KODE
-			for (int i = 0; i < ((ArrayList) obj).size(); i++) {
-				insertParticipant((Participant)((ArrayList) obj).get(i));
-			}
-			response = new Response("participantlistmodel", "post", (ArrayList<Participant>) obj);
 		} else if (obj instanceof Login) {
 			System.out.println("DatabaseWorker.handleRequest: obj instanceof Login: " + (obj instanceof Login));
 			Employee e = loginUser((Login)obj);

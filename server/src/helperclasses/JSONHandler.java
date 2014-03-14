@@ -65,7 +65,6 @@ public class JSONHandler {
 			} else if (type.equals("\"employee\"")) {
 				object = mapper.readValue(String.valueOf(root.path("object")), Employee.class);
 			} else {
-				// Will also arrive here when login
 				System.out.println("Request.parseJSON: ELSE ");
 				return object;
 			}
