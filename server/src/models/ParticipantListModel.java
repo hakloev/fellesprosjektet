@@ -11,6 +11,7 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 		super();
 	}
 
+	@JsonProperty("getParticipants")
 	public Object[] getParticipants() {
 		return this.toArray();
 	}
