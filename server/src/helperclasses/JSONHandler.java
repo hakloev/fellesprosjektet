@@ -10,9 +10,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import javax.print.DocFlavor;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -42,16 +44,25 @@ public class JSONHandler {
 				return object;
 			}
 
+			// THIS CODE IS UGLY
 			if (type.equals("\"appointment\"")) {
 				object = new Appointment();
 				Object parsed = parser.parse(String.valueOf(root.path("object")));
 				JSONObject jsonObject = (JSONObject) parsed;
 				JSONObject employee = (JSONObject) jsonObject.get("appointmentLeader");
-				System.out.println(employee);
-				JSONObject participantList = (JSONObject) jsonObject.get("participantList");
-				((Appointment)object).setStart(new Date(jsonObject.get("startDateTime").toString()));
-				((Appointment)object).setEnd(new Date(jsonObject.get("endDateTime").toString()));
+				((Appointment) object).setAppointmentLeader(new Employee(employee.get("name").toString(), employee.get("userName").toString()));
+				((Appointment) object).setDescription(jsonObject.get("description").toString());
+				((Appointment) object).setLocation(jsonObject.get("location").toString());
+				String date = jsonObject.get("date").toString();
+				String start = jsonObject.get("start").toString();
+				String end = jsonObject.get("end").toString();
+				SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy:HH:mm");
+				String startDate = date + ":" + start;
+				String endDate = date +":"+ end;
+				((Appointment) object).setStart(sdf.parse(startDate));
+				((Appointment) object).setEnd(sdf.parse(endDate));
 
+				JSONObject participantList = (JSONObject) jsonObject.get("participantList");
 				ParticipantListModel model = new ParticipantListModel();
 				JSONArray msg = (JSONArray) participantList.get("participants");
 				Iterator<JSONObject> iterator = msg.iterator();
@@ -59,7 +70,6 @@ public class JSONHandler {
 					JSONObject factObj = (JSONObject) iterator.next();
 					model.addElement(new Participant(factObj.get("userName").toString(), factObj.get("name").toString(), ParticipantStatus.valueOf(factObj.get("participantStatus").toString())));
 					String user = (String) factObj.toJSONString();
-					System.out.println(user);
 				}
 				((Appointment)object).setParticipantList(model);
 			} else if (type.equals("\"participant\"")) {
@@ -73,6 +83,8 @@ public class JSONHandler {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		} catch (ParseException e) {
+			e.printStackTrace();
+		} catch (java.text.ParseException e) {
 			e.printStackTrace();
 		}
 		return object;

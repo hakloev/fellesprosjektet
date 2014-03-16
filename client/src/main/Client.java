@@ -7,6 +7,7 @@ import helperclasses.Request;
 import models.*;
 
 import javax.swing.*;
+import java.util.Date;
 
 
 /**
@@ -20,8 +21,21 @@ public class Client {
         //trying to establish connection to the server
         client.connect();
 
-		Appoint
+	    ParticipantListModel plist = new ParticipantListModel();
+	    plist.addElement(new Participant("trulsmp","trulsmp", ParticipantStatus.participating));
+	    plist.addElement(new Participant("hakloev", "hakloev", ParticipantStatus.notParticipating));
+
+	    Appointment a = new Appointment(new Employee("hakloev", "Håkon Løvdal"));
+	    a.setParticipantList(plist);
+	    a.setStart(new Date());
+	    a.setEnd(new Date());
+	    a.setDescription("Lite møte");
+	    a.setLocation(new Room("F1", 500));
+
+
 		Request request = new Request("appointment", "POST", a);
+
+	    client.getOutWorker().sendRequest(request);
 
 
     	//setupUIManager(); // do first

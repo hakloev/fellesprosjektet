@@ -3,14 +3,6 @@ package models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import helperclasses.Request;
-
-
-
-
-
-import java.beans.PropertyChangeListener;
-import java.beans.PropertyChangeSupport;
 import java.util.Calendar;
 import java.util.Date;
 

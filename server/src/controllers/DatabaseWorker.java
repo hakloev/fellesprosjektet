@@ -7,7 +7,6 @@ import helperclasses.Response;
 import models.*;
 
 import java.sql.*;
-import java.util.ArrayList;
 
 /**
  * Created by Håkon Ødegård Løvdal on 11/03/14.

@@ -1,9 +1,12 @@
 package models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Room {
 	
-	
+	@JsonProperty("roomCode")
 	private String roomCode;
+	@JsonProperty("capacity")
 	private int capacity;
 	
 	

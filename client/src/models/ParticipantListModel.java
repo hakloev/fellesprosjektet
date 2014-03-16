@@ -20,7 +20,7 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 	}
 
 
-    @JsonProperty("getParticipants")
+    @JsonProperty("participants")
     public Object[] getParticipants() {
         return this.toArray();
     }
