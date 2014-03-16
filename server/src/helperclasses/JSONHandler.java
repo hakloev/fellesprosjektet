@@ -13,6 +13,7 @@ import org.json.simple.parser.ParseException;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -45,10 +46,11 @@ public class JSONHandler {
 				object = new Appointment();
 				Object parsed = parser.parse(String.valueOf(root.path("object")));
 				JSONObject jsonObject = (JSONObject) parsed;
+				JSONObject employee = (JSONObject) jsonObject.get("appointmentLeader");
+				System.out.println(employee);
 				JSONObject participantList = (JSONObject) jsonObject.get("participantList");
-				((Appointment)object).setDate(jsonObject.get("date").toString());
-				((Appointment)object).setStart(jsonObject.get("start").toString());
-				((Appointment)object).setEnd(jsonObject.get("end").toString());
+				((Appointment)object).setStart(new Date(jsonObject.get("startDateTime").toString()));
+				((Appointment)object).setEnd(new Date(jsonObject.get("endDateTime").toString()));
 
 				ParticipantListModel model = new ParticipantListModel();
 				JSONArray msg = (JSONArray) participantList.get("participants");
