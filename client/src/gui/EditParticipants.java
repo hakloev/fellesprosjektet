@@ -1,7 +1,5 @@
 package gui;
 
-import gui.appointment.EditAppointment;
-
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JDialog;
@@ -23,8 +21,6 @@ import java.awt.event.ActionListener;
 public class EditParticipants extends JDialog implements ActionListener{
 
 	
-	private JDialog parent;
-	
 	private JPanel contentPane;
 	private JList<Participant> participantList;
 	private JList<Employee> employeeList;
@@ -40,7 +36,6 @@ public class EditParticipants extends JDialog implements ActionListener{
 		this.setTitle("Rediger deltagere");
 		this.setResizable(false);
 		
-		this.parent = parent;
 		this.appointment = appointment;
 		tempParticipantList = new ParticipantListModel(appointment.getParticipantList());
 		
@@ -137,8 +132,7 @@ public class EditParticipants extends JDialog implements ActionListener{
 		JLabel lblAnsatte = new JLabel(" Ansatte");
 		employeeScrollPane.setColumnHeaderView(lblAnsatte);
 		
-		EmployeeListModel employeeListModel;
-		employeeListModel = new EmployeeListModel();
+		EmployeeListModel employeeListModel = new EmployeeListModel();
 		employeeListModel.initialize();
 		
 		employeeList = new JList<Employee>(employeeListModel);
@@ -185,7 +179,10 @@ public class EditParticipants extends JDialog implements ActionListener{
 			
 		}
 		else if (ae.getActionCommand().equals("remove participant")){
-			tempParticipantList.removeElement(participantList.getSelectedValue());
+			if ( ! participantList.getSelectedValue().equals(tempParticipantList.getAppoinmentLeader()) ) {
+				tempParticipantList.removeElement(participantList.getSelectedValue());
+			}
+			
 		}
 		else if (ae.getActionCommand().equals("add group")){
 			Group selected = groupList.getSelectedValue();

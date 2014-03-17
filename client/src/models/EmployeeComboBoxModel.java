@@ -17,12 +17,15 @@ public class EmployeeComboBoxModel extends DefaultComboBoxModel<Employee> implem
 	
 	@Override
 	public void initialize() {
+		
+		/* test code */
 		EmployeeListModel tempModel = new EmployeeListModel();
 		tempModel.initialize();
 		
 		for (Object employee : tempModel.toArray()) {
 			this.addElement((Employee)employee);
 		}
+		/* end test code */
 	}
 
 	

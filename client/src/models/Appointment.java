@@ -1,7 +1,6 @@
 package models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import controllers.OutboundWorker;
@@ -13,36 +12,64 @@ import helperclasses.Request;
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 public class Appointment implements NetInterface {
 
 
+	private PropertyChangeSupport pcs;
 
 	@JsonProperty("participantList")
 	private ParticipantListModel participantList;
+	private EmailListModel emailRecipientsList;
 
-	private PropertyChangeSupport pcs;
-
+	private int appointmentID;
 	private Employee appointmentLeader;
 	private String description;
 	private Room location;
 	private String locationText;
-
+	
 	private Calendar startDateTime;
 	private Calendar endDateTime;
+	
+	private boolean showInCalendar;
 
 
 	/**
-	 *  Constructor for new appointment
+	 * Constructor for new appointment
+	 * 
+	 * @param appointmentLeader
 	 */
 	public Appointment(Employee appointmentLeader) {
-		this.appointmentLeader = appointmentLeader;
 		pcs = new PropertyChangeSupport(this);
-		participantList = new ParticipantListModel();
+		
+		this.appointmentLeader = appointmentLeader;
+		participantList = new ParticipantListModel(new Participant(appointmentLeader));
+		emailRecipientsList = new EmailListModel();
 	}
+	
+	
+	/* Work in progress. Use refresh instead if appointment editing is canceled.
+	/**
+	 * Copy constructor
+	 * 
+	 * @param oldAppointment
+	 *
+	public Appointment(Appointment oldAppointment) {
+		pcs = new PropertyChangeSupport(this);
+		
+		participantList
+		emailRecipientsList
+		appointmentLeader
+		description
+		location
+		locationText
+		startDateTime
+		endDateTime
+		
+	}
+	*/
 
 
 	public void setDate(Date date) {
@@ -88,7 +115,7 @@ public class Appointment implements NetInterface {
 
 	public void setDuration(Date duration){
 		if (startDateTime != null) {
-			String oldValue = this.getDuration();
+			String oldValue = this.getEnd();
 
 			if (endDateTime == null) endDateTime = Calendar.getInstance();
 
@@ -194,6 +221,16 @@ public class Appointment implements NetInterface {
 			this.participantList = participantList;
 		}
 	}
+	
+	
+	public EmailListModel getEmailRecipientsList() {
+		return emailRecipientsList;
+	}
+	
+	
+	public void setEmailRecipientsList(EmailListModel emailList) {
+		this.emailRecipientsList = emailList;
+	}
 
 
 	public Employee getAppointmentLeader() {
@@ -224,6 +261,21 @@ public class Appointment implements NetInterface {
 
 	public String getLocation() {
 		return locationText;
+	}
+	
+	
+	public int getAppointmentID() {
+		return appointmentID;
+	}
+
+
+	public boolean isShowInCalendar() {
+		return showInCalendar;
+	}
+
+
+	public void setShowInCalendar(boolean showInCalendar) {
+		this.showInCalendar = showInCalendar;
 	}
 
 
@@ -258,4 +310,11 @@ public class Appointment implements NetInterface {
 		OutboundWorker.sendRequest(request);
 
 	}
+
+
+
+	
+	
 }
+
+

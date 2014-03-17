@@ -1,7 +1,5 @@
 package gui;
 
-import com.sun.swing.internal.plaf.synth.resources.synth_sv;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -24,21 +22,19 @@ public class Alarm extends JDialog implements ActionListener{
     private JSpinner dateSpinner;
     private JButton okButton, cancelButton;
     private ButtonGroup btnGroup;
-    private JDialog parent;
-    private Calendar warningDate, startDate;
-    private Calendar[] alarmCalendar;
+    private Calendar startDate;
+    private Calendar[] alarmTime;
 
     private JPanel contentPane;
 
 
-    public Alarm(JDialog parent, Calendar startDate, Calendar[] alarmCalendar){
+    public Alarm(JDialog parent, Calendar startDate, Calendar[] alarmTime){
         super(parent, true);
         this.setTitle("Velg alarm tidspunkt");
         this.setResizable(false);
 
-        this.parent = parent;
         this.startDate = startDate;
-        this.alarmCalendar = alarmCalendar;
+        this.alarmTime = alarmTime;
 
         contentPane = new JPanel(new GridBagLayout());
         contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -133,7 +129,9 @@ public class Alarm extends JDialog implements ActionListener{
         dateSpinner = new JSpinner(new SpinnerDateModel());
         JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(dateSpinner, "dd.MM.yyyy  HH:mm");
         dateSpinner.setEditor(timeEditor);
-        dateSpinner.setValue(new Date());
+        Date startTimeDate = new Date();
+        startTimeDate.setTime(startDate.getTimeInMillis());
+        dateSpinner.setValue(startTimeDate);
         gbc.insets = new Insets(0, 0, 5, 5);
         gbc.gridy = 4;
         gbc.gridx = 1;
@@ -177,23 +175,16 @@ public class Alarm extends JDialog implements ActionListener{
             }
             
             String command = btnGroup.getSelection().getActionCommand();
-            warningDate = startDate;
             
             switch (command){
                 case "24 timer før":
-                    warningDate.add(Calendar.DAY_OF_MONTH, -1);
-                    alarmCalendar[0] = warningDate;
-                    dispose();  
+                	startDate.add(Calendar.DAY_OF_MONTH, -1);
                     break;
                 case "1 time før":
-                    warningDate.add(Calendar.HOUR_OF_DAY, -1);
-                    alarmCalendar[0] = warningDate;
-                    dispose();
+                	startDate.add(Calendar.HOUR_OF_DAY, -1);
                     break;
                 case "10 min før":
-                    warningDate.add(Calendar.MINUTE, -10);
-                    alarmCalendar[0] = warningDate;
-                    dispose();
+                	startDate.add(Calendar.MINUTE, -10);
                     break;
                 case "customHoursButton":
                     String[] time = customHoursTextField.getText().split(":");
@@ -202,20 +193,17 @@ public class Alarm extends JDialog implements ActionListener{
                         break;
                     }
                     int hours = Integer.parseInt(time[0]);
-                    warningDate.add(Calendar.HOUR_OF_DAY, -hours);
+                    startDate.add(Calendar.HOUR_OF_DAY, -hours);
                     int minutes = Integer.parseInt(time[1]);
-                    warningDate.add(Calendar.MINUTE, -minutes);
-                    alarmCalendar[0] = warningDate;
-                    dispose();
+                    startDate.add(Calendar.MINUTE, -minutes);
                     break;
                 case "customDateTimeButton":
                     Date midDate = (Date) dateSpinner.getValue();
-                    warningDate = Calendar.getInstance();
-                    warningDate.setTimeInMillis(midDate.getTime());
-                    alarmCalendar[0] = warningDate;
-                    dispose();
+                    startDate.setTimeInMillis(midDate.getTime());
                     break;
             }
+            alarmTime[0] = startDate;
+            dispose();
         }
     }
 }

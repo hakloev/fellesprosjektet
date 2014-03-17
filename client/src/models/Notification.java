@@ -49,4 +49,11 @@ public class Notification {
 	}
 	
 	
+	@Override
+	public String toString() {
+		return userName + " " + type;
+	}
+	
+	
 }
+

@@ -1,13 +1,17 @@
 package gui;
 
+import helperclasses.*;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-import controllers.SocketListener;
+import models.*;
+import controllers.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 
 /**
  * Created by Tarald on 11.03.14.
@@ -20,12 +24,12 @@ public class LoginScreen extends JDialog implements ActionListener{
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JLabel usernameLabel, passwordLabel;
-    private String[] saveUsernameHere;
+    private Employee[] saveEmployeeHere;
 
 
-    public LoginScreen(Frame parent, String[] saveUsernameHere){
+    public LoginScreen(Frame parent, Employee[] saveEmployeeHere){
         super(parent,"Innlogging", true);
-        this.saveUsernameHere = saveUsernameHere;
+        this.saveEmployeeHere = saveEmployeeHere;
         
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setResizable(false);
@@ -87,40 +91,80 @@ public class LoginScreen extends JDialog implements ActionListener{
 
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand() == "Logg inn") {
-        	//Creating a SocketClient object
-            //SocketListener client = new SocketListener();
-            //trying to establish connection to the server
+    public void actionPerformed(ActionEvent ae) {
+        if (ae.getActionCommand() == "Logg inn") {
             
             /* test code */
             this.dispose();
-            saveUsernameHere[0] = usernameField.getText();
+            saveEmployeeHere[0] = new Employee("arvid", "Arvid Pettersen");
             return;
             /* end test code */
             
-            /* real logic below. Uncomment for production environment!
+            // real logic below. Uncomment for production environment!
+            /*
+            SocketListener client = new SocketListener();
             if (client.connect()) {
-            	SocketListener.setClientSocketListener(client);
-            	String username = usernameField.getText();
-            	if (client.getOutboundWorker().login(username, passwordField.getPassword())) {
-            		saveUsernameHere[0] = username;
-            		this.dispose();
+            	OutboundWorker.sendRequest(new Request("login", "post",
+            			new Login(usernameField.getText(), passwordField.getPassword().toString())));
+            	
+            	Object[] response = new Object[1];
+            	new LoginWaiter(response);
+            	
+            	if (response[0] != null) {
+            		if (response[0] instanceof Integer) {
+            			JOptionPane.showMessageDialog(null, "Tidsavbrudd!", "Feil", JOptionPane.ERROR_MESSAGE);
+            			
+            		} else if (response[0] instanceof Employee) {
+            			saveEmployeeHere[0] = (Employee)response[0];
+            			this.dispose();
+            			return;
+            			
+            		} else {
+            			JOptionPane.showMessageDialog(null, "Det oppstod en feil!", "Feil", JOptionPane.ERROR_MESSAGE);
+            		}
+        			
             	} else {
             		JOptionPane.showMessageDialog(null, "Feil brukernavn eller passord", "Feil", JOptionPane.ERROR_MESSAGE);
-            		client.closeSocket();
-            		SocketListener.setClientSocketListener(null);
             	}
+            	
+            	try {
+					SocketListener.getSocket().close();
+				} catch (IOException e) {
+					// Don't care
+					//e.printStackTrace();
+				}
+            	
             } else {
             	JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
             }
             */
+        
+        } else if (ae.getActionCommand() == "Avslutt") {
+        	System.exit(0);
             
-            
-        }
-        else if(e.getActionCommand() == "Avslutt") {
-            System.exit(0);
         }
     }
 
+
+	class LoginWaiter extends Thread {
+		LoginWaiter(Object[] response) {
+			InboundWorker.register(this);
+			try {
+				sleep(30000); // 30 second timeout
+			} catch (InterruptedException e) {
+				//e.printStackTrace();
+				response[0] = InboundWorker.getResponse();
+				InboundWorker.unregister(this);
+				return;
+			}
+			InboundWorker.unregister(this);
+			response[0] = new Integer(1);
+		}
+	}
+	
+	
+	
 }
+
+
+

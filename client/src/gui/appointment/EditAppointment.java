@@ -1,5 +1,7 @@
 package gui.appointment;
 
+import gui.CalendarView;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -7,6 +9,7 @@ import models.*;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Calendar;
 import java.util.Date;
 
 @SuppressWarnings("serial")
@@ -28,6 +31,9 @@ public class EditAppointment extends JDialog {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(contentPane);
 		
+		ParticipantListModel plModel = appointment.getParticipantList();
+		Participant currentUser = plModel.get(plModel.indexOf(new Participant( ((CalendarView)parent).getLoggedInEmployee() )));
+		
 		GridBagLayout gbl = new GridBagLayout();
 		contentPane.setLayout(gbl);
 		
@@ -35,8 +41,9 @@ public class EditAppointment extends JDialog {
 		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
-
-		detailsPanel = new DetailsPanel(this, appointment, new Date());   // Temporary use of new date, date can be fetched from the Calendar View
+		
+		// TODO Send proper time
+		detailsPanel = new DetailsPanel(this, appointment, Calendar.getInstance(), currentUser);   // Temporary use of new date, date can be fetched from the Calendar View
 		contentPane.add(detailsPanel, gbc_detailsPanel);
 
 		
@@ -45,7 +52,7 @@ public class EditAppointment extends JDialog {
 		gbc_okButtonPanel.gridx = 0;
 		gbc_okButtonPanel.gridy = 1;
 		gbc_okButtonPanel.gridwidth = 2;
-		contentPane.add(new OKButtonPanel(this), gbc_okButtonPanel);
+		contentPane.add(new OKButtonPanel(this, appointment, currentUser), gbc_okButtonPanel);
 		
 		// editButtonPanel
 		GridBagConstraints gbc_editButtonPanel = new GridBagConstraints();
@@ -68,11 +75,12 @@ public class EditAppointment extends JDialog {
 	public void updateUI() {
 		detailsPanel.updateUI();
 	}
+	
+	
     public Participant getSelectedParticipant(){
         return this.detailsPanel.getSelectedParticipant();
     }
-	public ParticipantListModel getParticipantList(){
-        return this.detailsPanel.getAppointmentParticipantList();
-    }
+    
+    
 }
 

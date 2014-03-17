@@ -11,6 +11,7 @@ public enum ParticipantStatus {
 	
 	private String status;
 	public static final ImageIcon noStatusIcon = new ImageIcon("resources/noStatus-14.png");
+	public static final ImageIcon leaderIcon = new ImageIcon("resources/leader-14.png");
 	private final ImageIcon statusIcon;
 	
 	

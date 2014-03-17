@@ -10,11 +10,7 @@ public class SocketListener{
 
     private String hostname;
     private int port;
-    private Socket socketClient;
-    private OutboundWorker outWorker;
-    
-    private static SocketListener clientSocketListener;
-    private static boolean connected = false;
+    private static Socket socketClient;
 
 
     public SocketListener(String hostname, int port){
@@ -32,14 +28,12 @@ public class SocketListener{
     public boolean connect(){
         System.out.println("Attempting to connect to "+hostname+":"+port);
         try {
-            Socket socketClient = new Socket(hostname,port);
+            socketClient = new Socket(hostname, port);
             System.out.println("Connection Established \n");
             InboundWorker inWorker = new InboundWorker(socketClient);
             inWorker.start();
-            outWorker= new OutboundWorker(socketClient);
             System.out.println("Response Thread STARTED");
 
-            
             return true;
 
         } catch (IOException e) {
@@ -51,30 +45,15 @@ public class SocketListener{
             //return true;
             
         }
-
     }
 
     
-    
-    public void closeSocket() {
-    	if (socketClient != null) try {
-    		socketClient.close();
-    	} catch (IOException e) {
-    		e.printStackTrace();
-    	}
+    public static Socket getSocket() {
+    	return socketClient;
     }
     
     
-    public static void setClientSocketListener(SocketListener clientSocket) {
-    	clientSocketListener = clientSocket;
-    }
-    
-    
-    public static SocketListener getClientSocketListener() {
-    	return clientSocketListener;
-    }
-    
-    
+
     
     
 }

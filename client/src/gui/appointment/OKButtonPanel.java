@@ -9,15 +9,22 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import models.Appointment;
+import models.Participant;
+
 @SuppressWarnings("serial")
 class OKButtonPanel extends JPanel implements ActionListener {
 	
 	
-	JDialog parent;
+	private JDialog parent;
+	private Appointment appointment;
+	private Participant currentUser;
 	
 	
-	OKButtonPanel(JDialog parent) {
+	OKButtonPanel(JDialog parent, Appointment appointment, Participant currentUser) {
 		this.parent = parent;
+		this.appointment = appointment;
+		this.currentUser = currentUser;
 		
 		JButton btnOK = new JButton("OK");
 		this.add(btnOK);
@@ -41,15 +48,22 @@ class OKButtonPanel extends JPanel implements ActionListener {
 		String actionCommand = ae.getActionCommand();
 		
 		if(actionCommand.equals("OK")){
-			//JOptionPane.showMessageDialog(null, "Ny avtale lagt til i kalenderen", "Avtaleendring", JOptionPane.INFORMATION_MESSAGE);
 			if (parent instanceof EditAppointment) {
+				appointment.save();
+				/* TODO
+				 * ID for new appointment
+				 * show in calendar
+				 */
 				
 			} else if (parent instanceof ViewAppointment) {
-				
+				// TODO code for saving participantstatus & alarm & if shown in calendar
 			}
 			parent.dispose();
 			
 		} else if(actionCommand.equals("Avbryt")){
+			if (appointment.getAppointmentID() != 0) {
+				appointment.refresh(); // TODO Implement proper cancel logic instead of using refresh
+			}
 			parent.dispose();
 			
 		} else if(actionCommand.equals("Slett avtale")){
@@ -57,17 +71,20 @@ class OKButtonPanel extends JPanel implements ActionListener {
 				int choice = JOptionPane.showConfirmDialog(null,
 						"Er du sikker på at du vil slette avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
 				if (choice == 0) {
-					//slett avtalen
+					// TODO slett avtalen fra kalenderen
+					appointment.delete();
+					parent.dispose();
 				}
-				parent.dispose();
 				
 			} else if (parent instanceof ViewAppointment) {
 				int choice = JOptionPane.showConfirmDialog(null,
 						"Er du sikker på at du vil slette avtalen fra din kalender?", "Bekreft", JOptionPane.YES_NO_OPTION);
 				if (choice == 0) {
-					//slett avtalen
+					//TODO slett avtalen fra kalenderen
+					appointment.setShowInCalendar(false);
+					currentUser.setShowInCalendar(false);
+					parent.dispose();
 				}
-				parent.dispose();
 			}
 		}
 		
