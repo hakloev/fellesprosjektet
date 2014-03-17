@@ -11,6 +11,7 @@ import org.json.simple.parser.ParseException;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Iterator;
 
 /**
  * Created by Håkon Ødegård Løvdal on 11/03/14.
@@ -53,7 +54,6 @@ public class DatabaseWorker {
 					a.setAppointmentID(appointmentID);
 					a.initialize();
 					response = new Response(sendAppointment(a));
-
 				}
 			} else if (requestType.equals("roomlistmodel")) {
 				String dbMethod = (String) jsonObject.get("dbmethod");
@@ -87,7 +87,7 @@ public class DatabaseWorker {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("response", "appointment");
 		jsonObject.put("dbmethod", "initialize");
-		jsonObject.put("appointment", appointment);
+		jsonObject.put("model", appointment);
 		return jsonObject.toJSONString();
 	}
 
@@ -110,6 +110,17 @@ public class DatabaseWorker {
 		} catch (java.text.ParseException e1) {
 			e1.printStackTrace();
 		}
+		JSONArray array = (JSONArray) model.get("participants");
+		ParticipantListModel plm = new ParticipantListModel();
+		Iterator<JSONObject> iterator = array.iterator();
+		while (iterator.hasNext()) {
+			JSONObject p = iterator.next();
+			Participant participant = new Participant((String) p.get("username"), (String) p.get("name"),
+					ParticipantStatus.valueOf(p.get("participantStatus").toString()), Boolean.valueOf(p.get("showInCalendar").toString()));
+		    plm.addElement(participant);
+		}
+		plm.setAppointmentID(a.getAppointmentID());
+		plm.save();
 		a.save();
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("response", "appointment");

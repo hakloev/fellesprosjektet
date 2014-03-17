@@ -12,7 +12,7 @@ public class Participant {
     private ParticipantStatus participantStatus;
 
     public Participant(String userName, String name,
-                     ParticipantStatus participantStatus, boolean isShowInCalendar) {
+                     ParticipantStatus participantStatus, boolean showInCalendar) {
         this.userName = userName;
         this.name = name;
         this.participantStatus = participantStatus;
@@ -28,12 +28,7 @@ public class Participant {
                 '}';
     }
 
-    public Participant(Employee employee) {
-        this.userName = employee.getUsername();
-        this.name = employee.getName();
-        participantStatus = null;
 
-    }
 
 	public boolean isShowInCalendar() {
 		return showInCalendar;
