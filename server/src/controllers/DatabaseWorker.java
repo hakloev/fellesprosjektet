@@ -85,6 +85,21 @@ public class DatabaseWorker {
 		appointment.put("startDateTime", sdf.format(a.getStartDateTime().getTime()));
 		appointment.put("endDateTime", sdf.format(a.getEndDateTime().getTime()));
 		JSONObject jsonObject = new JSONObject();
+
+		ParticipantListModel model = new ParticipantListModel();
+		model.setAppointmentID(a.getAppointmentID());
+		model.initialize();
+		a.setParticipantList(model); // er egentlig unødvendig
+		JSONArray array = new JSONArray();
+		for (int i = 0; i < model.size(); i++) {
+			JSONObject participant = new JSONObject();
+			participant.put("name",model.get(i).getName());
+			participant.put("username", model.get(i).getUserName());
+			participant.put("participantstatus", model.get(i).getParticipantStatus().toString());
+			participant.put("showInCalendar", model.get(i).isShowInCalendar());
+			array.add(participant);
+		}
+		appointment.put("participants", array);
 		jsonObject.put("response", "appointment");
 		jsonObject.put("dbmethod", "initialize");
 		jsonObject.put("model", appointment);

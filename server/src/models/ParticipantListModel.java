@@ -4,6 +4,7 @@ import controllers.DBconnection;
 
 import javax.swing.DefaultListModel;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -46,6 +47,26 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 
 	@Override
 	public void initialize() {
+		Connection dbCon = DBconnection.getConnection();
+		try {
+			String sql = "SELECT d.*, a.navn FROM deltager d, ansatt a WHERE d.brukernavn = a.brukernavn AND d.avtaleid = " + this.appointmentID;
+			Statement stmt = dbCon.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				ParticipantStatus participating = ParticipantStatus.participating;
+				if (rs.getString(3).equals("deltar_ikke")) {
+					participating = ParticipantStatus.notParticipating;
+				}
+				boolean show = true;
+				if (rs.getInt(5) == 0) {
+					show = false;
+				}
+				Participant p = new Participant(rs.getString(1), rs.getString(6), participating, show);
+				this.addElement(p);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 
 	}
 
