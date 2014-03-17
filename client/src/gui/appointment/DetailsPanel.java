@@ -35,22 +35,24 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 	private JSpinner durationSpinner;
 	private JTextField placeTextField;
 	private JTextField alarmTextField;
-
 	private JTextArea descriptionTextArea;
-
+	private JButton btnVelgRom;
 	private JList<Participant> participantList;
+	
+	private boolean enabled = true;
 
 	private Appointment appointment;
-
-	private JButton btnVelgRom;
-
-	private Calendar[] alarmCalendar = new Calendar[1];
+	private Calendar[] alarmTime = new Calendar[1];
+	private Participant currentUser;
 
 
-	DetailsPanel(JDialog parent, Appointment appointment, Date date) {
+	DetailsPanel(JDialog parent, Appointment appointment, Calendar startDate, Participant currentUser) {
 		this.appointment = appointment;
 		appointment.addPropertyChangeListener(this);
 		this.parent = parent;
+		this.currentUser = currentUser;
+		
+		Date startDateDate = new Date(startDate.getTimeInMillis());
 
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);
@@ -68,7 +70,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		dateSpinner.addChangeListener(this);
 		JSpinner.DateEditor timeEditor01 = new JSpinner.DateEditor(dateSpinner, "dd.MM.yyyy");
 		dateSpinner.setEditor(timeEditor01);
-		dateSpinner.setValue(new Date());
+		dateSpinner.setValue(startDateDate);
 		dateSpinner.addFocusListener(this);
 		GridBagConstraints gbc_dateTextField = new GridBagConstraints();
 		gbc_dateTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -91,7 +93,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		startTimeSpinner.addChangeListener(this);
 		JSpinner.DateEditor timeEditor02 = new JSpinner.DateEditor(startTimeSpinner, "HH:mm");
 		startTimeSpinner.setEditor(timeEditor02);
-		startTimeSpinner.setValue(date);
+		startTimeSpinner.setValue(startDateDate);
 		startTimeSpinner.addFocusListener(this);
 		GridBagConstraints gbc_startTimeTextField = new GridBagConstraints();
 		gbc_startTimeTextField.insets = new Insets(0, 0, 5, 5);
@@ -102,7 +104,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		//startTimeSpinner.setColumns(10);
 		
 		/* Varighet */  // durationSpinner must exist before endTime is set in Appointment!!!
-		JLabel lblVarighet = new JLabel("Varighet[TT:MM]");
+		JLabel lblVarighet = new JLabel("Varighet");
 		GridBagConstraints gbc_lblVarighet = new GridBagConstraints();
 		gbc_lblVarighet.anchor = GridBagConstraints.NORTHEAST;
 		gbc_lblVarighet.insets = new Insets(0, 5, 5, 5);
@@ -138,8 +140,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		stopTimeSpinner.addChangeListener(this);
 		JSpinner.DateEditor timeEditor03 = new JSpinner.DateEditor(stopTimeSpinner, "HH:mm");
 		stopTimeSpinner.setEditor(timeEditor03);
-		Date endDate = new Date(date.getTime());
-		endDate.setHours(date.getHours()+1);
+		Date endDate = new Date(startDateDate.getTime());
+		endDate.setHours(startDateDate.getHours()+1);
 		this.appointment.setEnd(endDate);
 		stopTimeSpinner.setValue(endDate);
 		stopTimeSpinner.addFocusListener(this);
@@ -231,7 +233,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_alarmTextField.gridx = 1;
 		gbc_alarmTextField.gridy = 5;
 		this.add(alarmTextField, gbc_alarmTextField);
-		alarmTextField.setEnabled(false);
+		alarmTextField.setEditable(false);
 		alarmTextField.setColumns(11);
 
 		JButton btnVelgTid = new JButton("Velg tid");
@@ -243,7 +245,10 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.add(btnVelgTid, gbc_btnVelgTid);
 
 		btnVelgTid.addActionListener(actionListener);
-
+		if (currentUser.getAlarm() != null) {
+			alarmTime[0] = currentUser.getAlarm();
+			setAlarmTextField();
+		}
 	}
 
 
@@ -255,7 +260,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		durationSpinner.setEnabled(enabled);
 		placeTextField.setEditable(enabled);
 		descriptionTextArea.setEditable(enabled);
-		participantList.setEnabled(enabled);
+		//participantList.setEnabled(enabled);
+		this.enabled = enabled;
 		if (! enabled) this.remove(btnVelgRom);
 	}
 
@@ -272,18 +278,25 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 	}
 	
 	
-	public ParticipantListModel getAppointmentParticipantList(){
-		return this.appointment.getParticipantList();
-	}
-
-
 	ListSelectionListener pllsl = new ListSelectionListener() {
 		@Override
 		public void valueChanged(ListSelectionEvent lse) {
+			if (! enabled) {
+				participantList.clearSelection();
+				participantList.transferFocus();
+				return;
+			}
+			
 			if (! (parent instanceof EditAppointment)) return;
 			EditAppointment editParent = (EditAppointment)parent;
 
 			if (participantList.getSelectedValue() == null) {
+				editParent.editButtonPanel.setBothStatusButtonsEnabled(false);
+				editParent.editButtonPanel.setButtonSlettEnabled(false);
+				return;
+			}
+			
+			if ( participantList.getSelectedValue().equals( ((ParticipantListModel)participantList.getModel()).getAppoinmentLeader() ) ) {
 				editParent.editButtonPanel.setBothStatusButtonsEnabled(false);
 				editParent.editButtonPanel.setButtonSlettEnabled(false);
 				return;
@@ -309,13 +322,13 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 
     public void setAlarmTextField(){
-    	if (alarmCalendar[0] != null) {
+    	if (alarmTime[0] != null) {
     		String alarmText = new String();
-    		alarmText += alarmCalendar[0].get(Calendar.DAY_OF_MONTH) + ".";
-    		alarmText += alarmCalendar[0].get(Calendar.MONTH) + ".";
-    		alarmText += alarmCalendar[0].get(Calendar.YEAR) + " ";
-    		alarmText += alarmCalendar[0].get(Calendar.HOUR_OF_DAY) + ":";
-    		alarmText += alarmCalendar[0].get(Calendar.MINUTE);
+    		alarmText += alarmTime[0].get(Calendar.DAY_OF_MONTH) + ".";
+    		alarmText += (alarmTime[0].get(Calendar.MONTH) + 1) + ".";  // +1 since Calendar starts months with 0
+    		alarmText += alarmTime[0].get(Calendar.YEAR) + " ";
+    		alarmText += alarmTime[0].get(Calendar.HOUR_OF_DAY) + ":";
+    		alarmText += alarmTime[0].get(Calendar.MINUTE);
     		alarmTextField.setText(alarmText);
     	}
     }
@@ -325,7 +338,19 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			if (ae.getActionCommand().equals("Velg tid")) {
-				new Alarm(parent, Calendar.getInstance(), alarmCalendar);
+				Calendar cal = Calendar.getInstance();
+				if (alarmTime[0] == null) {
+					cal.setTime((Date)dateSpinner.getValue());
+					cal.set(Calendar.HOUR_OF_DAY, ((Date)startTimeSpinner.getValue()).getHours() );
+					cal.set(Calendar.MINUTE, ((Date)startTimeSpinner.getValue()).getMinutes() );
+				} else {
+					cal.setTimeInMillis(alarmTime[0].getTimeInMillis());
+				}
+				
+				new Alarm(parent, cal, alarmTime);
+				if (alarmTime[0] != null) {
+					currentUser.setAlarm(alarmTime[0]);
+				}
                 setAlarmTextField();
                 
 			} else if (ae.getActionCommand().equals("Velg rom")) {
@@ -357,10 +382,10 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		}
 		if (evt.getPropertyName().equals("Duration")){
 			if(durationSpinner != null){
-				String duration = (String) evt.getNewValue();
+				String[] duration = ( (String)evt.getNewValue() ).split(":");
 				Date date = new Date();
-				date.setHours(Integer.parseInt(duration.substring(0,2)));
-				date.setMinutes(Integer.parseInt(duration.substring(3,5)));
+				date.setHours(Integer.parseInt(duration[0]));
+				date.setMinutes(Integer.parseInt(duration[1]));
 				durationSpinner.setValue(date);
 			}
 		}
@@ -369,15 +394,16 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 	@Override
 	public void focusGained(FocusEvent arg0) {
-		// TODO Auto-generated method stub
+		// TODO Remove focuslistener?
 		
 	}
 
 
 	@Override
 	public void focusLost(FocusEvent arg0) {
-
+		// TODO Remove focuslistener?
 	}
+
 
 	@Override
 	public void stateChanged(ChangeEvent arg0) {

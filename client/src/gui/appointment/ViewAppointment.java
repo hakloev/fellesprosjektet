@@ -1,7 +1,10 @@
 package gui.appointment;
 
+import gui.CalendarView;
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.util.Calendar;
 import java.util.Date;
 
 import javax.swing.JDialog;
@@ -26,6 +29,9 @@ public class ViewAppointment extends JDialog {
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(contentPane);
 		
+		ParticipantListModel plModel = appointment.getParticipantList();
+		Participant currentUser = plModel.get(plModel.indexOf(new Participant( ((CalendarView)parent).getLoggedInEmployee() )));
+		
 		GridBagLayout gbl = new GridBagLayout();
 		contentPane.setLayout(gbl);
 		
@@ -33,7 +39,8 @@ public class ViewAppointment extends JDialog {
 		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
-		DetailsPanel detailsPanel = new DetailsPanel(this, appointment, new Date());
+		// TODO send proper time
+		DetailsPanel detailsPanel = new DetailsPanel(this, appointment, Calendar.getInstance(), currentUser);
 		contentPane.add(detailsPanel, gbc_detailsPanel);
 		detailsPanel.setEnabled(false);
 		
@@ -42,13 +49,13 @@ public class ViewAppointment extends JDialog {
 		gbc_statusPanel.gridx = 0;
 		gbc_statusPanel.gridy = 1;
 		gbc_statusPanel.anchor = GridBagConstraints.WEST;
-		contentPane.add(new StatusPanel(), gbc_statusPanel);
+		contentPane.add(new StatusPanel(currentUser), gbc_statusPanel);
 		
 		// okButtonPanel
 		GridBagConstraints gbc_okButtonPanel = new GridBagConstraints();
 		gbc_okButtonPanel.gridx = 0;
 		gbc_okButtonPanel.gridy = 2;
-		contentPane.add(new OKButtonPanel(this), gbc_okButtonPanel);
+		contentPane.add(new OKButtonPanel(this, appointment, currentUser), gbc_okButtonPanel);
 		
 		this.pack();
 		this.setLocationRelativeTo(parent);

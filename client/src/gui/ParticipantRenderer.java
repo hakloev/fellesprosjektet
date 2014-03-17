@@ -17,12 +17,20 @@ public class ParticipantRenderer extends DefaultListCellRenderer {
 		
 		JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 		
+		if ( ((ParticipantListModel)list.getModel()).getAppoinmentLeader().equals(value) ) {
+			label.setIcon(ParticipantStatus.leaderIcon);
+			return label;
+		}
+		
 		ParticipantStatus status = ((Participant)value).getParticipantStatus();
+		
 		if (status == null) {
 			label.setIcon(ParticipantStatus.noStatusIcon);
 		} else {
 			label.setIcon(status.getStatusIcon());
 		}
+		
+		
 		
 		return label;
 	}

@@ -24,7 +24,6 @@ public class NotificationListModel extends DefaultListModel<Notification> implem
 	public void refresh() {
 		this.clear();
 		this.initialize();
-
 	}
 
 	@Override

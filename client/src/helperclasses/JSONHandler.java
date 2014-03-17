@@ -3,6 +3,7 @@ package helperclasses;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import helperclasses.Response;
 import models.*;
 
@@ -45,6 +46,9 @@ public class JSONHandler {
                 case "\"participant\"":
                     object = mapper.readValue(String.valueOf(root.path("object")), Participant.class);
                     break;
+                case "\"employee\"":
+    				object = mapper.readValue(String.valueOf(root.path("object")), Employee.class);
+    				break;
                 default:
                     System.out.println("Request.parseJSON: ELSE ");
                     return null;

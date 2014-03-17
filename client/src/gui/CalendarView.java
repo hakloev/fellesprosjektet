@@ -21,7 +21,6 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 
 import controllers.*;
 
@@ -30,23 +29,26 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.IOException;
 import java.util.Calendar;
 
 @SuppressWarnings("serial")
 public class CalendarView extends JFrame {
 
-	private JTable calendarTable;
 	private JPanel contentPane;
+	
+	private JTable calendarTable;
+	private WeekCalendar calendarTableModel;
 	private JComboBox<Integer> weekComboBox;
 	private JComboBox<Employee> employeeComboBox;
+	private EmployeeComboBoxModel employeeComboBoxModel;
 	private JLabel usernameLabel;
-	private WeekCalendar calendarTableModel;
 	private JList<Notification> notificationList;
 	private JSpinner yearSpinner;
 	
 	private JFrame thisFrame;
 	
-	private String loggedInUsername;
+	//private String loggedInUsername;
 	private Employee loggedInEmployee;
 
 
@@ -57,7 +59,6 @@ public class CalendarView extends JFrame {
 		thisFrame = this;
 		this.setTitle("Kalender - Firma X");
 		this.setResizable(false);
-		//this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.addWindowListener(windowListener);
 		
 		
@@ -66,7 +67,6 @@ public class CalendarView extends JFrame {
 		this.setContentPane(contentPane);
 		
 		GridBagLayout gbl = new GridBagLayout();
-		//gbl.rowHeights = new int[]{0, 0};
 		contentPane.setLayout(gbl);
 		
 		addTopPanel();
@@ -75,21 +75,10 @@ public class CalendarView extends JFrame {
 		
 		this.pack();
 		this.setLocationRelativeTo(null);
-		
-		/* login stuff */
-		String[] username = new String[1]; // point to something mutable so we can get it back
-		new LoginScreen(this, username);
-		usernameLabel.setText(username[0]);
-		loggedInUsername = username[0];
-		
-		EmployeeComboBoxModel ecbModel = new EmployeeComboBoxModel();
-		employeeComboBox.setModel(ecbModel);
-		
-		NotificationListModel notiListModel = new NotificationListModel();
-		notiListModel.initialize();
-		notificationList.setModel(notiListModel);
-		
 		this.setVisible(true);
+		
+		/* login */
+		initializeLoggedInUser();
 		
 	}
 
@@ -147,10 +136,11 @@ public class CalendarView extends JFrame {
 		for (int week = 1; week <= 52; week++) {
 			weekComboBox.addItem(week);
 		}
+		weekComboBox.setActionCommand("week");
 		
 		/* Year */
 		yearSpinner = new JSpinner();
-		yearSpinner.setModel(new SpinnerNumberModel(1970, 1970, 2114, 1));
+		yearSpinner.setModel(new SpinnerNumberModel(1970, 1970, 2070, 1));
 		GridBagConstraints gbc_yearSpinner = new GridBagConstraints();
 		gbc_yearSpinner.anchor = GridBagConstraints.WEST;
 		gbc_yearSpinner.insets = new Insets(5, 0, 5, 5);
@@ -162,6 +152,7 @@ public class CalendarView extends JFrame {
 		Calendar currentCal = Calendar.getInstance();
 		weekComboBox.setSelectedIndex(currentCal.get(Calendar.WEEK_OF_YEAR) - 1);
 		yearSpinner.setValue(currentCal.get(Calendar.YEAR));
+		weekComboBox.addActionListener(actionListener); // Add this here to avoid action event from setting current week
 		
 		/* Showing calendar of employee */
 		JLabel showingLabel = new JLabel("Viser kalender for");
@@ -282,7 +273,8 @@ public class CalendarView extends JFrame {
 		gbc_calendarPanel.gridy = 1;
 		contentPane.add(calendarPanel, gbc_calendarPanel);
 		
-		calendarTable = new JTable();
+		calendarTableModel = new WeekCalendar();
+		calendarTable = new JTable(calendarTableModel);
 		//calendarTable.setColumnSelectionAllowed(true);
 		calendarTable.setCellSelectionEnabled(true);
 		//calendarTable.setFillsViewportHeight(true);
@@ -290,53 +282,54 @@ public class CalendarView extends JFrame {
 		calendarTable.setRowHeight(29);
 		calendarTable.setGridColor(new Color(200, 200, 200));
 		calendarPanel.add(calendarTable);
-		
-		calendarTableModel = new WeekCalendar();
-		calendarTable.setModel(calendarTableModel);
 	}
 
 	
 	ActionListener actionListener = new ActionListener() {
 		@Override
-		public void actionPerformed(ActionEvent e) {
-			String actionCommand = e.getActionCommand();
+		public void actionPerformed(ActionEvent ae) {
+			String actionCommand = ae.getActionCommand();
 			if (actionCommand.equals("Ny avtale")) {
+				// TODO get time and date from selection
 				new EditAppointment(thisFrame, new Appointment(loggedInEmployee));
 				
 			} else if (actionCommand.equals("Avtalevisning")) {
+				// TODO Check if selected appointment is appointment logged in users appointment
 				new ViewAppointment(thisFrame, new Appointment(loggedInEmployee));
 				
 			} else if(actionCommand.equals("Slett avtale")) {
+				//TODO delete the chose appointment
 				int choice = JOptionPane.showConfirmDialog(thisFrame,
 						"Er du sikker på at du vil slette denne avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
 				
 				if (choice == 0) {
 					// slett avtale
-					System.out.println("Avtale slettet");
 				}
 				
 			} else if(actionCommand.equals("->")) {
 				weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() + 1);
+				sendWeekCalendarRequest(calendarTableModel.getEmployee());
 				
 			} else if(actionCommand.equals("<-")) {
 				weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() - 1);
+				sendWeekCalendarRequest(calendarTableModel.getEmployee());
+				
+			} else if(actionCommand.equals("week")) {
+				sendWeekCalendarRequest(calendarTableModel.getEmployee());
 				
 			} else if(actionCommand.equals("Logg ut")) {
-				SocketListener sl = SocketListener.getClientSocketListener();
-				if (sl != null) {
-					//OutboundWorker ow = sl.getOutboundWorker();
-					//if (ow != null) ow.logout();
-					sl.closeSocket();
-				}
+				
+				closeNetworkSocket();
 				
 				// clear text
 				employeeComboBox.setSelectedItem(null);
-				loggedInUsername = "";
+				loggedInEmployee = null;
 				usernameLabel.setText("");
 				
 				// clear calendar table
 				calendarTableModel.resetDefaultCalendar();
-				calendarTable.setModel(new WeekCalendar());
+				calendarTableModel = new WeekCalendar();
+				calendarTable.setModel(calendarTableModel);
 				
 				// clear notifications
 				notificationList.setModel(new NotificationListModel());
@@ -346,36 +339,72 @@ public class CalendarView extends JFrame {
 				weekComboBox.setSelectedIndex(currentCal.get(Calendar.WEEK_OF_YEAR) - 1);
 				yearSpinner.setValue(currentCal.get(Calendar.YEAR));
 				
-				// show login screen
-				String[] username = new String[1]; // point to something mutable so we can get it back
-				new LoginScreen(thisFrame, username);
-				usernameLabel.setText(username[0]);
-				loggedInUsername = username[0];
-				
+				initializeLoggedInUser();
 			}
 		}
 	};
 	
 	
+	
+	
 	WindowAdapter windowListener = new WindowAdapter() {
 		@Override
 		public void windowClosing(WindowEvent we) {
-			SocketListener listener = SocketListener.getClientSocketListener();
-			if (listener != null) listener.closeSocket();
-			
+			closeNetworkSocket();
 			System.exit(0);
-			
 		}
 		@Override
 		public void windowClosed(WindowEvent we) {
-			System.out.println("closed");
 		}
 	};
 	
 	
-	public String getLoggedInUser() {
-		return loggedInUsername;
+	public Employee getLoggedInEmployee() {
+		return loggedInEmployee;
 	}
+	
+	
+	private void closeNetworkSocket() {
+		if (SocketListener.getSocket() != null) {
+			try {
+				SocketListener.getSocket().close();
+			} catch (IOException e) {
+				// Don't care
+				//e.printStackTrace();
+			}
+		}
+	}
+	
+	
+	private void initializeLoggedInUser() {
+		Employee[] user = new Employee[1]; // point to something mutable so we can get it back
+		new LoginScreen(thisFrame, user);
+		usernameLabel.setText(user[0].getUserName());
+		loggedInEmployee = user[0];
+		
+		/* Do initialization */
+		// TODO proper initialization
+		EmployeeComboBoxModel ecbModel = new EmployeeComboBoxModel();
+		ecbModel.initialize();
+		employeeComboBox.setModel(ecbModel);
+		employeeComboBox.setSelectedItem(loggedInEmployee);
+		//employeeComboBox.updateUI();
+		
+		NotificationListModel notiListModel = new NotificationListModel();
+		notiListModel.initialize();
+		notificationList.setModel(notiListModel);
+		
+		sendWeekCalendarRequest(loggedInEmployee);
+	}
+	
+	
+	private void sendWeekCalendarRequest(Employee employee) {
+		calendarTableModel.resetDefaultCalendar();
+		calendarTableModel = new WeekCalendar(employee, (int)weekComboBox.getSelectedItem(), (int)yearSpinner.getValue());
+		calendarTableModel.initialize();
+		calendarTable.setModel(calendarTableModel);
+	}
+	
 	
 	
 }

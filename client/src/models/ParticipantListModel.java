@@ -13,10 +13,30 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 	
 	
 	
+	private Participant appointmentLeader;
 	
 	
-	public ParticipantListModel() {
+	/**
+	 * Creates a new empty list
+	 */
+	public ParticipantListModel(Participant appointmentLeader) {
 		super();
+		this.appointmentLeader = appointmentLeader;
+		this.addElement(appointmentLeader);
+	}
+	
+	
+	/**
+	 * Copy constructor
+	 * 
+	 * @param participantList
+	 */
+    public ParticipantListModel(ParticipantListModel participantList) {
+		super();
+		for (Object participant : participantList.toArray()){
+			this.addElement((Participant) participant);
+		}
+		this.appointmentLeader = participantList.getAppoinmentLeader();
 	}
 
 
@@ -34,20 +54,14 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 		return this.isEmpty();
 	}
 
+
 	@Override
 	@JsonIgnore
 	public ListDataListener[] getListDataListeners() {
 		return this.getListDataListeners();
 	}
 
-    public ParticipantListModel(ParticipantListModel participantList) {
-		super();
-		for (Object participant : participantList.toArray()){
-			this.addElement((Participant) participant);
-		}
-	}
-	
-	
+
 	@Override
 	public void addElement(Participant participant){
 		if (this.contains(participant)){
@@ -55,4 +69,13 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 		}
 		super.addElement(participant);
 	}
+
+	
+	public Participant getAppoinmentLeader() {
+		return this.appointmentLeader;
+	}
+	
+	
 }
+
+
