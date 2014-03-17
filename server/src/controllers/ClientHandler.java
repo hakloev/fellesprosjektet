@@ -1,6 +1,5 @@
 package controllers;
 
-import helperclasses.JSONHandler;
 import helperclasses.Request;
 import helperclasses.Response;
 
@@ -49,7 +48,7 @@ public class ClientHandler extends Thread implements Runnable {
 
 				// Return the response to client
 				if (response != null) {
-					sendOutgoingResponse(JSONHandler.createJSON(response));
+					sendOutgoingResponse(response.getResponse());
 				} else {
 					System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
 							_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " GOT NULL RESPONSE, NOTHING TO SEND");

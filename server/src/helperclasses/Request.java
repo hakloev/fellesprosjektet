@@ -21,10 +21,6 @@ public class Request {
 		_REQUESTTYPE = null;
 	}
 
-	public void set_REQUESTTYPE(String _REQUESTTYPE) {
-		this._REQUESTTYPE = _REQUESTTYPE;
-	}
-
 	public String get_REQUESTTYPE() {
 		return _REQUESTTYPE;
 	}
@@ -42,4 +38,6 @@ public class Request {
 		Date date = new Date();
 		return df.format(date);
 	}
+
+
 }

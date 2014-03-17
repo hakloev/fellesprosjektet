@@ -221,7 +221,6 @@ public class Appointment implements NetInterface {
 		this.locationText = location.getRoomCode();
 	}
 
-
 	public String getLocation() {
 		return locationText;
 	}

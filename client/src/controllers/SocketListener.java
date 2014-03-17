@@ -73,9 +73,13 @@ public class SocketListener{
     public static SocketListener getClientSocketListener() {
     	return clientSocketListener;
     }
-    
-    
-    
-    
+
+	public OutboundWorker getOutWorker() {
+		return outWorker;
+	}
+
+	public void setOutWorker(OutboundWorker outWorker) {
+		this.outWorker = outWorker;
+	}
 }
 
