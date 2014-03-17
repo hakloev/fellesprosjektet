@@ -6,7 +6,17 @@ import javax.swing.DefaultListModel;
 public class RoomListModel extends DefaultListModel<Room> implements NetInterface {
 	
 	
+	private int minimumCapacity;
 	
+	
+	public RoomListModel(int capacity) {
+		this.minimumCapacity = capacity;
+	}
+	
+	
+	public void setCapacity(int capacity) {
+		this.minimumCapacity = capacity;
+	}
 	
 	
 	@Override
@@ -14,14 +24,24 @@ public class RoomListModel extends DefaultListModel<Room> implements NetInterfac
 		// TODO Auto-generated method stub
 		
 		/* test code */
-		this.addElement(new Room("B1-183C", 6));
-		this.addElement(new Room("Rill", 50));
-		this.addElement(new Room("Rall", 50));
+		Room[] rooms = new Room[] {
+			new Room("B1-183C", 6),
+			new Room("WhiteCube", 8),
+			new Room("Rill", 50),
+			new Room("Rall", 50)
+		};
+		
+		for (Room room : rooms) {
+			if (room.getCapacity() >= minimumCapacity) {
+				this.addElement(room);
+			}
+		}
 		/* end test code */
 	}
 
 	@Override
 	public void refresh() {
+		this.clear();
 		this.initialize();
 	}
 

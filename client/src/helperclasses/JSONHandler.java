@@ -4,6 +4,7 @@ package helperclasses;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gui.LoginScreen;
+
 import helperclasses.Response;
 import models.*;
 
@@ -44,6 +45,7 @@ public class JSONHandler {
             } else {
                 System.out.println("Request.parseJSON: ELSE ");
                 return null;
+
             }
 
 

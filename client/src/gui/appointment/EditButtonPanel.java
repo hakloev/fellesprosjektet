@@ -1,6 +1,7 @@
 package gui.appointment;
 
 import gui.EditParticipants;
+import gui.EditEmailRecipients;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -65,6 +66,16 @@ class EditButtonPanel extends JPanel implements ActionListener {
 		gbc_btnSlett.gridy = 3;
 		this.add(btnSlett, gbc_btnSlett);
 		btnSlett.addActionListener(this);
+		
+		JButton btnEmail = new JButton("e-post liste");
+		btnEmail.setActionCommand("email");
+		GridBagConstraints gbc_btnEmail = new GridBagConstraints();
+		gbc_btnEmail.insets = new Insets(0, 0, 5, 5);
+		gbc_btnEmail.fill = GridBagConstraints.HORIZONTAL;
+		gbc_btnEmail.gridx = 0;
+		gbc_btnEmail.gridy = 4;
+		this.add(btnEmail, gbc_btnEmail);
+		btnEmail.addActionListener(this);
 
 	}
 
@@ -108,13 +119,15 @@ class EditButtonPanel extends JPanel implements ActionListener {
             
         }
         else if(ae.getActionCommand().equals("Slett")){
-             int choice = JOptionPane.showConfirmDialog(this,
+             int choice = JOptionPane.showConfirmDialog(null,
                 "Er du sikker på at du vil slette " + ((EditAppointment)parent).getSelectedParticipant().getName() + " fra avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
 
             if (choice == 0) {
-                // slett Deltager
-                ((EditAppointment)parent).getParticipantList().removeElement(((EditAppointment) parent).getSelectedParticipant());
+            	appointment.getParticipantList().removeElement(((EditAppointment) parent).getSelectedParticipant());
             }
+        }
+        else if (ae.getActionCommand().equals("email")) {
+        	new EditEmailRecipients(parent, appointment);
         }
 
 	}

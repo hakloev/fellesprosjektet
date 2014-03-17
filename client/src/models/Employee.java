@@ -3,25 +3,18 @@ package models;
 public class Employee {
 	
 	
-	private String userName;
+	private String username;
 	private String name;
 	
 	
-	public Employee(String userName, String name) {
-		this.userName = userName;
+	public Employee(String username, String name) {
+		this.username = username;
 		this.name = name;
 	}
 
-    public void setUserName(String userName) {
-        this.userName = userName;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getUserName() {
-		return userName;
+		return username;
 	}
 	
 	
@@ -34,4 +27,15 @@ public class Employee {
 		return name;
 	}
 
+	
+	@Override
+    public boolean equals(Object employee){
+        if (employee instanceof Employee) {
+            return (((Employee)employee).username.equals(this.username));
+        }
+        return false;
+    }
+	
+	
+	
 }

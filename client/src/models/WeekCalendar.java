@@ -11,7 +11,8 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	
 	private Employee employee;
 	private ArrayList<Appointment> appointmentList;
-	private int weekNumber;
+	private int week;
+	private int year;
 	private int iteratorIndex;
 	
 	
@@ -38,13 +39,14 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	
 	public WeekCalendar() {
 		super(emptyCalendar, columnTitles);
-		
 	}
 	
 	
-	public WeekCalendar(Employee employee, int weekNumber) {
+	public WeekCalendar(Employee employee, int weekNumber, int year) {
+		super(emptyCalendar, columnTitles);
 		this.employee = employee;
-		this.weekNumber = weekNumber;
+		this.week = weekNumber;
+		this.year = year;
 		iteratorIndex = 0;
 	}
 	
@@ -59,6 +61,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	
 	@Override
 	public void refresh() {
+		// TODO Clear first maybe?
 		this.initialize();
 	}
 	
@@ -92,9 +95,14 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	
 	
 	public void addAppointment(Appointment appointment) {
+		// TODO code for placing app in table
 		appointmentList.add(appointment);
 	}
 	
+	
+	public Employee getEmployee() {
+		return employee;
+	}
 	
 	/* Don't ask.. */
 	public void resetDefaultCalendar() {

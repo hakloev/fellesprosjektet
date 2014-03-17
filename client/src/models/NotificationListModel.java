@@ -14,13 +14,16 @@ public class NotificationListModel extends DefaultListModel<Notification> implem
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
-
+		
+		/* test code */
+		this.addElement(new Notification(0, "per", 0, "invitation"));
+		/* end test code */
 	}
 
 	@Override
 	public void refresh() {
+		this.clear();
 		this.initialize();
-
 	}
 
 	@Override

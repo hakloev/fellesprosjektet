@@ -1,168 +1,214 @@
 package models;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import controllers.OutboundWorker;
 import helperclasses.Request;
 
 
+
+
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.Calendar;
+import java.util.Date;
 
 public class Appointment implements NetInterface {
 
 
-	@JsonProperty("participantList")
-	private ParticipantListModel participantList;
 	private PropertyChangeSupport pcs;
 
-	private int year;
-	private int month;
-	private int day;
-	private int starthour;
-	private int startmin;
-	private int endhour;
-	private int endmin;
-	private int duration;
-	private boolean startset;
-	private boolean endset;
-	private boolean durationset;
+	@JsonProperty("participantList")
+	private ParticipantListModel participantList;
+	private EmailListModel emailRecipientsList;
+
+	private int appointmentID;
+	private Employee appointmentLeader;
+	private String description;
+	private Room location;
+	private String locationText;
+	
+	private Calendar startDateTime;
+	private Calendar endDateTime;
+	
+	private boolean showInCalendar;
 
 
-
-	public Appointment() {
-
+	/**
+	 * Constructor for new appointment
+	 * 
+	 * @param appointmentLeader
+	 */
+	public Appointment(Employee appointmentLeader) {
 		pcs = new PropertyChangeSupport(this);
-		participantList = new ParticipantListModel();
+		
+		this.appointmentLeader = appointmentLeader;
+		participantList = new ParticipantListModel(new Participant(appointmentLeader));
+		emailRecipientsList = new EmailListModel();
 	}
-
-	public void setDate(String date){
-		day = Integer.parseInt(date.substring(0,2)); // DD.MM.YYYY
-		month = Integer.parseInt(date.substring(3,5)); // 01.34.6789
-		year = Integer.parseInt(date.substring(6,10));
-	}
-	public void setStart(String start){
-		starthour = Integer.parseInt(start.substring(0,2));
-		startmin = Integer.parseInt(start.substring(3,5));
-		startset = true;
-
-		if(endset){
-			int newduration = (endhour -starthour)*60 + endmin - startmin;
-			pcs.firePropertyChange("duration", duration, newduration);
-			duration = newduration;
-			durationset = true;
-		}
-		else if(durationset){
-			String oldEnd = getEnd();
-			endmin = startmin + duration;
-			endhour = starthour;
-			while (endmin > 59){
-				endhour += 1;
-				endmin -= 60;
-			}
-			endset = true;
-			pcs.firePropertyChange("End", oldEnd, getEnd());
-		}
-
-	}
-	public void setEnd(String end){
-		endhour = Integer.parseInt(end.substring(0,2));
-		endmin = Integer.parseInt(end.substring(3,5));
-		endset = true;
-
-		if(startset){
-			int oldDuration = getDuration();
-			duration = (endhour -starthour)*60 + endmin - startmin;
-			durationset = true;
-			pcs.firePropertyChange("Duration", oldDuration, getDuration());
-		}
-		else if(durationset){
-			String oldStart = getStart();
-			startmin = endmin - duration;
-			starthour = endhour;
-			while (startmin < 0){
-				starthour -= 1;
-				startmin += 60;
-			}
-			startset = true;
-			pcs.firePropertyChange("Start", oldStart, getStart());
-		}
-	}
-	public void setDuration(int duration){
-		this.duration = duration;
-		durationset = true;
-		if (startset){
-			String oldEnd = getEnd();
-			int reminder = startmin + duration;
-			endhour = starthour;
-			while (reminder > 59){
-				endhour += 1;
-				reminder -= 60;
-
-			}
-			endmin = reminder;
-			endset = true;
-			durationset = true;
-			pcs.firePropertyChange("End", oldEnd, getEnd());
-		}
-		else if (!startset && endset){
-			String oldStart = getStart();
-			int reminder = endmin - duration;
-			starthour = endhour;
-			while (reminder < 0){
-				starthour -= 1;
-				reminder += 60;
-
-			}
-			startmin = reminder;
-			startset = true;
-			durationset = true;
-			pcs.firePropertyChange("Start", oldStart, getStart());
-		}
+	
+	
+	/* Work in progress. Use refresh instead if appointment editing is canceled.
+	/**
+	 * Copy constructor
+	 * 
+	 * @param oldAppointment
+	 *
+	public Appointment(Appointment oldAppointment) {
+		pcs = new PropertyChangeSupport(this);
+		
+		participantList
+		emailRecipientsList
+		appointmentLeader
+		description
+		location
+		locationText
+		startDateTime
+		endDateTime
 		
 	}
-	public String getDate(){
-		String ret = "";
-		ret += day/10;
-		ret += day % 10;
-		ret += ".";
-		ret += month/10;
-		ret += month % 10;
-		ret += ".";
-		ret += year;
-		return ret;
+	*/
+
+
+	public void setDate(Date date) {
+		if (startDateTime == null) startDateTime = Calendar.getInstance();
+
+		startDateTime.set(date.getYear(), date.getMonth(), date.getDate());
 	}
-	public String getStart(){
-		String ret = "";
-		ret += starthour/10;
-		ret += starthour % 10;
-		ret += ":";
-		ret += startmin/10;
-		ret += startmin%10;
-		return ret;
+
+
+	public void setStart(Date start){
+		if (startDateTime == null) startDateTime = Calendar.getInstance();
+
+		startDateTime.set(Calendar.HOUR_OF_DAY, start.getHours());
+		startDateTime.set(Calendar.MINUTE, start.getMinutes());
+
 
 	}
+
+
+	public void setEnd(Date end){
+		if (endDateTime == null) endDateTime = Calendar.getInstance();
+
+		String oldDuration = this.getDuration();
+
+		if (startDateTime != null) {
+			endDateTime.set(
+					startDateTime.get(Calendar.YEAR),
+					startDateTime.get(Calendar.MONTH),
+					startDateTime.get(Calendar.DAY_OF_MONTH),
+					end.getHours(),
+					end.getMinutes());
+
+
+			pcs.firePropertyChange("Duration", oldDuration, getDuration());
+
+
+		} else {
+			endDateTime.set(Calendar.HOUR_OF_DAY, end.getHours());
+			endDateTime.set(Calendar.MINUTE, end.getMinutes());
+		}
+	}
+
+
+	public void setDuration(Date duration){
+		if (startDateTime != null) {
+			String oldValue = this.getEnd();
+
+			if (endDateTime == null) endDateTime = Calendar.getInstance();
+
+			endDateTime.set(startDateTime.get(Calendar.YEAR),
+					startDateTime.get(Calendar.MONTH),
+					startDateTime.get(Calendar.DAY_OF_MONTH),
+					startDateTime.get(Calendar.HOUR_OF_DAY) + duration.getHours(),
+					startDateTime.get(Calendar.MINUTE) + duration.getMinutes());
+			pcs.firePropertyChange("End", oldValue, this.getEnd());
+		}
+	}
+
+
+	public String getDate(){
+		if (startDateTime != null) {
+			int day = startDateTime.get(Calendar.DAY_OF_MONTH);
+			int month = startDateTime.get(Calendar.MONTH);
+			int year = startDateTime.get(Calendar.YEAR);
+			String ret = "";
+			ret += day/10;
+			ret += day % 10;
+			ret += ".";
+			ret += month/10;
+			ret += month%10;
+			ret += ".";
+			ret += year;
+			return ret;
+
+
+		}
+		return "01.01.1970";
+	}
+
+
+	public String getStart(){
+		if (startDateTime != null) {
+			int hour = startDateTime.get(Calendar.HOUR_OF_DAY);
+			int min = startDateTime.get(Calendar.MINUTE);
+			String ret = "";
+			ret += hour /10;
+			ret += hour % 10;
+			ret += ":";
+			ret += min /10;
+			ret += min%10;
+			return ret;
+		}
+		return "00:00";
+	}
+
+
 	public String getEnd(){
-		String ret = "";
-		ret += endhour/10;
-		ret += endhour % 10;
-		ret += ":";
-		ret += endmin/10;
-		ret += endmin%10;
-		return ret;
+		if (endDateTime != null) {
+			int hour = endDateTime.get(Calendar.HOUR_OF_DAY);
+			int min = endDateTime.get(Calendar.MINUTE);
+			String ret = "";
+			ret += hour /10;
+			ret += hour % 10;
+			ret += ":";
+			ret += min /10;
+			ret += min%10;
+			return ret;
+		}
+		return "00:00";
 	}
-	public int getDuration(){
-		return duration;
+
+
+	public String getDuration(){
+		if (startDateTime != null && endDateTime != null) {
+			long difference = endDateTime.getTimeInMillis() - startDateTime.getTimeInMillis();
+			difference /= 60000;
+			long hour = difference /60;
+			long min = difference % 60;
+			String ret = "";
+			ret += hour /10;
+			ret += hour % 10;
+			ret += ":";
+			ret += min /10;
+			ret += min%10;
+			return ret;
+		}
+		return "00:00";
 	}
+
 
 	public void addPropertyChangeListener(PropertyChangeListener listener){
 		pcs.addPropertyChangeListener(listener);
 	}
+
+
 	public void removePropertyChangeListener(PropertyChangeListener listener){
 		pcs.removePropertyChangeListener(listener);
 	}
+
 
 	public ParticipantListModel getParticipantList() {
 		return participantList;
@@ -175,7 +221,68 @@ public class Appointment implements NetInterface {
 			this.participantList = participantList;
 		}
 	}
+	
+	
+	public EmailListModel getEmailRecipientsList() {
+		return emailRecipientsList;
+	}
+	
+	
+	public void setEmailRecipientsList(EmailListModel emailList) {
+		this.emailRecipientsList = emailList;
+	}
 
+
+	public Employee getAppointmentLeader() {
+		return appointmentLeader;
+	}
+
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
+	public String getDescription() {
+		return description;
+	}
+
+
+	public void setLocation(String location) {
+		this.locationText = location;
+	}
+
+
+	public void setLocation(Room location) {
+		this.location = location;
+		this.locationText = location.getRoomCode();
+	}
+
+
+	public String getLocation() {
+		return locationText;
+	}
+	
+	
+	public int getAppointmentID() {
+		return appointmentID;
+	}
+
+
+	public boolean isShowInCalendar() {
+		return showInCalendar;
+	}
+
+
+	public void setShowInCalendar(boolean showInCalendar) {
+		this.showInCalendar = showInCalendar;
+	}
+
+
+	@Override
+	public String toString() {
+		return appointmentLeader.getName().split(" ")[0] + " : " + locationText;
+	}
 
 
 	@Override
@@ -193,14 +300,21 @@ public class Appointment implements NetInterface {
 
 	@Override
 	public void save() {
-        Request request = new Request("appointment","post",this);
-        OutboundWorker.sendRequest(request);
+		Request request = new Request("appointment","post",this);
+		OutboundWorker.sendRequest(request);
 	}
 
 	@Override
 	public void delete() {
-      Request request = new Request("appointment","delete",this);
-      OutboundWorker.sendRequest(request);
+		Request request = new Request("appointment","delete",this);
+		OutboundWorker.sendRequest(request);
 
 	}
+
+
+
+	
+	
 }
+
+

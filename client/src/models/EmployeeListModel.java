@@ -21,6 +21,7 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements Net
 
 	@Override
 	public void refresh() {
+		this.clear();
 		this.initialize();
 	}
 

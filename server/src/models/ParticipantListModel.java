@@ -1,7 +1,9 @@
 package models;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.swing.DefaultListModel;
@@ -10,13 +12,13 @@ import javax.swing.event.ListDataListener;
 
 @SuppressWarnings("serial")
 public class ParticipantListModel extends DefaultListModel<Participant> {
-	
-	
-	
-	
-	
+
+
+
+	@JsonCreator
 	public ParticipantListModel() {
 		super();
+
 		/* test code */
 		this.addElement(new Participant("siri", "Siri Gundersen", ParticipantStatus.participating));
 		this.addElement(new Participant("arvid", "Arvid Pettersen", ParticipantStatus.participating));
@@ -24,8 +26,7 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 		/* end test code */
 	}
 
-
-    @JsonProperty("getParticipants")
+	@JsonProperty("participants")
     public Object[] getParticipants() {
         return this.toArray();
     }

@@ -1,11 +1,6 @@
 package main;
 
-import controllers.OutboundWorker;
-import controllers.SocketListener;
 import gui.CalendarView;
-import helperclasses.Request;
-import models.*;
-
 import javax.swing.*;
 
 
@@ -42,6 +37,7 @@ public class Client {
         //OutboundWorker.login("trulsmp",test);
 
     	setupUIManager(); // do first
+    	
         new CalendarView();
 
     }

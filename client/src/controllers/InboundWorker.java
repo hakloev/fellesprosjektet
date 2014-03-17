@@ -7,7 +7,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.ArrayList;
 
 /**
  * Created by Truls on 12.03.14.
@@ -16,7 +15,10 @@ public class InboundWorker extends Thread implements Runnable {
     private boolean connected;
     private String response;
     private BufferedReader readFromServer;
-    Socket socketClient;
+    private Socket socketClient;
+    
+    private static Thread registeredWaitingInstance;
+    private static Object responseObject;
 
     public InboundWorker(Socket socketClient) {
         connected = true;
@@ -45,12 +47,18 @@ public class InboundWorker extends Thread implements Runnable {
                 System.out.println(response.get_JSONRESPONSE() + "\n");
 
                 Object object = JSONHandler.parseJSON(response);
-
+                
+                responseObject = object;
+                	
+                if (registeredWaitingInstance != null) {
+                	registeredWaitingInstance.interrupt();
+                }
+                
                 System.out.println("ParsedObjectOutput: " + object);
 
 
                 // TODO: SENDE VIDERE TIL KLASSE SOM OPPDATER KLIENT
-
+                
             }
 
         } catch (IOException e) {
@@ -58,6 +66,21 @@ public class InboundWorker extends Thread implements Runnable {
             e.printStackTrace();
         }
 
+    }
+    
+    
+    public static void register(Thread waiting) {
+    	registeredWaitingInstance = waiting;
+    }
+    
+    public static void unregister(Thread waiting) {
+    	if (registeredWaitingInstance == waiting) {
+    		registeredWaitingInstance = null;
+    	}
+    }
+    
+    public static Object getResponse() {
+    	return responseObject;
     }
 }
 
