@@ -250,11 +250,6 @@ public class Appointment implements DBInterface {
 
 	@Override
 	public void initialize() {
-
-	}
-
-	@Override
-	public void refresh() {
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		try {
 			String sql = "SELECT * FROM avtale WHERE avtaleid = " + this.appointmentID;
@@ -281,6 +276,11 @@ public class Appointment implements DBInterface {
 	}
 
 	@Override
+	public void refresh() {
+		this.initialize();
+	}
+
+	@Override
 	public void save() {
 		Connection dbCon = DBconnection.getConnection();
 		try {
@@ -301,8 +301,7 @@ public class Appointment implements DBInterface {
 
 			ResultSet rs = stmt.getGeneratedKeys();
 			while (rs.next()) {
-				rs.getInt(1);
-				System.out.println("id: " + rs.getInt(1));
+				this.setAppointmentID(rs.getInt(1));
 			}
 			rs.close();
 			stmt.close();
