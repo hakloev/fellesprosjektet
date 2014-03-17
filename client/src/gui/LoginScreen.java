@@ -93,7 +93,7 @@ public class LoginScreen extends JDialog implements ActionListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Logg inn")) {
-        	//Creating a SocketClient object
+            //Creating a SocketClient object
             client = new SocketListener();
             //trying to establish connection to the server
             Boolean connected = client.connect();
@@ -102,19 +102,18 @@ public class LoginScreen extends JDialog implements ActionListener{
             /* end test code */
 
             if (connected) {
-            	String username = usernameField.getText();
-                while (loggedIn == false) {
-                    OutboundWorker.login(username, passwordField.getPassword());
-            		saveUsernameHere[0] = username;
-            		this.dispose();
-                }
+                String username = usernameField.getText();
+                OutboundWorker.login(username, passwordField.getPassword());
+                saveUsernameHere[0] = username;
+                this.dispose();
+
 
 
             } else {
-            	JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
             }
-            
-            
+
+
         }
         else if(e.getActionCommand().equals("Avslutt")) {
             System.exit(0);
