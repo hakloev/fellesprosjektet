@@ -7,41 +7,41 @@ import javax.swing.table.DefaultTableModel;
 
 @SuppressWarnings("serial")
 public class WeekCalendar extends DefaultTableModel implements NetInterface, Iterator<Appointment>{
-	
-	
+
+
 	private Employee employee;
 	private ArrayList<Appointment> appointmentList;
 	private int week;
 	private int year;
 	private int iteratorIndex;
-	
-	
+
+
 	private static Object[][] emptyCalendar = new Object[][] {
-			{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
-			{"07.00", null, null, null, null, null, null, null},
-			{"08.00", null, null, null, null, null, null, null},
-			{"09.00", null, null, null, null, null, null, null},
-			{"10.00", null, null, null, null, null, null, null},
-			{"11.00", null, null, null, null, null, null, null},
-			{"12.00", null, null, null, null, null, null, null},
-			{"13.00", null, null, null, null, null, null, null},
-			{"14.00", null, null, null, null, null, null, null},
-			{"15.00", null, null, null, null, null, null, null},
-			{"16.00", null, null, null, null, null, null, null},
-			{"17.00", null, null, null, null, null, null, null},
-			{"18.00", null, null, null, null, null, null, null},
-			{"19.00", null, null, null, null, null, null, null},
-			{"20.00", null, null, null, null, null, null, null},
-		};
+		{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
+		{"07.00", null, null, null, null, null, null, null},
+		{"08.00", null, null, null, null, null, null, null},
+		{"09.00", null, null, null, null, null, null, null},
+		{"10.00", null, null, null, null, null, null, null},
+		{"11.00", null, null, null, null, null, null, null},
+		{"12.00", null, null, null, null, null, null, null},
+		{"13.00", null, null, null, null, null, null, null},
+		{"14.00", null, null, null, null, null, null, null},
+		{"15.00", null, null, null, null, null, null, null},
+		{"16.00", null, null, null, null, null, null, null},
+		{"17.00", null, null, null, null, null, null, null},
+		{"18.00", null, null, null, null, null, null, null},
+		{"19.00", null, null, null, null, null, null, null},
+		{"20.00", null, null, null, null, null, null, null},
+	};
 	private static Object[] columnTitles = new String[] {
-			"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
-	
-	
+		"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
+
+
 	public WeekCalendar() {
 		super(emptyCalendar, columnTitles);
 	}
-	
-	
+
+
 	public WeekCalendar(Employee employee, int weekNumber, int year) {
 		super(emptyCalendar, columnTitles);
 		this.employee = employee;
@@ -49,28 +49,28 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 		this.year = year;
 		iteratorIndex = 0;
 	}
-	
-	
-	
+
+
+
 	@Override
 	public void initialize() {
 		// TODO Get appointments for this employee for the specific week
-		
-		
+
+
 	}
-	
+
 	@Override
 	public void refresh() {
 		// TODO Clear first maybe?
 		this.initialize();
 	}
-	
+
 	@Override
 	public void save() {
 		// This should probably not be saved as one.
 		// Server access should be administered on each Appointment object
 	}
-	
+
 	@Override
 	public void delete() {
 		// This should probably not be deleted as one
@@ -92,40 +92,40 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	public void remove() {
 		// Not allowed!
 	}
-	
-	
+
+
 	public void addAppointment(Appointment appointment) {
 		// TODO code for placing app in table
 		appointmentList.add(appointment);
 	}
-	
-	
+
+
 	public Employee getEmployee() {
 		return employee;
 	}
-	
+
 	/* Don't ask.. */
 	public void resetDefaultCalendar() {
 		emptyCalendar = new Object[][] {
-			{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
-			{"07.00", null, null, null, null, null, null, null},
-			{"08.00", null, null, null, null, null, null, null},
-			{"09.00", null, null, null, null, null, null, null},
-			{"10.00", null, null, null, null, null, null, null},
-			{"11.00", null, null, null, null, null, null, null},
-			{"12.00", null, null, null, null, null, null, null},
-			{"13.00", null, null, null, null, null, null, null},
-			{"14.00", null, null, null, null, null, null, null},
-			{"15.00", null, null, null, null, null, null, null},
-			{"16.00", null, null, null, null, null, null, null},
-			{"17.00", null, null, null, null, null, null, null},
-			{"18.00", null, null, null, null, null, null, null},
-			{"19.00", null, null, null, null, null, null, null},
-			{"20.00", null, null, null, null, null, null, null},
+				{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
+				{"07.00", null, null, null, null, null, null, null},
+				{"08.00", null, null, null, null, null, null, null},
+				{"09.00", null, null, null, null, null, null, null},
+				{"10.00", null, null, null, null, null, null, null},
+				{"11.00", null, null, null, null, null, null, null},
+				{"12.00", null, null, null, null, null, null, null},
+				{"13.00", null, null, null, null, null, null, null},
+				{"14.00", null, null, null, null, null, null, null},
+				{"15.00", null, null, null, null, null, null, null},
+				{"16.00", null, null, null, null, null, null, null},
+				{"17.00", null, null, null, null, null, null, null},
+				{"18.00", null, null, null, null, null, null, null},
+				{"19.00", null, null, null, null, null, null, null},
+				{"20.00", null, null, null, null, null, null, null},
 		};
-	columnTitles = new String[] {
-			"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
+		columnTitles = new String[] {
+				"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
 	}
-	
-	
+
+
 }
