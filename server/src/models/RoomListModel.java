@@ -27,6 +27,7 @@ public class RoomListModel extends DefaultListModel<Room> implements DBInterface
 
 	@Override
 	public void refresh() {
+		this.initialize();
 	}
 
 	@Override

@@ -1,6 +1,5 @@
 package controllers;
 
-import com.sun.corba.se.spi.activation._ServerStub;
 import helperclasses.Request;
 import helperclasses.Response;
 import models.*;
@@ -26,7 +25,6 @@ public class DatabaseWorker {
 			Object obj = parser.parse(request.get_JSONREQUEST());
 			JSONObject jsonObject = (JSONObject) obj;
 			String requestType = (String) jsonObject.get("request");
-			System.out.println(requestType);
 			if (requestType.equals("login")) {
 				JSONArray array = (JSONArray) jsonObject.get("array");
 				JSONObject responseJSON = new JSONObject();
@@ -48,7 +46,6 @@ public class DatabaseWorker {
 				String dbMethod = (String) jsonObject.get("dbmethod");
 				if (dbMethod.equals("save")) {
 					JSONObject model = (JSONObject) jsonObject.get("model");
-
 				}
 			} else if (requestType.equals("roomlistmodel")) {
 				String dbMethod = (String) jsonObject.get("dbmethod");
@@ -88,6 +85,10 @@ public class DatabaseWorker {
 		for (Appointment a : weekCalendar.getAppointmentList()) {
 			JSONObject appointment = new JSONObject();
 			appointment.put("appointmentID", a.getAppointmentID());
+			JSONObject appointmentLeader = new JSONObject();
+			appointmentLeader.put("username", a.getAppointmentLeader().getUsername());
+			appointmentLeader.put("name", a.getAppointmentLeader().getName());
+			appointment.put("appointmentLeader", appointmentLeader);
 			appointment.put("description", a.getDescription());
 			if (a.getRoom() != null) {
 				appointment.put("location", a.getRoom().getRoomCode());
