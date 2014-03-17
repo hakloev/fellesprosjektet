@@ -5,14 +5,11 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gui.LoginScreen;
 
-import helperclasses.Response;
 import models.*;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 /**
  * Created by Torgeir on 11.03.14.
@@ -29,10 +26,14 @@ public class JSONHandler {
             response.set_RESPONSETYPE(String.valueOf(root.path("request")));
             System.out.println("Type " + type);
 
-            if (type.equals("\"employee\"")) {
+            if (type.equals("\"login\"")) {
+                object = mapper.readValue(String.valueOf(root.path("object")),Login.class);
+            }
+            else if (type.equals("\"employee\"")) {
+
                 object = mapper.readValue(String.valueOf(root.path("object")), Employee.class);
             }
-            if (type.equals("\"appointment\"")) {
+            else if (type.equals("\"appointment\"")) {
                 object = mapper.readValue(String.valueOf(root.path("object")), Appointment.class);
 
             }

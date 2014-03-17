@@ -80,7 +80,7 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 	public Participant getAppoinmentLeader() {
 		return this.appointmentLeader;
 	}
-	
+
 }
 
 
