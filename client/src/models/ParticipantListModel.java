@@ -39,6 +39,10 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 		this.appointmentLeader = participantList.getAppoinmentLeader();
 	}
 
+    public ParticipantListModel() {
+
+    }
+
 
     @JsonProperty("participants")
     public Object[] participants() {

@@ -1,5 +1,7 @@
 package main;
 
+import controllers.OutboundWorker;
+import controllers.SocketListener;
 import gui.CalendarView;
 import javax.swing.*;
 
@@ -11,9 +13,9 @@ public class Client {
 
     public static void main(String[] args) {
         //Creating a SocketClient object
-        //SocketListener client = new SocketListener ();
+        SocketListener client = new SocketListener ();
         //trying to establish connection to the server
-        //client.connect();
+        client.connect();
 
         /*
 
@@ -34,11 +36,11 @@ public class Client {
         String password = "tr";
         char[] test = password.toCharArray();
 
-        //OutboundWorker.login("trulsmp",test);
+        OutboundWorker.login("trulsmp", test);
 
-    	setupUIManager(); // do first
+    	//setupUIManager(); // do first
     	
-        new CalendarView();
+        //new CalendarView();
 
     }
     

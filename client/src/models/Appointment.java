@@ -48,6 +48,10 @@ public class Appointment implements NetInterface {
 		participantList = new ParticipantListModel(new Participant(appointmentLeader));
 		emailRecipientsList = new EmailListModel();
 	}
+
+    public Appointment() {
+
+    }
 	
 	
 	/* Work in progress. Use refresh instead if appointment editing is canceled.
@@ -242,6 +246,9 @@ public class Appointment implements NetInterface {
 		this.description = description;
 	}
 
+    public void setAppointmentLeader(Employee appointmentLeader) {
+        this.appointmentLeader = appointmentLeader;
+    }
 
 	public String getDescription() {
 		return description;

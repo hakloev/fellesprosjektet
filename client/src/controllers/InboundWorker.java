@@ -49,7 +49,15 @@ public class InboundWorker extends Thread implements Runnable {
                 Object object = JSONHandler.parseJSON(response);
                 
                 responseObject = object;
-                	
+
+                if (responseObject == null) {
+                    // TODO: ikke gyldig login
+                }
+                else {
+                    // TODO: gyldig login
+                }
+
+
                 if (registeredWaitingInstance != null) {
                 	registeredWaitingInstance.interrupt();
                 }
