@@ -4,6 +4,7 @@ insert into ansatt values ('kvolden', 'kvolden', 'Kristian Volden');
 insert into ansatt values ('tarald', 'tarald', 'Tarald Gåsbakk');
 insert into ansatt values ('torgeirws', 'torgeir', 'Torgeir Skogen');
 insert into ansatt values ('trulsmp', 'trulsmp', 'Truls Mørk Pettersen');
+insert into ansatt values ('link', 'link', 'Link from Zelda');
 
 insert into moterom values ('R1', 478);
 insert into moterom values ('F1', 500);
@@ -31,3 +32,24 @@ insert into gruppemedlem values ('fagKom', 'trulsmp');
 
 insert into gruppemedlem values ('Ledergruppa', 'kvolden');
 insert into gruppemedlem values ('Ledergruppa', 'tarald');
+
+INSERT INTO avtale VALUES (1, 'kvolden', '2014-03-17 10:00:00', '2013-03-17 11:00:00', 'Kjapt møte', 'R1', 'R1');
+INSERT INTO avtale VALUES (2, 'hakloev', '2014-03-18 09:00:00', '2013-03-18 11:00:00', 'Kjapt møte', 'B126', 'B1-126');
+INSERT INTO avtale VALUES (3, 'torgeirws', '2014-03-17 10:00:00', '2013-03-17 11:00:00', 'Kjapt møte', 'F1', 'F1');
+INSERT INTO avtale VALUES (4, 'havard', '2014-03-17 08:00:00', '2013-03-17 10:00:00', 'Kjapt møte', 'E304', 'E304');
+
+INSERT INTO deltager VALUES ('hakloev', 1, 'deltar', null, 1);
+INSERT INTO deltager VALUES ('torgeirws', 1, 'deltar', null, 1);
+INSERT INTO deltager VALUES ('kvolden', 1, 'deltar_ikke', null, 1);
+INSERT INTO deltager VALUES ('tarald', 2, 'deltar', null, 0);
+INSERT INTO deltager VALUES ('havard', 2, 'deltar', null, 0);
+INSERT INTO deltager VALUES ('hakloev', 2, 'deltar', null, 0);
+INSERT INTO deltager VALUES ('torgeirws', 3, 'deltar', null, 1);
+INSERT INTO deltager VALUES ('trulsmp', 3, 'deltar', null, 1);
+INSERT INTO deltager VALUES ('link', 4, 'deltar', null, 1);
+INSERT INTO deltager VALUES ('havard', 4, 'deltar', null, 1);
+
+INSERT INTO email VALUES ('haakloev@gmail.com', 2);
+INSERT INTO email VALUES ('derp@derp.com', 4);
+
+

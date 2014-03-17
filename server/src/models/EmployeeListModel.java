@@ -44,9 +44,4 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements DBI
 	public void delete() {
 		// Do not add code. This model can not be deleted from server
 	}
-
-	@JsonProperty("employees")
-	public Object getArray() {
-		return this.toArray();
-	}
 }

@@ -37,10 +37,6 @@ public class Client {
 
 	    client.getOutWorker().sendRequest(request);
 
-	    Request request1 = new Request("login", "null", null);
-
-	    client.getOutWorker().sendRequest(request1);
-
     	//setupUIManager(); // do first
         //new CalendarView();
 

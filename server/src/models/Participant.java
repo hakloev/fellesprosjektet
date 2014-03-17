@@ -8,14 +8,15 @@ public class Participant {
 
     private String userName;
     private String name;
+	private boolean showInCalendar;
     private ParticipantStatus participantStatus;
 
-    @JsonCreator
-    public Participant(@JsonProperty("userName" )String userName, @JsonProperty("name") String name,
-                       @JsonProperty("participantStatus") ParticipantStatus participantStatus) {
+    public Participant(String userName, String name,
+                     ParticipantStatus participantStatus, boolean isShowInCalendar) {
         this.userName = userName;
         this.name = name;
         this.participantStatus = participantStatus;
+	    this.showInCalendar = showInCalendar;
     }
 
     @Override
@@ -28,11 +29,19 @@ public class Participant {
     }
 
     public Participant(Employee employee) {
-        this.userName = employee.getUserName();
+        this.userName = employee.getUsername();
         this.name = employee.getName();
         participantStatus = null;
 
     }
+
+	public boolean isShowInCalendar() {
+		return showInCalendar;
+	}
+
+	public void setShowInCalendar(boolean showInCalendar) {
+		this.showInCalendar = showInCalendar;
+	}
 
 	public void setUserName(String userName) {
 		this.userName = userName;

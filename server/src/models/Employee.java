@@ -1,40 +1,78 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Employee {
+import controllers.DBconnection;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+public class Employee implements DBInterface {
 	
 
-	private String userName;
+	private String username;
 	private String name;
 	
-	@JsonCreator
-	public Employee(@JsonProperty("userName") String userName, @JsonProperty("name") String name) {
-		this.userName = userName;
+	public Employee(String userName,String name) {
+		this.username = userName;
 		this.name = name;
 	}
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setUsername(String userName) {
+        this.username = userName;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public String getUserName() {
-		return userName;
-	}
-	
-	
-	public String toString() {
-		return name;
+    public String getUsername() {
+		return username;
 	}
 
+	@Override
+	public String toString() {
+		return "Employee{" +
+				"username='" + username + '\'' +
+				", name='" + name + '\'' +
+				'}';
+	}
 
 	public String getName() {
 		return name;
 	}
 
+	@Override
+	public void initialize() {
+
+	}
+
+	@Override
+	public void refresh() {
+		Connection dbCon = DBconnection.getConnection(); // Singelton class
+		try {
+			String sql = "SELECT * FROM ansatt WHERE brukernavn = '" + this.username + "'";
+			Statement stmt = dbCon.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				this.username = rs.getString(1);
+				this.name = rs.getString(3);
+			}
+			stmt.close();
+			rs.close();
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	@Override
+	public void save() {
+
+	}
+
+	@Override
+	public void delete() {
+
+	}
 }

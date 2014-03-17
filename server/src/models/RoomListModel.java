@@ -1,6 +1,5 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import controllers.DBconnection;
 
 import javax.swing.DefaultListModel;
@@ -40,11 +39,4 @@ public class RoomListModel extends DefaultListModel<Room> implements DBInterface
 		// Do not add code. This model can not be deleted from server
 	}
 
-	@JsonProperty("rooms")
-	public Object getArray() {
-		return this.toArray();
-	}
-	
-	
-	
 }

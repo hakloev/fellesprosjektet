@@ -1,44 +1,19 @@
 package models;
 
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.swing.DefaultListModel;
-import javax.swing.event.ListDataListener;
 
 
 @SuppressWarnings("serial")
 public class ParticipantListModel extends DefaultListModel<Participant> {
 
 
-
-	@JsonCreator
 	public ParticipantListModel() {
 		super();
 	}
 
-	@JsonProperty("participants")
     public Object[] getParticipants() {
         return this.toArray();
     }
-
-
-	// TRULS: LEGG TIL DISSE!!
-
-	@Override
-	@JsonIgnore
-	public boolean isEmpty() {
-		return this.isEmpty();
-	}
-
-	@Override
-	@JsonIgnore
-	public ListDataListener[] getListDataListeners() {
-		return this.getListDataListeners();
-	}
 
     public ParticipantListModel(ParticipantListModel participantList) {
 		super();
