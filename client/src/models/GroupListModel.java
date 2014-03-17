@@ -1,5 +1,8 @@
 package models;
 
+import controllers.OutboundWorker;
+import helperclasses.Request;
+
 import javax.swing.DefaultListModel;
 
 @SuppressWarnings("serial")
@@ -14,8 +17,7 @@ public class GroupListModel extends DefaultListModel<Group> implements NetInterf
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
-		
-		/* test code */
+		/* test code
 		Group group = new Group("Alle ansatte");
 		EmployeeListModel tempList = new EmployeeListModel();
 		tempList.initialize();
@@ -23,7 +25,7 @@ public class GroupListModel extends DefaultListModel<Group> implements NetInterf
 			group.add((Employee)employee);
 		}
 		this.addElement(group);
-		/* end test code */
+		end test code */
 	}
 
 	@Override

@@ -3,7 +3,13 @@ package main;
 import controllers.OutboundWorker;
 import controllers.SocketListener;
 import gui.CalendarView;
+import helperclasses.Request;
+import models.*;
+
 import javax.swing.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 
 
 /**
@@ -17,28 +23,46 @@ public class Client {
         //trying to establish connection to the server
         client.connect();
 
-        /*
+
+        Employee employee = new Employee("trulsmp","trulsmp");
 
         ParticipantListModel plist = new ParticipantListModel();
         plist.addElement(new Participant("trulsmp","truls", ParticipantStatus.participating));
         plist.addElement(new Participant("hakloev", "Haakon", ParticipantStatus.notParticipating));
 
         Appointment appointment = new Appointment();
-
+        appointment.setAppointmentID(2);
         appointment.setParticipantList(plist);
-        appointment.setDate("14.03.2014");
-        appointment.setStart("14:30");
-        appointment.setEnd("15:30");
-        Request request = new Request("appointment","post",appointment);
-        OutboundWorker.sendRequest(request);
+        Date date = new Date();
+        appointment.setDate(date);
+        appointment.setStartDateTime(Calendar.getInstance());
+        appointment.setEndDateTime(Calendar.getInstance());
+        appointment.setAppointmentLeader(employee);
+        Room room = new Room("R1",478);
+        appointment.setLocation(room);
+        appointment.setDescription("Kodekveld i fellesprosjekt, yayyyy");
+        appointment.save();
 
-        */
-        String password = "tr";
+        Appointment a = new Appointment();
+        a.setAppointmentID(2);
+        //a.initialize();
+
+        String password = "truls";
         char[] test = password.toCharArray();
+        //OutboundWorker.login("trulsmp", test);
 
-        OutboundWorker.login("trulsmp", test);
 
-    	//setupUIManager(); // do first
+        WeekCalendar weekCalendar = new WeekCalendar(new Employee("trulsmp","Truls Mork Pettersen"),12,2014);
+        //weekCalendar.initialize();
+
+        RoomListModel roomListModel = new RoomListModel();
+        //roomListModel.initialize();
+
+
+
+
+
+        //setupUIManager(); // do first
     	
         //new CalendarView();
 

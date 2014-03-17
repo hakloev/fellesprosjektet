@@ -29,7 +29,7 @@ public class Participant {
      * @param employee
      */
     public Participant(Employee employee) {
-        this.userName = employee.getUserName();
+        this.userName = employee.getUsername();
         this.name = employee.getName();
         participantStatus = null;
     }

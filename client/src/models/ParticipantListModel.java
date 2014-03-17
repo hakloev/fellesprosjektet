@@ -80,7 +80,7 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
     }
 
 
-	
+	@JsonIgnore
 	public Participant getAppoinmentLeader() {
 		return this.appointmentLeader;
 	}

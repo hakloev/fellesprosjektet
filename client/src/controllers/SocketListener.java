@@ -13,7 +13,7 @@ public class SocketListener{
     private static Socket socketClient;
 
     public SocketListener() {
-    	this.hostname = "localhost";
+    	this.hostname = "78.91.30.65";
         this.port = 4657;
     }
 

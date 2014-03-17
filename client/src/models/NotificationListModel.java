@@ -1,6 +1,12 @@
 package models;
 
+import com.sun.org.apache.regexp.internal.recompile;
+import controllers.OutboundWorker;
+import helperclasses.Request;
+
 import javax.swing.DefaultListModel;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 @SuppressWarnings("serial")
 public class NotificationListModel extends DefaultListModel<Notification> implements NetInterface {
@@ -14,10 +20,11 @@ public class NotificationListModel extends DefaultListModel<Notification> implem
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
-		
-		/* test code */
+
+        //OutboundWorker.sendRequest(request);
+		/* test code
 		this.addElement(new Notification(0, "per", 0, "invitation"));
-		/* end test code */
+		 end test code */
 	}
 
 	@Override
@@ -28,13 +35,14 @@ public class NotificationListModel extends DefaultListModel<Notification> implem
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
-
+		Request request = new Request("notificationlistmodel","save",this);
+        //OutboundWorker.sendRequest(request);
 	}
 
 	@Override
 	public void delete() {
-		// TODO Auto-generated method stub
+        Request request = new Request("notificationlistmodel","delete",this);
+        //OutboundWorker.sendRequest(request);
 
 	}
 
