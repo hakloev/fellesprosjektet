@@ -115,13 +115,20 @@ public class DatabaseWorker {
 		Iterator<JSONObject> iterator = array.iterator();
 		while (iterator.hasNext()) {
 			JSONObject p = iterator.next();
+			ParticipantStatus pStatus = null;
+			if (p.get("participantstatus").toString().equals("Deltar")) {
+				pStatus = ParticipantStatus.participating;
+			} else {
+				pStatus = ParticipantStatus.notParticipating;
+			}
+
 			Participant participant = new Participant((String) p.get("username"), (String) p.get("name"),
-					ParticipantStatus.valueOf(p.get("participantStatus").toString()), Boolean.valueOf(p.get("showInCalendar").toString()));
+					pStatus, Boolean.valueOf(p.get("showInCalendar").toString()));
 		    plm.addElement(participant);
 		}
+		a.save();
 		plm.setAppointmentID(a.getAppointmentID());
 		plm.save();
-		a.save();
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("response", "appointment");
 		jsonObject.put("dbmethod", "save");

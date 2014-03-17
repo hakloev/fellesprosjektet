@@ -66,7 +66,11 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 				if (p.isShowInCalendar()) {
 					show = 1;
 				}
-				sql = "insert into deltager values ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + p.getParticipantStatus().toString() + "', null, '" + show + ")";
+				String deltar = "deltar";
+				if (p.getParticipantStatus().toString().equals("deltar_ikke")) {
+					deltar = "deltar_ikke";
+				}
+				sql = "insert into deltager values ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', null, '" + show + "')";
 				System.out.println(sql);
 				stmt.executeUpdate(sql);
 			}
