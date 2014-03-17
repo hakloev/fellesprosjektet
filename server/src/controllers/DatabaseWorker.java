@@ -7,6 +7,7 @@ import helperclasses.Response;
 import models.*;
 
 import java.sql.*;
+import helperclasses.JSONHandler;
 
 /**
  * Created by Håkon Ødegård Løvdal on 11/03/14.
@@ -37,12 +38,30 @@ public class DatabaseWorker {
 			} else {
 				response = new Response("login", "null", null);
 			}
-
+		} else if (obj == null) {
+			System.out.println("DatabaseWorker.handleRequest: INIT CLIENT");
+			response = initClient();
 		} else {
 			System.out.println("DatabaseWorker.handleRequest: UNEXPECTED OBJECT");
 		}
 		// return response object
 		return response;
+	}
+
+	public static Response initClient() {
+		RoomListModel rooms = new RoomListModel();
+		rooms.initialize();
+		String roomsJSON = JSONHandler.createJSON(rooms);
+
+		GroupListModel groups = new GroupListModel();
+		groups.initialize();
+		String groupsJSON = JSONHandler.createJSON(groups);
+
+		EmployeeListModel employees = new EmployeeListModel();
+		employees.initialize();
+		String employeesJSON = JSONHandler.createJSON(employees);
+
+		return new Response("init", "null", roomsJSON + groupsJSON + employeesJSON);
 	}
 
 	private static Employee loginUser(Login l) {
@@ -67,34 +86,4 @@ public class DatabaseWorker {
 		return e;
 	}
 
-	public static void insertParticipant(Participant p) {
-		Connection dbCon = DBconnection.getConnection(); // Singelton class
-		try {
-			String sql = "INSERT INTO deltager VALUES ('" + p.getUserName() + "', 1, '" +
-					p.getParticipantStatus() + "', null, 1)";
-			PreparedStatement stmt = dbCon.prepareStatement(sql);
-			stmt.executeUpdate();
-			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-	}
-
-	public static void updateParticipant(Participant p) {
-
-	}
-
-	public static void deleteParticipant(Participant p) {
-
-	}
-
-	public static  void getAllParticipants() {
-		Connection dbCon = DBconnection.getConnection();
-		String sql = "SELECT * FROM deltager";
-	}
-
-	public static void getAllAppointments() {
-
-	}
 }

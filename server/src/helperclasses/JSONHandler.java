@@ -4,18 +4,17 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import controllers.DatabaseWorker;
 import models.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.print.DocFlavor;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
 
 /**
@@ -41,6 +40,12 @@ public class JSONHandler {
 				String user = array.get(0).toString();
 				String pw = array.get(1).toString();
 				object = new Login(user, pw);
+				return object;
+			}
+
+			if (request.get_REQUESTTYPE().equals("\"init\"")) {
+				System.out.println("JSONHandler.parseJSON: INITIALIZE REQUEST");
+				DatabaseWorker.initClient();
 				return object;
 			}
 
@@ -91,12 +96,30 @@ public class JSONHandler {
 	}
 
 	public static String createJSON(Response response) {
-		System.out.println("JSONHandler.createJSON: CREATING JSON");
+		System.out.println("JSONHandler.createJSON: CREATING JSON FROM RESPONSE");
 		ObjectMapper mapper = new ObjectMapper();
 		String dataJSON = null;
 		try {
 			Writer strWriter = new StringWriter();
 			mapper.writeValue(strWriter, response);
+			dataJSON = strWriter.toString();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return dataJSON;
+	}
+
+	public static String createJSON(Object obj) {
+		System.out.println("JSONHandler.createJSON: CREATING JSON FROM OBJECT");
+		ObjectMapper mapper = new ObjectMapper();
+		String dataJSON = null;
+		try {
+			Writer strWriter = new StringWriter();
+			mapper.writeValue(strWriter, obj);
 			dataJSON = strWriter.toString();
 		} catch (JsonMappingException e) {
 			e.printStackTrace();

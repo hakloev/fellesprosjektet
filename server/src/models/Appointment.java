@@ -8,8 +8,6 @@ import java.util.Date;
 
 public class Appointment implements DBInterface {
 
-
-
 	@JsonProperty("participantList")
 	private ParticipantListModel participantList;
 
@@ -232,6 +230,7 @@ public class Appointment implements DBInterface {
 
 	@Override
 	public void initialize() {
+
 	}
 
 	@Override
