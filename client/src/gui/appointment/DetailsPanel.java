@@ -166,6 +166,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		descriptionScrollPane.setColumnHeaderView(lblBeskrivelse);
 
 		descriptionTextArea = new JTextArea();
+		descriptionTextArea.addFocusListener(this);
 		descriptionTextArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		descriptionScrollPane.setViewportView(descriptionTextArea);
 
@@ -376,7 +377,9 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 	@Override
 	public void focusLost(FocusEvent arg0) {
-
+		if (arg0.getSource() == descriptionTextArea){
+			appointment.setDescription(descriptionTextArea.getText());
+		}
 	}
 
 	@Override
