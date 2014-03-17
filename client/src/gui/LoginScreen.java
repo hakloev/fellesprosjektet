@@ -3,6 +3,7 @@ package gui;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import controllers.OutboundWorker;
 import controllers.SocketListener;
 
 import java.awt.*;
@@ -21,11 +22,14 @@ public class LoginScreen extends JDialog implements ActionListener{
     private JPasswordField passwordField;
     private JLabel usernameLabel, passwordLabel;
     private String[] saveUsernameHere;
+    SocketListener client;
+    public static Boolean loggedIn;
 
 
     public LoginScreen(Frame parent, String[] saveUsernameHere){
         super(parent,"Innlogging", true);
         this.saveUsernameHere = saveUsernameHere;
+        loggedIn = false;
         
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setResizable(false);
@@ -88,37 +92,31 @@ public class LoginScreen extends JDialog implements ActionListener{
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getActionCommand() == "Logg inn") {
+        if(e.getActionCommand().equals("Logg inn")) {
         	//Creating a SocketClient object
-            SocketListener client = new SocketListener();
+            client = new SocketListener();
             //trying to establish connection to the server
-            
+            Boolean connected = client.connect();
+
             /* test code */
-            this.dispose();
-            saveUsernameHere[0] = usernameField.getText();
-            return;
             /* end test code */
-            
-            /* real logic below. Uncomment for production environment!
-            if (client.connect()) {
-            	SocketListener.setClientSocketListener(client);
+
+            if (connected) {
             	String username = usernameField.getText();
-            	if (client.getOutboundWorker().login(username, passwordField.getPassword())) {
+                while (loggedIn == false) {
+                    OutboundWorker.login(username, passwordField.getPassword());
             		saveUsernameHere[0] = username;
             		this.dispose();
-            	} else {
-            		JOptionPane.showMessageDialog(null, "Feil brukernavn eller passord", "Feil", JOptionPane.ERROR_MESSAGE);
-            		client.closeSocket();
-            		SocketListener.setClientSocketListener(null);
-            	}
+                }
+
+
             } else {
             	JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
             }
-            */
             
             
         }
-        else if(e.getActionCommand() == "Avslutt") {
+        else if(e.getActionCommand().equals("Avslutt")) {
             System.exit(0);
         }
     }

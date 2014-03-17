@@ -16,15 +16,8 @@ public class SocketListener{
     private static SocketListener clientSocketListener;
     private static boolean connected = false;
 
-
-    public SocketListener(String hostname, int port){
-        this.hostname = hostname;
-        this.port = port;
-    }
-    
-    
     public SocketListener() {
-    	this.hostname = "localhost";
+    	this.hostname = "78.91.30.221";
         this.port = 4657;
     }
 
@@ -32,14 +25,13 @@ public class SocketListener{
     public boolean connect(){
         System.out.println("Attempting to connect to "+hostname+":"+port);
         try {
-            Socket socketClient = new Socket(hostname,port);
+            socketClient = new Socket(hostname,port);
             System.out.println("Connection Established \n");
             InboundWorker inWorker = new InboundWorker(socketClient);
             inWorker.start();
             outWorker= new OutboundWorker(socketClient);
             System.out.println("Response Thread STARTED");
 
-            
             return true;
 
         } catch (IOException e) {

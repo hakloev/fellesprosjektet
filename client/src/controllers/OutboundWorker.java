@@ -5,7 +5,10 @@ import helperclasses.Request;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Torgeir on 11.03.14.
@@ -37,15 +40,23 @@ public class OutboundWorker {
     }
     
     
-    public boolean login(String username, char[] password) {
-    	//TODO login logic
+    public static boolean login(String username, char[] password) {
+
+        StringBuilder sb = new StringBuilder(password.length);
+        for (Character c : password)
+            sb.append(c);
+        String result = sb.toString();
+        ArrayList<String> list = new ArrayList<String>();
+        list.add(username);
+        list.add(result);
+        Request request = new Request("null","login", list );
+        OutboundWorker.sendRequest(request);
     	return true;
     }
     
     
-    public boolean logout() {
-    	// TODO logout logic
-    	return true;
+    public static boolean logout() {
+        return true;
     }
     
 }

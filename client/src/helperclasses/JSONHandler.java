@@ -3,6 +3,7 @@ package helperclasses;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gui.LoginScreen;
 import helperclasses.Response;
 import models.*;
 
@@ -27,27 +28,22 @@ public class JSONHandler {
             response.set_RESPONSETYPE(String.valueOf(root.path("request")));
             System.out.println("Type " + type);
 
-            switch (type) {
-                case "\"appointment\"":
-                    object = mapper.readValue(String.valueOf(root.path("object")), Appointment.class);
-                    break;
-                case "\"participantlistmodel\"":
-                    object = new ArrayList<Participant>();
-                    ArrayList<LinkedHashMap<?, ?>> p = mapper.readValue(String.valueOf(root.path("object")), ArrayList.class);
-                    for (LinkedHashMap<?, ?> aP : p) {
-                        ((ArrayList<Participant>) object).add(new Participant(aP.get("userName").toString(), aP.get("name").toString(), ParticipantStatus.valueOf(aP.get("participantStatus").toString())));
-                    }
-                    ParticipantListModel model = new ParticipantListModel();
-                    for (Participant participant : (ArrayList<Participant>) object) {
-                        model.addElement(participant);
-                    }
-                    return model;
-                case "\"participant\"":
-                    object = mapper.readValue(String.valueOf(root.path("object")), Participant.class);
-                    break;
-                default:
-                    System.out.println("Request.parseJSON: ELSE ");
-                    return null;
+            if (type.equals("\"employee\"")) {
+                object = mapper.readValue(String.valueOf(root.path("object")), Employee.class);
+            }
+            if (type.equals("\"appointment\"")) {
+                object = mapper.readValue(String.valueOf(root.path("object")), Appointment.class);
+
+            }
+            else if (type.equals("\"participant\"")) {
+                object = mapper.readValue(String.valueOf(root.path("object")), Participant.class);
+
+            }  else if (type.equals("\"login\"")) {
+                object = mapper.readValue(String.valueOf(root.path("object")), Participant.class);
+                LoginScreen.loggedIn = true;
+            } else {
+                System.out.println("Request.parseJSON: ELSE ");
+                return null;
             }
 
 

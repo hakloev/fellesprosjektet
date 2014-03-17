@@ -4,7 +4,7 @@ import controllers.OutboundWorker;
 import controllers.SocketListener;
 import gui.CalendarView;
 import helperclasses.Request;
-import models.Appointment;
+import models.*;
 
 import javax.swing.*;
 
@@ -16,16 +16,30 @@ public class Client {
 
     public static void main(String[] args) {
         //Creating a SocketClient object
-        SocketListener client = new SocketListener ("localhost",4657);
+        //SocketListener client = new SocketListener ();
         //trying to establish connection to the server
-        client.connect();
+        //client.connect();
 
-	/*
+        /*
+
         ParticipantListModel plist = new ParticipantListModel();
         plist.addElement(new Participant("trulsmp","truls", ParticipantStatus.participating));
         plist.addElement(new Participant("hakloev", "Haakon", ParticipantStatus.notParticipating));
-		Request request = new Request("participantlistmodel", "POST", plist);
-	*/
+
+        Appointment appointment = new Appointment();
+
+        appointment.setParticipantList(plist);
+        appointment.setDate("14.03.2014");
+        appointment.setStart("14:30");
+        appointment.setEnd("15:30");
+        Request request = new Request("appointment","post",appointment);
+        OutboundWorker.sendRequest(request);
+
+        */
+        String password = "tr";
+        char[] test = password.toCharArray();
+
+        //OutboundWorker.login("trulsmp",test);
 
     	setupUIManager(); // do first
         new CalendarView();

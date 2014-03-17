@@ -25,13 +25,11 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 	}
 
 
-    @JsonProperty("getParticipants")
-    public Object[] getParticipants() {
+    @JsonProperty("participants")
+    public Object[] participants() {
         return this.toArray();
     }
 
-
-	// TRULS: LEGG TIL DISSE!!
 
 	@Override
 	@JsonIgnore
@@ -60,4 +58,12 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 		}
 		super.addElement(participant);
 	}
+
+    @JsonIgnore
+    @Override
+    public int getSize(){
+        return super.getSize();
+    }
+
+
 }
