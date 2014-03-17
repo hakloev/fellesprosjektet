@@ -41,11 +41,11 @@ public class Client {
         Room room = new Room("R1",478);
         appointment.setLocation(room);
         appointment.setDescription("Kodekveld i fellesprosjekt, yayyyy");
-        appointment.save();
+        //appointment.save();
 
         Appointment a = new Appointment();
-        a.setAppointmentID(2);
-        //a.initialize();
+        a.setAppointmentID(16);
+        a.initialize();
 
         String password = "truls";
         char[] test = password.toCharArray();
