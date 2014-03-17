@@ -24,7 +24,7 @@ import javax.swing.event.ListSelectionListener;
 import models.*;
 
 @SuppressWarnings("serial")
-class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListener, ChangeListener{
+class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListener, ChangeListener, ActionListener{
 
 
 	private JDialog parent;
@@ -242,7 +242,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_btnVelgTid.gridy = 5;
 		this.add(btnVelgTid, gbc_btnVelgTid);
 
-		btnVelgTid.addActionListener(actionListener);
+		btnVelgTid.addActionListener(this);
 
 	}
 
@@ -307,6 +307,21 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		}
 	};
 
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        if (e.getActionCommand().equals("Velg tid")) {
+            String time = this.appointment.getStart();
+            String date = this.appointment.getDate();
+            Calendar startTime = Calendar.getInstance();
+            startTime.set(Calendar.DAY_OF_MONTH, Integer.parseInt(date.substring(0,2)));
+            startTime.set(Calendar.MONTH,Integer.parseInt(date.substring(3,5)) + 1);
+            startTime.set(Calendar.HOUR_OF_DAY, Integer.parseInt(time.substring(0,2)));
+            startTime.set(Calendar.MINUTE, Integer.parseInt(time.substring(3,5)));
+            new Alarm(parent, startTime, alarmCalendar);
+            setAlarmTextField();
+
+        }
+    }
 
     public void setAlarmTextField(){
     	if (alarmCalendar[0] != null) {
