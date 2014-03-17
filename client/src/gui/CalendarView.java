@@ -209,8 +209,8 @@ public class CalendarView extends JFrame {
 		logoutButton.addActionListener(actionListener);
 		
 	}
-	
-	
+
+
 	private void addRightPanel() {
 		JPanel rightPanel = new JPanel();
 		GridBagConstraints gbc_rightPanel = new GridBagConstraints();

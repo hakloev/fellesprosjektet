@@ -137,6 +137,13 @@ public class Appointment implements NetInterface {
 		}
 		return "00:00";
 	}
+    public Calendar getStartCal(){
+        if(startDateTime != null){
+            return this.startDateTime;
+        }
+        return Calendar.getInstance();
+    }
+
 
 
 	public String getEnd(){
@@ -155,6 +162,12 @@ public class Appointment implements NetInterface {
 	}
 
 
+    public Calendar getEndCal(){
+        if(endDateTime != null){
+            return endDateTime;
+        }
+        return Calendar.getInstance();
+    }
 	public String getDuration(){
 		if (startDateTime != null && endDateTime != null) {
 			long difference = endDateTime.getTimeInMillis() - startDateTime.getTimeInMillis();
