@@ -332,7 +332,8 @@ public class Appointment implements NetInterface {
         JSONObject participant = new JSONObject();
         participant.put("name",p.getName());
         participant.put("username",p.getUserName());
-        participant.put("participantstatus",p.getParticipantStatus());
+        participant.put("participantstatus",p.getParticipantStatus().toString());
+        participant.put("showInCalendar",p.isShowInCalendar());
         return participant;
     }
 

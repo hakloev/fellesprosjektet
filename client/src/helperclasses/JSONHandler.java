@@ -2,6 +2,7 @@ package helperclasses;
 
 
 
+import com.sun.java.swing.plaf.windows.TMSchema;
 import gui.LoginScreen;
 
 import models.*;
@@ -110,6 +111,26 @@ public class JSONHandler {
             //TODO: legge til room
         }
         appointment.setLocation((String) jsonObject.get("locationText"));
+        if (jsonObject.get("participants") != null) {
+
+            JSONArray array = (JSONArray) jsonObject.get("participants");
+            Iterator iterator = array.iterator();
+            while (iterator.hasNext()) {
+                JSONObject jp = new JSONObject();
+                jp =  (JSONObject) iterator.next();
+                ParticipantStatus status;
+                if (jp.get("participantStatus").toString().equals("Deltar")) {
+                    status = ParticipantStatus.participating;
+                }
+                else {
+                    status = ParticipantStatus.notParticipating;
+                }
+                ParticipantStatus status = new ParticipantStatus(jp.get("participantStatus"));
+                Participant participant = new Participant((String) jp.get("username").toString(),(String) jp.get("name"),status);
+                appointment.getParticipantList().addElement(participant);
+            }
+        }
+
         return appointment;
 
     }
