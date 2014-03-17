@@ -25,11 +25,13 @@ public class LoginScreen extends JDialog implements ActionListener{
     private JPasswordField passwordField;
     private JLabel usernameLabel, passwordLabel;
     private Employee[] saveEmployeeHere;
-
-
-    public LoginScreen(Frame parent, Employee[] saveEmployeeHere){
+    private SocketListener socketListener;
+    
+    
+    public LoginScreen(Frame parent, Employee[] saveEmployeeHere, SocketListener socketListener){
         super(parent,"Innlogging", true);
         this.saveEmployeeHere = saveEmployeeHere;
+        this.socketListener = socketListener;
         
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         setResizable(false);
@@ -94,17 +96,15 @@ public class LoginScreen extends JDialog implements ActionListener{
     public void actionPerformed(ActionEvent ae) {
         if (ae.getActionCommand() == "Logg inn") {
             
-            /* test code */
+            /* test code *
             this.dispose();
             saveEmployeeHere[0] = new Employee("arvid", "Arvid Pettersen");
             return;
             /* end test code */
             
             // real logic below. Uncomment for production environment!
-            /*
-            SocketListener client = new SocketListener();
-            if (client.connect()) {
-            	OutboundWorker.sendRequest(new Request("login", "post",
+            if (socketListener.connect()) {
+            	OutboundWorker.sendRequest(new Request("login", null,
             			new Login(usernameField.getText(), passwordField.getPassword().toString())));
             	
             	Object[] response = new Object[1];
@@ -121,23 +121,19 @@ public class LoginScreen extends JDialog implements ActionListener{
             			
             		} else {
             			JOptionPane.showMessageDialog(null, "Det oppstod en feil!", "Feil", JOptionPane.ERROR_MESSAGE);
+            			socketListener.close();
             		}
         			
             	} else {
             		JOptionPane.showMessageDialog(null, "Feil brukernavn eller passord", "Feil", JOptionPane.ERROR_MESSAGE);
             	}
             	
-            	try {
-					SocketListener.getSocket().close();
-				} catch (IOException e) {
-					// Don't care
-					//e.printStackTrace();
-				}
+            	socketListener.close();
             	
             } else {
             	JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
             }
-            */
+            
         
         } else if (ae.getActionCommand() == "Avslutt") {
         	System.exit(0);
@@ -146,19 +142,36 @@ public class LoginScreen extends JDialog implements ActionListener{
     }
 
 
-	class LoginWaiter extends Thread {
+	public class LoginWaiter extends Thread {
 		LoginWaiter(Object[] response) {
-			InboundWorker.register(this);
-			try {
-				sleep(30000); // 30 second timeout
-			} catch (InterruptedException e) {
-				//e.printStackTrace();
-				response[0] = InboundWorker.getResponse();
-				InboundWorker.unregister(this);
-				return;
+			synchronized (this) {
+				socketListener.register(this);
+				try {
+					//sleep(10000); // 30 second timeout
+					join(10000);
+					//wait(10000);
+				} catch (InterruptedException e) {
+					//e.printStackTrace();
+					System.out.println("waiter interrupted");
+					/*try {
+						socketListener.join();
+					} catch (InterruptedException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}*/
+					response[0] = socketListener.getResponse();
+					socketListener.unregister(this);
+					return;
+				}
+				
+				System.out.println("waiter not interrupted");
+				socketListener.unregister(this);
+				response[0] = new Integer(1);
+				
 			}
-			InboundWorker.unregister(this);
-			response[0] = new Integer(1);
+		}
+		public synchronized void jall() {
+			System.out.println("crapAll!");
 		}
 	}
 	

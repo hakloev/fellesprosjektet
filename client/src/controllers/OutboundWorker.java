@@ -25,7 +25,7 @@ public class OutboundWorker {
     public static void sendRequest(Request request) {
 
         try {
-            DataOutputStream writeToServer = new DataOutputStream(SocketListener.getSocket().getOutputStream());
+            DataOutputStream writeToServer = new DataOutputStream(socketClient.getOutputStream());
             String userDataJSON = JSONHandler.toJson(request);
             writeToServer.writeBytes(userDataJSON + "\n");
 
@@ -36,6 +36,11 @@ public class OutboundWorker {
         }
 
 
+    }
+    
+    
+    public static void setSocket(Socket socket) {
+    	socketClient = socket;
     }
     
     

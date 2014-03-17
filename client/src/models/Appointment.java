@@ -75,7 +75,8 @@ public class Appointment implements NetInterface {
 	public void setDate(Date date) {
 		if (startDateTime == null) startDateTime = Calendar.getInstance();
 
-		startDateTime.set(date.getYear(), date.getMonth(), date.getDate());
+		//startDateTime.set(date.getYear(), date.getMonth(), date.getDate());
+		startDateTime.setTimeInMillis(date.getTime());
 	}
 
 
@@ -132,7 +133,7 @@ public class Appointment implements NetInterface {
 	public String getDate(){
 		if (startDateTime != null) {
 			int day = startDateTime.get(Calendar.DAY_OF_MONTH);
-			int month = startDateTime.get(Calendar.MONTH);
+			int month = startDateTime.get(Calendar.MONTH) + 1;
 			int year = startDateTime.get(Calendar.YEAR);
 			String ret = "";
 			ret += day/10;

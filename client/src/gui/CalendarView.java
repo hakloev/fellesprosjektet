@@ -48,19 +48,20 @@ public class CalendarView extends JFrame {
 	
 	private JFrame thisFrame;
 	
-	//private String loggedInUsername;
 	private Employee loggedInEmployee;
+	private SocketListener socketListener;
 
 
 	/**
 	 * Create the main view.
 	 */
-	public CalendarView() {
+	public CalendarView(SocketListener socketListener) {
 		thisFrame = this;
 		this.setTitle("Kalender - Firma X");
 		this.setResizable(false);
 		this.addWindowListener(windowListener);
 		
+		this.socketListener = socketListener;
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -294,7 +295,7 @@ public class CalendarView extends JFrame {
 				new EditAppointment(thisFrame, new Appointment(loggedInEmployee));
 				
 			} else if (actionCommand.equals("Avtalevisning")) {
-				// TODO Check if selected appointment is appointment logged in users appointment
+				// TODO Check if selected appointment is logged in users appointment
 				new ViewAppointment(thisFrame, new Appointment(loggedInEmployee));
 				
 			} else if(actionCommand.equals("Slett avtale")) {
@@ -365,20 +366,13 @@ public class CalendarView extends JFrame {
 	
 	
 	private void closeNetworkSocket() {
-		if (SocketListener.getSocket() != null) {
-			try {
-				SocketListener.getSocket().close();
-			} catch (IOException e) {
-				// Don't care
-				//e.printStackTrace();
-			}
-		}
+		socketListener.close();
 	}
 	
 	
 	private void initializeLoggedInUser() {
 		Employee[] user = new Employee[1]; // point to something mutable so we can get it back
-		new LoginScreen(thisFrame, user);
+		new LoginScreen(thisFrame, user, socketListener);
 		usernameLabel.setText(user[0].getUserName());
 		loggedInEmployee = user[0];
 		

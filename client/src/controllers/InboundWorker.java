@@ -1,5 +1,6 @@
 package controllers;
 
+import gui.LoginScreen;
 import helperclasses.JSONHandler;
 import helperclasses.Response;
 
@@ -11,6 +12,8 @@ import java.net.Socket;
 /**
  * Created by Truls on 12.03.14.
  */
+
+@Deprecated
 public class InboundWorker extends Thread implements Runnable {
     private boolean connected;
     private String response;
@@ -49,9 +52,12 @@ public class InboundWorker extends Thread implements Runnable {
                 Object object = JSONHandler.parseJSON(response);
                 
                 responseObject = object;
-                	
+                
                 if (registeredWaitingInstance != null) {
-                	registeredWaitingInstance.interrupt();
+                	System.out.println("k test interrupt");
+                	((LoginScreen.LoginWaiter)registeredWaitingInstance).jall();
+                	registeredWaitingInstance.join();
+                	System.out.println("k test interrupt done");
                 }
                 
                 System.out.println("ParsedObjectOutput: " + object);
@@ -64,22 +70,26 @@ public class InboundWorker extends Thread implements Runnable {
         } catch (IOException e) {
             System.err.println("Connection/there is no server");
             e.printStackTrace();
-        }
+        } catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
     }
     
     
-    public static void register(Thread waiting) {
+    public static synchronized void register(Thread waiting) {
     	registeredWaitingInstance = waiting;
+    	System.out.println("registered: " + registeredWaitingInstance);
     }
     
-    public static void unregister(Thread waiting) {
+    public static synchronized void unregister(Thread waiting) {
     	if (registeredWaitingInstance == waiting) {
     		registeredWaitingInstance = null;
     	}
     }
     
-    public static Object getResponse() {
+    public static synchronized Object getResponse() {
     	return responseObject;
     }
 }
