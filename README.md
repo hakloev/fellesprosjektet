@@ -1,7 +1,7 @@
 Fellesprosjektet - Gruppe 7
 ================
 
-Kode for utvikling av applikasjon i fellesprosjektet. 
+Kode for utvikling av klient og server i kalendersystemet under fellesprosjektet. 
 
 ### Authors:
 
