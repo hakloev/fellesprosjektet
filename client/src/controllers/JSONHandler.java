@@ -37,6 +37,7 @@ public class JSONHandler {
                 if (array.isEmpty()) {
                     // TODO: invalid login, send response to GUI
                     System.out.println("Invalid Login");
+                    return null;
                 }
                 else {
                     Employee employee = new Employee(array.get(0).toString(),array.get(1).toString());
