@@ -19,7 +19,7 @@ public class SocketListener extends Thread {
     private static SocketListener socketListener;
     
     private ResponseWaiter registeredWaitingInstance;
-    private Object responseObject;
+    private Object object;
     
         
     public SocketListener(String hostname, int port){
@@ -114,7 +114,7 @@ public class SocketListener extends Thread {
     }
     
     public synchronized Object getResponse() {
-    	return responseObject;
+    	return object;
     }
 
     
@@ -129,7 +129,7 @@ public class SocketListener extends Thread {
 
     public void handleResponse(String responseString) {
 
-        Object object = JSONHandler.parseJSON(responseString);
+        object = JSONHandler.parseJSON(responseString);
         if (object instanceof Employee){
             System.out.println(((Employee)object).toString());
 
@@ -150,8 +150,6 @@ public class SocketListener extends Thread {
             System.out.println(((GroupListModel) object).toString());
         }
 
-
-        System.out.println("ParsedObjectOutput: " + responseObject);
         System.out.println("this Thread: " + this);
         if (registeredWaitingInstance != null) {
             System.out.println("k test interrupt");
