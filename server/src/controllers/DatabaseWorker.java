@@ -11,6 +11,7 @@ import org.json.simple.parser.ParseException;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -62,11 +63,42 @@ public class DatabaseWorker {
 					roomListModel.initialize();
 					response = new Response(roomListModelAsJSON(roomListModel));
 				}
+			} else if (requestType.equals("grouplistmodel")) {
+				String dbMethod = (String) jsonObject.get("dbmethod");
+				if (dbMethod.equals("initialize")) {
+					GroupListModel groupListModel = new GroupListModel();
+					groupListModel.initialize();
+					response = new Response(groupListModelAsJSON(groupListModel));
+				}
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return response;
+	}
+
+	private static String groupListModelAsJSON(GroupListModel groupListModel) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("response", "grouplistmodel");
+		jsonObject.put("dbmethod", "initialize");
+		JSONArray array = new JSONArray();
+		for (int i = 0; i < groupListModel.size(); i++) {
+			JSONObject group = new JSONObject();
+			ArrayList<Employee> participants = groupListModel.get(i).getEmployees();
+			JSONArray array1 = new JSONArray();
+			for (int j = 0; j < groupListModel.get(i).getEmployees().size(); j++) {
+				JSONObject employee = new JSONObject();
+				employee.put("name", participants.get(j).getName());
+				employee.put("username", participants.get(j).getUsername());
+				array1.add(employee);
+			}
+			group.put("group", groupListModel.get(i).getGroupName());
+			group.put("employees", array1);
+			array.add(group);
+		}
+		jsonObject.put("model", array);
+		System.out.println(jsonObject.toJSONString());
+		return jsonObject.toJSONString();
 	}
 
 	private static String sendAppointment(Appointment a) {
