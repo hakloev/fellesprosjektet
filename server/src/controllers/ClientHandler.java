@@ -9,6 +9,10 @@ import java.net.SocketException;
 
 /**
  * Created by Håkon Ødegård Løvdal on 10/03/14.
+ *
+ * ClientHandler handles write to and from server.
+ * It accepts the request and creates a response to send back.
+ *
  */
 public class ClientHandler extends Thread implements Runnable {
 
@@ -22,7 +26,9 @@ public class ClientHandler extends Thread implements Runnable {
 		this._SOCKET = socket;
 		this._CONNECTIONID = connectionID;
 		this._SERVING = true;
-		System.out.println(": ClientHandler.ClientHandler " + _CONNECTIONID + ": INITIATED CONNECTIONID " + _CONNECTIONID);
+		System.out.println("ClientHandler.ClientHandler " + _CONNECTIONID + ": INITIATED CONNECTIONID " + _CONNECTIONID);
+		System.out.println("ClientHandler.ClientHandler " + _CONNECTIONID + ": CREATED AT " + Request.getTime());
+
 	}
 
 	@Override
