@@ -40,7 +40,7 @@ public class ViewAppointment extends JDialog {
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
 		// TODO send proper time
-		DetailsPanel detailsPanel = new DetailsPanel(this, appointment, Calendar.getInstance(), currentUser);
+		DetailsPanel detailsPanel = new DetailsPanel(this, appointment, currentUser);
 		contentPane.add(detailsPanel, gbc_detailsPanel);
 		detailsPanel.setEnabled(false);
 		

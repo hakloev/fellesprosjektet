@@ -2,6 +2,8 @@ package models;
 
 import javax.swing.DefaultComboBoxModel;
 
+import controllers.LogoutException;
+
 @SuppressWarnings("serial")
 public class EmployeeComboBoxModel extends DefaultComboBoxModel<Employee> implements NetInterface {
 	
@@ -16,7 +18,7 @@ public class EmployeeComboBoxModel extends DefaultComboBoxModel<Employee> implem
 
 	
 	@Override
-	public void initialize() {
+	public void initialize() throws LogoutException {
 		// Wrapper for employee list. This class should not communicate with the server directly.
 		EmployeeListModel tempModel = new EmployeeListModel();
 		tempModel.initialize();
@@ -28,7 +30,7 @@ public class EmployeeComboBoxModel extends DefaultComboBoxModel<Employee> implem
 
 	
 	@Override
-	public void refresh() {
+	public void refresh() throws LogoutException {
 		this.removeAllElements();
 		this.initialize();
 	}

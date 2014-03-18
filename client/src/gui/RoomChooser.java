@@ -17,6 +17,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import controllers.LogoutException;
 import models.*;
 
 @SuppressWarnings("serial")
@@ -35,7 +36,7 @@ public class RoomChooser extends JDialog {
 	
 	
 	
-	public RoomChooser(JDialog parent, int capacity, Room[] saveRoomHere) {
+	public RoomChooser(JDialog parent, int capacity, Room[] saveRoomHere) throws LogoutException {
 		super(parent, true);
 		this.setTitle("Velg rom");
 		this.setResizable(false);
@@ -131,6 +132,10 @@ public class RoomChooser extends JDialog {
 				} catch (NumberFormatException e) {
 					JOptionPane.showMessageDialog(null, "Du må skrive inn et tall", "Feil", JOptionPane.ERROR_MESSAGE);
 					capacityTextField.setText("");
+				} catch (LogoutException e) {
+					// TODO notify calendarView
+					//e.printStackTrace();
+					System.out.println(e.getMessage());
 				}
 				
 			} else if (ae.getActionCommand().equals("OK")) {

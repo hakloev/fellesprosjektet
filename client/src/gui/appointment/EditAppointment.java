@@ -43,7 +43,7 @@ public class EditAppointment extends JDialog {
 		gbc_detailsPanel.gridy = 0;
 		
 		// TODO Send proper time
-		detailsPanel = new DetailsPanel(this, appointment, Calendar.getInstance(), currentUser);   // Temporary use of new date, date can be fetched from the Calendar View
+		detailsPanel = new DetailsPanel(this, appointment, currentUser); 
 		contentPane.add(detailsPanel, gbc_detailsPanel);
 
 		

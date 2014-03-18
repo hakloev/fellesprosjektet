@@ -1,5 +1,6 @@
 package models;
 
+import controllers.LogoutException;
 import controllers.OutboundWorker;
 import controllers.ResponseWaiter;
 import controllers.SocketListener;
@@ -29,7 +30,7 @@ public class RoomListModel extends DefaultListModel<Room> implements NetInterfac
 	
 	
 	@Override
-	public void initialize() {
+	public void initialize() throws LogoutException {
         JSONObject json;
         json = new JSONObject();
         JSONObject jsonObject = new JSONObject();
@@ -49,7 +50,7 @@ public class RoomListModel extends DefaultListModel<Room> implements NetInterfac
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh() throws LogoutException {
 		this.clear();
 		this.initialize();
 	}

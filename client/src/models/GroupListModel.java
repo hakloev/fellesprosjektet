@@ -1,5 +1,6 @@
 package models;
 
+import controllers.LogoutException;
 import controllers.OutboundWorker;
 import controllers.ResponseWaiter;
 import controllers.SocketListener;
@@ -18,7 +19,7 @@ public class GroupListModel extends DefaultListModel<Group> implements NetInterf
 	
 	
 	@Override
-	public void initialize() {
+	public void initialize() throws LogoutException {
         JSONObject json;
         json = new JSONObject();
         json.put("request","grouplistmodel");
@@ -38,7 +39,7 @@ public class GroupListModel extends DefaultListModel<Group> implements NetInterf
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh() throws LogoutException {
 		this.clear();
 		this.initialize();
 	}

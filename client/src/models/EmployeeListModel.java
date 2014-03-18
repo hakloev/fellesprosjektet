@@ -4,6 +4,7 @@ import javax.swing.DefaultListModel;
 
 import org.json.simple.JSONObject;
 
+import controllers.LogoutException;
 import controllers.OutboundWorker;
 import controllers.ResponseWaiter;
 import controllers.SocketListener;
@@ -15,7 +16,7 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements Net
 	
 	
 	@Override
-	public void initialize() {
+	public void initialize() throws LogoutException {
 		
 		JSONObject json;
         json = new JSONObject();
@@ -34,7 +35,7 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements Net
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh() throws LogoutException {
 		this.clear();
 		this.initialize();
 	}

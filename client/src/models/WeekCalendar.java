@@ -1,24 +1,28 @@
 package models;
 
+import controllers.LogoutException;
 import controllers.OutboundWorker;
+import controllers.ResponseWaiter;
+import controllers.SocketListener;
 
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
+import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
 @SuppressWarnings("serial")
-public class WeekCalendar extends DefaultTableModel implements NetInterface, Iterator<Appointment>{
+public class WeekCalendar extends DefaultTableModel implements NetInterface { //Iterator<Appointment>
 
 
 	private Employee employee;
-	private ArrayList<Appointment> appointmentList;
+	//private ArrayList<Appointment> appointmentList;
 	private int week;
 	private int year;
-	private int iteratorIndex;
+	//private int iteratorIndex;
 
 	private JSONObject json;
 
@@ -46,7 +50,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 
 	public WeekCalendar() {
 		super(emptyCalendar, columnTitles);
-		appointmentList = new ArrayList<Appointment>();
+		//appointmentList = new ArrayList<Appointment>();
 	}
 
 
@@ -55,13 +59,13 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 		this.employee = employee;
 		this.week = weekNumber;
 		this.year = year;
-		iteratorIndex = 0;
+		//iteratorIndex = 0;
 	}
 
 
 
 	@Override
-	public void initialize() {
+	public void initialize() throws LogoutException {
 
 		json = new JSONObject();
 		JSONObject jsonObject = new JSONObject();
@@ -73,11 +77,24 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 		json.put("model",jsonObject);
 		OutboundWorker.sendRequest(json);
 
-
+		Object[] response = new Object[1];
+        new ResponseWaiter(SocketListener.getSL(), response);
+        if (response[0] != null && response[0] instanceof WeekCalendar) {
+        	WeekCalendar weekCal = (WeekCalendar)response[0];
+        	Vector dataVector = weekCal.getDataVector();
+        	for (Object vector : dataVector) {
+        		for (Object app : (Vector)vector) {
+        			if (app != null) {
+        				this.addAppointment((Appointment)app);
+        			}
+        		}
+        	}
+        	
+        }
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh() throws LogoutException {
 		this.initialize();
 	}
 
@@ -93,7 +110,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 		// Server access should be administered on each Appointment object
 	}
 
-
+	/*
 	@Override
 	public boolean hasNext() {
 		return iteratorIndex < appointmentList.size();
@@ -108,17 +125,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	public void remove() {
 		// Not allowed!
 	}
-
-
-	public void addAppointment(Appointment appointment) {
-		Calendar date = appointment.getStartDateTime();
-		if (date.getWeekYear() == week){
-			setValueAt(appointment);
-		}
-		appointmentList.add(appointment);
-	}
-
-
+	*/
 
 	public Employee getEmployee() {
 		return employee;
@@ -147,25 +154,40 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 				"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
 	}
 
-
-
+	/*
 	public ArrayList<Appointment> getAppointmentList() {
 		return appointmentList;
 	}
-
-
-	public void setValueAt(Appointment appointment){
-		Calendar newAppointment = appointment.getStartCal();
-		int row = newAppointment.get(Calendar.DAY_OF_WEEK);
-		int column = newAppointment.get(Calendar.HOUR_OF_DAY);
-		if(column < 7 || column > 20){
-			System.out.println("InvalidTimeException");
+	*/
+	
+	public void addAppointment(Appointment appointment) {
+		Calendar dateTime = appointment.getStartDateTime();
+		if (dateTime.getWeekYear() == week){
+			int row = dateTime.get(Calendar.DAY_OF_WEEK);
+			if (row == Calendar.SUNDAY) {
+				row = 7;
+			} else {
+				row -= 1;
+			}
+			int column = dateTime.get(Calendar.HOUR_OF_DAY);
+			column -= 6;
+			if (column < 1 || column > 14) {
+				System.out.println("InvalidTimeException");
+			}
+			else {
+				this.setValueAt(appointment, row, column);
+				//emptyCalendar[row][column] = appointment.getDescription();
+			}
 		}
-		else{
-			emptyCalendar[row][column] = appointment.getDescription();
-		}
+		//appointmentList.add(appointment);
+	}
+	
+	
+	public void removeAppointment(Appointment appointment) {
+		// TODO implement logic to remove appointment based on its data
 	}
 
 
-
 }
+
+

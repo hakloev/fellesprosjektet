@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 
 import javax.swing.*;
 
+import controllers.LogoutException;
 import models.*;
 
 @SuppressWarnings("serial")
@@ -100,7 +101,13 @@ class EditButtonPanel extends JPanel implements ActionListener {
 	@Override
 	public void actionPerformed(ActionEvent ae) {
 		if (ae.getActionCommand().equals("Rediger liste")) {
-			new EditParticipants(parent, appointment);
+			try {
+				new EditParticipants(parent, appointment);
+			} catch (LogoutException e) {
+				// TODO notify calendarView
+				//e.printStackTrace();
+				System.out.println(e.getMessage());
+			}
 			
 		}
         else if(ae.getActionCommand().equals(("Deltar"))){

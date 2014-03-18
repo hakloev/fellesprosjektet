@@ -93,5 +93,16 @@ public class Participant {
         return false;
     }
 
+    
+    /**
+     * Save alarm and status for this participant in this appointment
+     * 
+     * @param appointmentID
+     */
+    public void save(int appointmentID) {
+    	// TODO netcode for saving to server
+    }
+    
+    
 }
 
