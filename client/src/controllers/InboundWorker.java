@@ -2,10 +2,7 @@ package controllers;
 
 import helperclasses.JSONHandler;
 import helperclasses.Response;
-import models.Appointment;
-import models.NotificationListModel;
-import models.RoomListModel;
-import models.WeekCalendar;
+import models.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -53,6 +50,7 @@ public class InboundWorker extends Thread implements Runnable {
                 System.out.println("Received response from Server: ");
                 System.out.println(responseString + "\n");
                 Object object = JSONHandler.parseJSON(responseString);
+
                 if (object instanceof WeekCalendar) {
                     System.out.println(((WeekCalendar) object).getAppointmentList().toString());
                 }
@@ -64,6 +62,9 @@ public class InboundWorker extends Thread implements Runnable {
                 }
                 else if (object instanceof NotificationListModel) {
 
+                }
+                else if (object instanceof GroupListModel) {
+                    System.out.println(((GroupListModel) object).toString());
                 }
                 // TODO: SENDE VIDERE TIL KLASSE SOM OPPDATER KLIENT
                 

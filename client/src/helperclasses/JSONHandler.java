@@ -81,6 +81,27 @@ public class JSONHandler {
                 }
                 return roomListModel;
             }
+            else if (jsonObject.get("response").equals("grouplistmodel")) {
+                GroupListModel groupListModel = new GroupListModel();
+                JSONArray array = (JSONArray) jsonObject.get("model");
+                Iterator iterator = array.iterator();
+                while (iterator.hasNext()){
+                    JSONObject jsongroup = (JSONObject) iterator.next();
+                    Group group = new Group((String) jsongroup.get("group").toString());
+                    JSONArray employees = (JSONArray) jsongroup.get("employees");
+                    Iterator it = employees.iterator();
+                    while (it.hasNext()) {
+                        JSONObject jsonemployee = (JSONObject) it.next();
+                        Employee employee = new Employee(jsonemployee.get("username").toString(),jsonemployee.get("name").toString());
+                        group.add(employee);
+
+                    }
+                    groupListModel.addElement(group);
+                }
+                return groupListModel;
+
+
+            }
 
 
         }

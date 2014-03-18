@@ -2,6 +2,7 @@ package models;
 
 import controllers.OutboundWorker;
 import helperclasses.Request;
+import org.json.simple.JSONObject;
 
 import javax.swing.DefaultListModel;
 
@@ -17,15 +18,12 @@ public class GroupListModel extends DefaultListModel<Group> implements NetInterf
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
-		/* test code
-		Group group = new Group("Alle ansatte");
-		EmployeeListModel tempList = new EmployeeListModel();
-		tempList.initialize();
-		for (Object employee : tempList.toArray()) {
-			group.add((Employee)employee);
-		}
-		this.addElement(group);
-		end test code */
+        JSONObject json;
+        json = new JSONObject();
+        json.put("request","grouplistmodel");
+        json.put("dbmethod","initialize");
+        OutboundWorker.sendRequest(json);
+
 	}
 
 	@Override

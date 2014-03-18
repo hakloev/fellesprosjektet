@@ -45,7 +45,7 @@ public class Client {
 
         Appointment a = new Appointment();
         a.setAppointmentID(16);
-        a.initialize();
+        //a.initialize();
 
         String password = "truls";
         char[] test = password.toCharArray();
@@ -58,6 +58,8 @@ public class Client {
         RoomListModel roomListModel = new RoomListModel();
         //roomListModel.initialize();
 
+        GroupListModel groupListModel = new GroupListModel();
+        groupListModel.initialize();
 
 
 
