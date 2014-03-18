@@ -1,5 +1,7 @@
 package controllers;
 
+import models.*;
+
 import java.io.*;
 import java.net.Socket;
 
@@ -17,7 +19,7 @@ public class SocketListener extends Thread {
     private static SocketListener socketListener;
     
     private ResponseWaiter registeredWaitingInstance;
-    private Object responseObject;
+    private Object object;
     
         
     public SocketListener(String hostname, int port){
@@ -28,7 +30,7 @@ public class SocketListener extends Thread {
     
     
     public SocketListener() {
-    	this("localhost", 4657);
+    	this("78.91.28.182", 4657);
     }
     
     
@@ -51,8 +53,7 @@ public class SocketListener extends Thread {
 
                 System.out.print("Received response from Server: ");
                 System.out.println(responseString + "\n");
-                InboundWorker inboundWorker = new InboundWorker();
-                inboundWorker.handleResponse(responseString);
+                handleResponse(responseString);
 
             }
 
@@ -113,7 +114,7 @@ public class SocketListener extends Thread {
     }
     
     public synchronized Object getResponse() {
-    	return responseObject;
+    	return object;
     }
 
     
@@ -125,8 +126,37 @@ public class SocketListener extends Thread {
     public static synchronized SocketListener getSL() {
     	return socketListener;
     }
-    
-    
+
+    public void handleResponse(String responseString) {
+
+        object = JSONHandler.parseJSON(responseString);
+        if (object instanceof Employee){
+            System.out.println(((Employee)object).toString());
+
+        }
+        else if (object instanceof WeekCalendar) {
+            System.out.println(((WeekCalendar) object).getAppointmentList().toString());
+        }
+        else if (object instanceof RoomListModel) {
+            System.out.println(((RoomListModel) object).toString());
+        }
+        else if (object instanceof Appointment) {
+            System.out.println(((Appointment) object).toString());
+        }
+        else if (object instanceof NotificationListModel) {
+            System.out.println("");
+        }
+        else if (object instanceof GroupListModel) {
+            System.out.println(((GroupListModel) object).toString());
+        }
+
+        System.out.println("this Thread: " + this);
+        if (registeredWaitingInstance != null) {
+            System.out.println("k test interrupt");
+            registeredWaitingInstance.setReady(true);
+            System.out.println("k test interrupt done");
+        }
+    }
     
 }
 

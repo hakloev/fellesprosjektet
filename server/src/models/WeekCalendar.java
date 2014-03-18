@@ -27,6 +27,7 @@ public class WeekCalendar implements DBInterface {
 	
 	@Override
 	public void initialize() {
+		System.out.println("WeekCalendar.initialize");
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Calendar c = Calendar.getInstance();
 		c.set(Calendar.WEEK_OF_YEAR, this.weekNumber);
@@ -57,17 +58,19 @@ public class WeekCalendar implements DBInterface {
 	
 	@Override
 	public void refresh() {
-
+		System.out.println("WeekCalendar.refresh");
 	}
 
 	@Override
 	public void save() {
+		System.out.println("WeekCalendar.save");
 		// This should probably not be saved as one.
 		// Server access should be administered on each Appointment object
 	}
 	
 	@Override
 	public void delete() {
+		System.out.println("WeekCalendar.delete");
 		// This should probably not be deleted as one
 		// Server access should be administered on each Appointment object
 	}

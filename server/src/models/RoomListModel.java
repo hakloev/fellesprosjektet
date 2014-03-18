@@ -10,6 +10,7 @@ public class RoomListModel extends DefaultListModel<Room> implements DBInterface
 	
 	@Override
 	public void initialize() {
+		System.out.println("RoomListModel.initialize");
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		try {
 			String sql = "SELECT * FROM moterom";
@@ -27,16 +28,19 @@ public class RoomListModel extends DefaultListModel<Room> implements DBInterface
 
 	@Override
 	public void refresh() {
+		System.out.println("RoomListModel.refresh");
 		this.initialize();
 	}
 
 	@Override
 	public void save() {
+		System.out.println("RoomListModel.save");
 		// Do not add code. This model should not be sent to server
 	}
 
 	@Override
 	public void delete() {
+		System.out.println("RoomListModel.delete");
 		// Do not add code. This model can not be deleted from server
 	}
 

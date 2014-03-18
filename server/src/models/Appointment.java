@@ -105,6 +105,7 @@ public class Appointment implements DBInterface {
 
 	@Override
 	public void initialize() {
+		System.out.println("Appointment.initialize");
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		try {
 			String sql = "SELECT * FROM avtale WHERE avtaleid = " + this.appointmentID;
@@ -132,11 +133,13 @@ public class Appointment implements DBInterface {
 
 	@Override
 	public void refresh() {
+		System.out.println("Appointment.refresh");
 		this.initialize();
 	}
 
 	@Override
 	public void save() {
+		System.out.println("Appointment.save");
 		Connection dbCon = DBconnection.getConnection();
 		try {
 			Statement stmt = dbCon.createStatement();
@@ -167,7 +170,7 @@ public class Appointment implements DBInterface {
 
 	@Override
 	public void delete() {
-
+		System.out.println("Appointment.delete");
 	}
 
 }

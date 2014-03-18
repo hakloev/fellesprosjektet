@@ -8,26 +8,23 @@ public class NotificationListModel extends DefaultListModel<Notification> implem
 	
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
-
+		System.out.println("NotificationListModel.initialize");
 	}
 
 	@Override
 	public void refresh() {
+		System.out.println("NotificationListModel.refresh");
 		this.initialize();
-
 	}
 
 	@Override
 	public void save() {
-		// TODO Auto-generated method stub
-
+		System.out.println("NotificationListModel.save");
 	}
 
 	@Override
 	public void delete() {
-		// TODO Auto-generated method stub
-
+		System.out.println("NotificationListModel.delete");
 	}
 
 }

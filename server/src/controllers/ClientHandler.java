@@ -41,7 +41,6 @@ public class ClientHandler extends Thread implements Runnable {
 
 			while (_SERVING) {
 				readFromClient = new BufferedReader(new InputStreamReader(_SOCKET.getInputStream()));
-
 				Request request = acceptIncomingRequest(readFromClient.readLine());
 				if (request == null) {
 					System.out.println("ClientHandler.run " + _CONNECTIONID + ": CLIENT FROM " +
@@ -78,6 +77,8 @@ public class ClientHandler extends Thread implements Runnable {
 			System.out.println("ClientHandler.sendOutgoingResponse " + _CONNECTIONID + ": SENDING " + response + " TO CLIENT FROM " +
 					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 			writeToClient.writeBytes(response + "\n");
+			System.out.println("ClientHandler.sendOutgoingResponse " + _CONNECTIONID + ": SENT " + response + " TO CLIENT FROM " +
+					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " AT " + Request.getTime());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -88,7 +89,7 @@ public class ClientHandler extends Thread implements Runnable {
 		if (incomingJSON == null) {
 			return null;
 		}
-		System.out.println("ClientHandler.acceptIncomingRequest " + _CONNECTIONID + ": RECEIVED " + incomingJSON + " FROM CLIENT " +
+		System.out.println("\nClientHandler.acceptIncomingRequest " + _CONNECTIONID + ": RECEIVED " + incomingJSON + " FROM CLIENT " +
 				_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 		return new Request(incomingJSON);
 	}

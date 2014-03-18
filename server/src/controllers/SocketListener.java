@@ -30,7 +30,7 @@ public class SocketListener extends Thread implements Runnable {
 				incomingConnection.setKeepAlive(true); // Trying to avoid timeout from socket
 
 				if (incomingConnection != null) {
-					System.out.println("SocketListener.run: INCOMING CONNECTION");
+					System.out.println("\nSocketListener.run: INCOMING CONNECTION");
 					ClientHandler client = new ClientHandler(incomingConnection, connectionID++); // Initiate one ClientHandler per incoming connection
 					client.start();
 				}

@@ -37,6 +37,7 @@ public class JSONHandler {
                 if (array.isEmpty()) {
                     // TODO: invalid login, send response to GUI
                     System.out.println("Invalid Login");
+                    return null;
                 }
                 else {
                     Employee employee = new Employee(array.get(0).toString(),array.get(1).toString());
@@ -101,6 +102,16 @@ public class JSONHandler {
                 return groupListModel;
 
 
+            } else if (jsonObject.get("response").equals("employeelistmodel")) {
+	            EmployeeListModel employeeListModel = new EmployeeListModel();
+	            JSONArray array = (JSONArray) jsonObject.get("model");
+	            Iterator iterator = array.iterator();
+	            while (iterator.hasNext()) {
+		            JSONObject jsonEmployee = (JSONObject) iterator.next();
+		            Employee e = new Employee((String) jsonEmployee.get("username"), (String) jsonEmployee.get("name"));
+		            employeeListModel.addElement(e);
+	            }
+	            return employeeListModel;
             }
 
 
