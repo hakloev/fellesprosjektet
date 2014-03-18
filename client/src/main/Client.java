@@ -1,13 +1,11 @@
 package main;
 
-import controllers.OutboundWorker;
 import controllers.SocketListener;
 import gui.CalendarView;
-import helperclasses.Request;
 import models.*;
+import java.awt.EventQueue;
 
 import javax.swing.*;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -16,9 +14,39 @@ import java.util.Date;
  * Created by Truls on 13.03.14.
  */
 public class Client {
-
+	
+	
     public static void main(String[] args) {
-        //Creating a SocketClient object
+    	setupUIManager(); // do first
+        
+    	//trulsTestCode();
+    	
+    	EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					new CalendarView();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+    }
+    
+    
+    private static void setupUIManager() {
+    	try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+			e.printStackTrace();
+		}
+    	
+    	UIManager.put("OptionPane.yesButtonText", "Ja");
+    	UIManager.put("OptionPane.noButtonText", "Nei");
+    }
+    
+    
+    private static void trulsTestCode() {
+    	//Creating a SocketClient object
         SocketListener client = new SocketListener ();
         //trying to establish connection to the server
         client.connect();
@@ -69,20 +97,6 @@ public class Client {
         //new CalendarView();
 
     }
-    
-    
-    private static void setupUIManager() {
-    	try {
-			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-		} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
-			e.printStackTrace();
-		}
-    	
-    	UIManager.put("OptionPane.yesButtonText", "Ja");
-    	UIManager.put("OptionPane.noButtonText", "Nei");
-    }
-    
-    
 }
 
 

@@ -1,7 +1,6 @@
 package models;
 
 import controllers.OutboundWorker;
-import helperclasses.Request;
 import org.json.simple.JSONObject;
 
 import javax.swing.DefaultListModel;

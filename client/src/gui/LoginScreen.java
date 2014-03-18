@@ -1,7 +1,5 @@
 package gui;
 
-import helperclasses.*;
-
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
@@ -13,7 +11,6 @@ import controllers.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 
 /**
  * Created by Tarald on 11.03.14.
@@ -22,16 +19,13 @@ import java.io.IOException;
 public class LoginScreen extends JDialog implements ActionListener{
 	
 	
-    private JButton loginButton, exitButton;
     private JTextField usernameField;
     private JPasswordField passwordField;
-    private JLabel usernameLabel, passwordLabel;
-    private String[] saveUsernameHere;
     SocketListener client;
     public static Boolean loggedIn;
     private Employee[] saveEmployeeHere;
-
-
+    
+    
     public LoginScreen(Frame parent, Employee[] saveEmployeeHere){
         super(parent,"Innlogging", true);
 
@@ -51,7 +45,7 @@ public class LoginScreen extends JDialog implements ActionListener{
         gbc.insets = new Insets(5, 5, 5, 5);
         gbc.gridx = 0;
         gbc.gridy = 0;
-        usernameLabel = new JLabel("Brukernavn:");
+        JLabel usernameLabel = new JLabel("Brukernavn:");
         panel.add(usernameLabel, gbc);
 
         gbc.insets = new Insets(5, 0, 5, 5);
@@ -63,7 +57,7 @@ public class LoginScreen extends JDialog implements ActionListener{
         gbc.insets = new Insets(0, 5, 5, 5);
         gbc.gridx = 0;
         gbc.gridy = 1;
-        passwordLabel = new JLabel("Passord:");
+        JLabel passwordLabel = new JLabel("Passord:");
         panel.add(passwordLabel, gbc);
 
         gbc.insets = new Insets(0, 0, 5, 5);
@@ -73,11 +67,11 @@ public class LoginScreen extends JDialog implements ActionListener{
         panel.add(passwordField, gbc);
         
         JPanel buttonPanel = new JPanel();
-        loginButton = new JButton("Logg inn");
+        JButton loginButton = new JButton("Logg inn");
         loginButton.addActionListener(this);
         buttonPanel.add(loginButton, gbc);
         
-        exitButton = new JButton("Avslutt");
+        JButton exitButton = new JButton("Avslutt");
         exitButton.addActionListener(this);
         buttonPanel.add(exitButton, gbc);
         
@@ -100,21 +94,23 @@ public class LoginScreen extends JDialog implements ActionListener{
     public void actionPerformed(ActionEvent ae) {
         if (ae.getActionCommand() == "Logg inn") {
             
-            /* test code */
+            /* test code *
             this.dispose();
             saveEmployeeHere[0] = new Employee("arvid", "Arvid Pettersen");
             return;
             /* end test code */
             
             // real logic below. Uncomment for production environment!
-            /*
-            SocketListener client = new SocketListener();
-            if (client.connect()) {
-            	OutboundWorker.sendRequest(new Request("login", "post",
-            			new Login(usernameField.getText(), passwordField.getPassword().toString())));
-            	
+        	SocketListener socketListener = new SocketListener();
+        	SocketListener.setSL(socketListener);
+        	
+            if (socketListener.connect()) {
             	Object[] response = new Object[1];
-            	new LoginWaiter(response);
+            	
+            	OutboundWorker.login(usernameField.getText(), passwordField.getPassword());
+            	//new Request("login", null, new Login(usernameField.getText(), passwordField.getPassword().toString())));
+            	
+            	new ResponseWaiter(socketListener, response);
             	
             	if (response[0] != null) {
             		if (response[0] instanceof Integer) {
@@ -128,30 +124,14 @@ public class LoginScreen extends JDialog implements ActionListener{
             		} else {
             			JOptionPane.showMessageDialog(null, "Det oppstod en feil!", "Feil", JOptionPane.ERROR_MESSAGE);
             		}
-        			
             	} else {
             		JOptionPane.showMessageDialog(null, "Feil brukernavn eller passord", "Feil", JOptionPane.ERROR_MESSAGE);
             	}
-            	
-            	try {
-					SocketListener.getSocket().close();
-				} catch (IOException e) {
-					// Don't care
-					//e.printStackTrace();
-				}
-            	
->>>>>>> origin/K
             } else {
                 JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
             }
-<<<<<<< HEAD
 
-
-        }
-        else if(e.getActionCommand().equals("Avslutt")) {
-            System.exit(0);
-=======
-            */
+            socketListener.close();
         
         } else if (ae.getActionCommand() == "Avslutt") {
         	System.exit(0);
@@ -159,22 +139,6 @@ public class LoginScreen extends JDialog implements ActionListener{
         }
     }
 
-
-	class LoginWaiter extends Thread {
-		LoginWaiter(Object[] response) {
-			InboundWorker.register(this);
-			try {
-				sleep(30000); // 30 second timeout
-			} catch (InterruptedException e) {
-				//e.printStackTrace();
-				response[0] = InboundWorker.getResponse();
-				InboundWorker.unregister(this);
-				return;
-			}
-			InboundWorker.unregister(this);
-			response[0] = new Integer(1);
-		}
-	}
 	
 	
 	
