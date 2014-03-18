@@ -44,6 +44,14 @@ public class Appointment implements NetInterface {
         startDateTime = Calendar.getInstance();
         endDateTime = Calendar.getInstance();
     }
+    
+    public Appointment(Employee appointmentLeader, Calendar date) {
+		pcs = new PropertyChangeSupport(this);
+		startDateTime = date;
+		this.appointmentLeader = appointmentLeader;
+		participantList = new ParticipantListModel(new Participant(appointmentLeader));
+		emailRecipientsList = new EmailListModel();
+	}
 	
 	
 	/* Work in progress. Use refresh instead if appointment editing is canceled.
@@ -162,13 +170,7 @@ public class Appointment implements NetInterface {
 	}
 	
 	
-    public Calendar getStartCal(){
-        if(startDateTime != null){
-            return this.startDateTime;
-        }
-        return Calendar.getInstance();
-    }
-
+ 
 
 	public String getEnd(){
 		if (endDateTime != null) {

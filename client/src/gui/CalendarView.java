@@ -288,7 +288,41 @@ public class CalendarView extends JFrame {
 			String actionCommand = ae.getActionCommand();
 			if (actionCommand.equals("Ny avtale")) {
 				// TODO get time and date from selection
-				new EditAppointment(thisFrame, new Appointment(loggedInEmployee));
+				int column = calendarTable.getSelectedColumn();
+				int row = calendarTable.getSelectedRow();
+				Calendar startDate = Calendar.getInstance();
+				Appointment app = new Appointment(loggedInEmployee);
+				if (column > 0 && row > 0 && column < 8 && row < 15){
+					startDate.set(Calendar.YEAR, (int) yearSpinner.getValue() );
+					startDate.set(Calendar.WEEK_OF_YEAR, (int) weekComboBox.getSelectedItem());
+					int day = 0;
+					if (column == 1){
+						day = Calendar.MONDAY;
+					}
+					else if (column == 2){
+						day = Calendar.TUESDAY;
+					}
+					else if (column == 3){
+						day = Calendar.WEDNESDAY;
+					}
+					else if (column == 4){
+						day = Calendar.THURSDAY;
+					}
+					else if (column == 5){
+						day = Calendar.FRIDAY;
+					}
+					else if (column == 6){
+						day = Calendar.SATURDAY;
+					}
+					else if (column == 7){
+						day = Calendar.SUNDAY;
+					}
+					startDate.set(Calendar.DAY_OF_WEEK, day);
+					int hour = row + 6;
+					startDate.set(Calendar.HOUR, hour);
+					app.setStartDateTime(startDate);
+				}
+				new EditAppointment(thisFrame, app);
 				
 			} else if (actionCommand.equals("Avtalevisning")) {
 				// TODO Check if selected appointment is logged in users appointment

@@ -46,13 +46,13 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 	private Participant currentUser;
 
 
-	DetailsPanel(JDialog parent, Appointment appointment, Calendar startDate, Participant currentUser) {
+	DetailsPanel(JDialog parent, Appointment appointment, Participant currentUser) {
 		this.appointment = appointment;
 		appointment.addPropertyChangeListener(this);
 		this.parent = parent;
 		this.currentUser = currentUser;
 
-		Date startDateDate = new Date(startDate.getTimeInMillis());
+		Date startDateDate = appointment.getStartDateTime().getTime();
 
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);

@@ -155,7 +155,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 
 
 	public void setValueAt(Appointment appointment){
-		Calendar newAppointment = appointment.getStartCal();
+		Calendar newAppointment = appointment.getStartDateTime();
 		int row = newAppointment.get(Calendar.DAY_OF_WEEK);
 		int column = newAppointment.get(Calendar.HOUR_OF_DAY);
 		if(column < 7 || column > 20){
