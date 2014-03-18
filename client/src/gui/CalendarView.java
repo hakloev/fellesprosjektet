@@ -390,10 +390,12 @@ public class CalendarView extends JFrame {
 	
 	
 	private void sendWeekCalendarRequest(Employee employee) {
-		calendarTableModel.resetDefaultCalendar();
-		calendarTableModel = new WeekCalendar(employee, (int)weekComboBox.getSelectedItem(), (int)yearSpinner.getValue());
-		calendarTableModel.initialize();
-		calendarTable.setModel(calendarTableModel);
+		if (employee != null) {
+			calendarTableModel.resetDefaultCalendar();
+			calendarTableModel = new WeekCalendar(employee, (int)weekComboBox.getSelectedItem(), (int)yearSpinner.getValue());
+			calendarTableModel.initialize();
+			calendarTable.setModel(calendarTableModel);
+		}
 	}
 	
 	

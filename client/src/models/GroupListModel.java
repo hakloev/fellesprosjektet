@@ -19,7 +19,6 @@ public class GroupListModel extends DefaultListModel<Group> implements NetInterf
 	
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
         JSONObject json;
         json = new JSONObject();
         json.put("request","grouplistmodel");
