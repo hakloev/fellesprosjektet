@@ -27,12 +27,14 @@ import controllers.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Calendar;
 
 @SuppressWarnings("serial")
-public class CalendarView extends JFrame {
+public class CalendarView extends JFrame implements MouseListener {
 
 	private JPanel contentPane;
 
@@ -252,6 +254,7 @@ public class CalendarView extends JFrame {
 		notificationScrollPane.setPreferredSize(new Dimension(180, 200));
 
 		notificationList = new JList<Notification>();
+		notificationList.addMouseListener(this);
 		notificationScrollPane.setViewportView(notificationList);
 
 		JLabel notificationLabel = new JLabel(" Varsler");
@@ -435,6 +438,52 @@ public class CalendarView extends JFrame {
 		calendarTableModel = new WeekCalendar(employee, (int)weekComboBox.getSelectedItem(), (int)yearSpinner.getValue());
 		calendarTableModel.initialize();
 		calendarTable.setModel(calendarTableModel);
+	}
+
+
+	@Override
+	public void mouseClicked(MouseEvent arg0) {
+		if (arg0.getClickCount() == 2 && arg0.getSource() == notificationList){
+			Notification notification = notificationList.getSelectedValue();
+			int appointmentID = notification.getAppointmentID();
+			Appointment app = new Appointment(appointmentID);
+			app.initialize();
+			if (app.getAppointmentLeader()== loggedInEmployee){
+				new EditAppointment(thisFrame, app);
+			}
+			else{
+				new ViewAppointment(thisFrame, app);
+			}
+		}
+		
+	}
+
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 
 

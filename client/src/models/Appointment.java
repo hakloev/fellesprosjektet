@@ -44,6 +44,9 @@ public class Appointment implements NetInterface {
         startDateTime = Calendar.getInstance();
         endDateTime = Calendar.getInstance();
     }
+    public Appointment(int appointmentID){
+    	this.appointmentID = appointmentID;
+    }
     
     public Appointment(Employee appointmentLeader, Calendar date) {
 		pcs = new PropertyChangeSupport(this);
