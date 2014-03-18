@@ -6,11 +6,8 @@ import javax.swing.event.ListDataListener;
 
 @SuppressWarnings("serial")
 public class ParticipantListModel extends DefaultListModel<Participant> {
-	
-	
-	
+
 	private Participant appointmentLeader;
-	
 	
 	/**
 	 * Creates a new empty list

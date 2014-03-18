@@ -34,20 +34,6 @@ public class RoomListModel extends DefaultListModel<Room> implements NetInterfac
         json.put("dbmethod","initialize");
         OutboundWorker.sendRequest(json);
 
-		/* test code
-		Room[] rooms = new Room[] {
-			new Room("B1-183C", 6),
-			new Room("WhiteCube", 8),
-			new Room("Rill", 50),
-			new Room("Rall", 50)
-		};
-		
-		for (Room room : rooms) {
-			if (room.getCapacity() >= minimumCapacity) {
-				this.addElement(room);
-			}
-		}
-		 end test code */
 	}
 
 	@Override

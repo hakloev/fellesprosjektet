@@ -46,11 +46,6 @@ public class Client {
     
     
     private static void trulsTestCode() {
-    	//Creating a SocketClient object
-        SocketListener client = new SocketListener ();
-        //trying to establish connection to the server
-        client.connect();
-
 
         Employee employee = new Employee("trulsmp","trulsmp");
 
@@ -89,12 +84,6 @@ public class Client {
         GroupListModel groupListModel = new GroupListModel();
         groupListModel.initialize();
 
-
-
-
-        //setupUIManager(); // do first
-    	
-        //new CalendarView();
 
     }
 }

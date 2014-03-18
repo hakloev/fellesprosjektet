@@ -10,7 +10,7 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements Net
 	
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
+		// TODO: ADD THIS
 
         //OutboundWorker.sendRequest(request);
 		/* test code */
