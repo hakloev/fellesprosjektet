@@ -29,6 +29,7 @@ public class Participant {
         this.userName = employee.getUsername();
         this.name = employee.getName();
         participantStatus = null;
+        showInCalendar = true;
     }
     
 

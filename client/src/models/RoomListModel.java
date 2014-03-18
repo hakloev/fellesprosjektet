@@ -1,6 +1,9 @@
 package models;
 
 import controllers.OutboundWorker;
+import controllers.ResponseWaiter;
+import controllers.SocketListener;
+
 import org.json.simple.JSONObject;
 
 import javax.swing.DefaultListModel;
@@ -32,8 +35,17 @@ public class RoomListModel extends DefaultListModel<Room> implements NetInterfac
         JSONObject jsonObject = new JSONObject();
         json.put("request","roomlistmodel");
         json.put("dbmethod","initialize");
+        json.put("capacity", minimumCapacity);
         OutboundWorker.sendRequest(json);
-
+        
+        Object[] response = new Object[1];
+        new ResponseWaiter(SocketListener.getSL(), response);
+        
+        if (response[0] != null && response[0] instanceof RoomListModel) {
+        	for (Object room : ((RoomListModel)response[0]).toArray() ) {
+        		this.addElement((Room)room);
+        	}
+        }
 	}
 
 	@Override

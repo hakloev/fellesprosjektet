@@ -288,6 +288,9 @@ public class CalendarView extends JFrame {
 			String actionCommand = ae.getActionCommand();
 			if (actionCommand.equals("Ny avtale")) {
 				// TODO get time and date from selection
+				//Appointment app = new Appointment(1);
+				//app.initialize();
+				//new EditAppointment(thisFrame, app);
 				new EditAppointment(thisFrame, new Appointment(loggedInEmployee));
 				
 			} else if (actionCommand.equals("Avtalevisning")) {
