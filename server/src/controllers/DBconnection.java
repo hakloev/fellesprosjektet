@@ -3,6 +3,7 @@ package controllers;
 import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Calendar;
 
 /**
  * Created by Kristian Volden and Håkon Ødegård Løvdal March 2014
@@ -29,6 +30,7 @@ public class DBconnection {
 	}
 
 	public static Connection createConnection() {
+		Calendar start = Calendar.getInstance();
 		if (dbCon == null) {
 			System.out.println("DBConnection.createConnection: TRYING TO CREATE CONNECTION");
 			try {
@@ -39,6 +41,8 @@ public class DBconnection {
 				e.printStackTrace();
 			}
 		}
+		Calendar end = Calendar.getInstance();
+		System.out.println("DBConnection created in: " + (end.getTimeInMillis() - start.getTimeInMillis()) + " millis");
 		System.out.println("DBConnection.createConnection: CREATED CONNECTION SUCCESSFULLY");
 		return dbCon;
 	}

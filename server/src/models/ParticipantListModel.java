@@ -42,6 +42,8 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 				ParticipantStatus participating = ParticipantStatus.participating;
 				if (rs.getString(3).equals("deltar_ikke")) {
 					participating = ParticipantStatus.notParticipating;
+				} else if (rs.getString(3).equals("null")) {
+					participating = null;
 				}
 				boolean show = true;
 				if (rs.getInt(5) == 0) {
@@ -75,9 +77,12 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 				if (p.isShowInCalendar()) {
 					show = 1;
 				}
-				String deltar = "deltar";
-				if (p.getParticipantStatus().toString().equals("deltar_ikke")) {
-					deltar = "deltar_ikke";
+				String deltar = null;
+				if (p.getParticipantStatus() != null) {
+					deltar = "deltar";
+					if (p.getParticipantStatus().toString().equals("deltar_ikke")) {
+						deltar = "deltar_ikke";
+					}
 				}
 				sql = "insert into deltager values ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', null, '" + show + "')";
 				System.out.println(sql);
