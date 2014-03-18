@@ -2,10 +2,13 @@ package models;
 
 import controllers.OutboundWorker;
 import helperclasses.Request;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.swing.table.DefaultTableModel;
@@ -20,9 +23,9 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	private int year;
 	private int iteratorIndex;
 
-    private JSONObject json;
-	
-	
+	private JSONObject json;
+
+
 	private static Object[][] emptyCalendar = new Object[][] {
 		{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
 		{"07.00", null, null, null, null, null, null, null},
@@ -46,7 +49,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 
 	public WeekCalendar() {
 		super(emptyCalendar, columnTitles);
-        appointmentList = new ArrayList<Appointment>();
+		appointmentList = new ArrayList<Appointment>();
 	}
 
 
@@ -63,15 +66,15 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	@Override
 	public void initialize() {
 
-        json = new JSONObject();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("employee",this.getEmployee().getUsername());
-        jsonObject.put("week",this.week);
-        jsonObject.put("year",this.year);
-        json.put("request","weekcalendar");
-        json.put("dbmethod","initialize");
-        json.put("model",jsonObject);
-        OutboundWorker.sendRequest(json);
+		json = new JSONObject();
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("employee",this.getEmployee().getUsername());
+		jsonObject.put("week",this.week);
+		jsonObject.put("year",this.year);
+		json.put("request","weekcalendar");
+		json.put("dbmethod","initialize");
+		json.put("model",jsonObject);
+		OutboundWorker.sendRequest(json);
 
 
 	}
@@ -111,8 +114,41 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 
 
 	public void addAppointment(Appointment appointment) {
-		// TODO code for placing app in table
-		appointmentList.add(appointment);
+		Calendar date = appointment.getStartDateTime();
+		if (date.getWeekYear() == week){
+			int x = 0;
+			int y = 0;
+			Date time = date.getTime();
+			int hour = time.getHours();
+			if(date.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
+				x = 7;
+			}
+			else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.MONDAY){
+				x = 1;
+			}
+			else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.TUESDAY){
+				x = 2;
+			}
+			else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.WEDNESDAY){
+				x = 3;
+			}
+			else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.THURSDAY){
+				x = 4;
+			}
+			else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.FRIDAY){
+				x = 5;
+			}
+			else if(date.get(Calendar.DAY_OF_WEEK)==Calendar.SATURDAY){
+				x = 6;
+			}
+			if (hour >= 7 && hour <= 21){
+				y = hour-6;
+			}
+			if (x != 0 && y != 0){
+				emptyCalendar[x][y] = appointment;
+			}
+			appointmentList.add(appointment);
+		}
 	}
 
 
@@ -144,7 +180,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	}
 
 
-    public ArrayList<Appointment> getAppointmentList() {
-        return appointmentList;
-    }
+	public ArrayList<Appointment> getAppointmentList() {
+		return appointmentList;
+	}
 }
