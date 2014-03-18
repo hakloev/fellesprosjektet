@@ -14,6 +14,7 @@ public class GroupListModel extends DefaultListModel<Group> implements DBInterfa
 
 	@Override
 	public void initialize() {
+		System.out.println("GroupListModel.initialize");
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		ArrayList<Group> groups = new ArrayList<Group>();
 		try {
@@ -37,7 +38,7 @@ public class GroupListModel extends DefaultListModel<Group> implements DBInterfa
 				String sql2 = "SELECT e.brukernavn, e.navn FROM ansatt e, gruppemedlem g WHERE g.gruppenavn = '" + g.getGroupName() +"' AND e.brukernavn = g.brukernavn";
 				ResultSet rs2 = stm2.executeQuery(sql2);
 				while (rs2.next()) {
-					Employee e = new Employee(rs2.getObject("e.navn").toString(), rs2.getObject("e.brukernavn").toString());
+					Employee e = new Employee(rs2.getObject("e.brukernavn").toString(), rs2.getObject("e.navn").toString());
 					g.getEmployees().add(e);
 				}
 				rs2.close();
@@ -51,16 +52,19 @@ public class GroupListModel extends DefaultListModel<Group> implements DBInterfa
 
 	@Override
 	public void refresh() {
+		System.out.println("GroupListModel.refresh");
 		this.initialize();
 	}
 
 	@Override
 	public void save() {
+		System.out.println("GroupListModel.save");
 		// Do not add code. This model should not be sent to server
 	}
 
 	@Override
 	public void delete() {
+		System.out.println("GroupListModel.delete");
 		// Do not add code. This model can not be deleted from server
 	}
 

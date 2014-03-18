@@ -86,11 +86,37 @@ public class DatabaseWorker {
 					groupListModel.initialize();
 					response = new Response(groupListModelAsJSON(groupListModel));
 				}
+			} else if (requestType.equals("employeelistmodel")) {
+				System.out.println("DatabaseWorker.handleRequest: EMPLOYEELISTMODEL");
+				String dbMethod = (String) jsonObject.get("dbmethod");
+				if (dbMethod.equals("initialize")) {
+					System.out.println("DatabaseWorker.handleRequest: EMPLOYEELISTMODEL INITALIZE");
+					EmployeeListModel employeeListModel = new EmployeeListModel();
+					employeeListModel.initialize();
+					response = new Response(employeeListModelAsJSON(employeeListModel));
+				}
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return response;
+	}
+
+	private static String employeeListModelAsJSON(EmployeeListModel employeeListModel) {
+		System.out.println("DatabaseWorker.employeeListModelAsJSON: PARSING REQUEST");
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("response", "employeelistmodel");
+		jsonObject.put("dbmethod", "initialize");
+		JSONArray array = new JSONArray();
+		for (int i = 0; i < employeeListModel.size(); i++) {
+			JSONObject employee = new JSONObject();
+			Employee e = employeeListModel.get(i);
+			employee.put("username", e.getUsername());
+			employee.put("name", e.getName());
+			array.add(employee);
+		}
+		jsonObject.put("model", array);
+		return jsonObject.toJSONString();
 	}
 
 	private static String groupListModelAsJSON(GroupListModel groupListModel) {
