@@ -32,6 +32,7 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 
 	@Override
 	public void initialize() {
+		System.out.println("ParticipantListModel.initialize");
 		Connection dbCon = DBconnection.getConnection();
 		try {
 			String sql = "SELECT d.*, a.navn FROM deltager d, ansatt a WHERE d.brukernavn = a.brukernavn AND d.avtaleid = " + this.appointmentID;
@@ -57,11 +58,13 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 
 	@Override
 	public void refresh() {
+		System.out.println("ParticipantListModel.refresh");
 		this.initialize();
 	}
 
 	@Override
 	public void save() {
+		System.out.println("ParticipantListModel.save");
 		Connection dbCon = DBconnection.getConnection();
 		try {
 			Statement stmt = dbCon.createStatement();
@@ -88,6 +91,6 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 
 	@Override
 	public void delete() {
-
+		System.out.println("ParticipantListModel.delete");
 	}
 }

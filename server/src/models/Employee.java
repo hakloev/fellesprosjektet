@@ -36,11 +36,12 @@ public class Employee implements DBInterface {
 
 	@Override
 	public void initialize() {
-
+		System.out.println("Employee.initialize");
 	}
 
 	@Override
 	public void refresh() {
+		System.out.println("Employee.refresh");
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		try {
 			String sql = "SELECT * FROM ansatt WHERE brukernavn = '" + this.username + "'";
@@ -59,11 +60,11 @@ public class Employee implements DBInterface {
 
 	@Override
 	public void save() {
-
+		System.out.println("Employee.save");
 	}
 
 	@Override
 	public void delete() {
-
+		System.out.println("Employee.delete");
 	}
 }
