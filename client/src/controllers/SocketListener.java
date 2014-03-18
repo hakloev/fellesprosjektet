@@ -1,6 +1,4 @@
 package controllers;
-import helperclasses.JSONHandler;
-import helperclasses.Response;
 
 import java.io.*;
 import java.net.Socket;
@@ -53,22 +51,8 @@ public class SocketListener extends Thread {
 
                 System.out.print("Received response from Server: ");
                 System.out.println(responseString + "\n");
+                InboundWorker.handleResponse(responseString);
 
-                responseObject = JSONHandler.parseJSON(responseString);
-                
-                System.out.println("ParsedObjectOutput: " + responseObject);
-                System.out.println("this Thread: " + this);
-                
-                if (registeredWaitingInstance != null) {
-                	System.out.println("k test interrupt");
-                	registeredWaitingInstance.setReady(true);
-                	System.out.println("k test interrupt done");
-                }
-                
-
-
-                // TODO: SENDE VIDERE TIL KLASSE SOM OPPDATER KLIENT
-                
             }
 
         } catch (IOException e) {

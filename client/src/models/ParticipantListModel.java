@@ -1,9 +1,5 @@
 package models;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import javax.swing.DefaultListModel;
 import javax.swing.event.ListDataListener;
 
@@ -44,21 +40,18 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
     }
 
 
-    @JsonProperty("participants")
     public Object[] participants() {
         return this.toArray();
     }
 
 
 	@Override
-	@JsonIgnore
 	public boolean isEmpty() {
 		return this.isEmpty();
 	}
 
 
 	@Override
-	@JsonIgnore
 	public ListDataListener[] getListDataListeners() {
 		return this.getListDataListeners();
 	}
@@ -73,14 +66,12 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 	}
 
 
-    @JsonIgnore
     @Override
     public int getSize(){
         return super.getSize();
     }
 
 
-	@JsonIgnore
 	public Participant getAppoinmentLeader() {
 		return this.appointmentLeader;
 	}
