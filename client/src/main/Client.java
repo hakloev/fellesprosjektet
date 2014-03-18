@@ -2,11 +2,9 @@ package main;
 
 import java.awt.EventQueue;
 
-import gui.CalendarView;
-
 import javax.swing.*;
 
-import controllers.SocketListener;
+import gui.CalendarView;
 
 
 /**
@@ -14,27 +12,19 @@ import controllers.SocketListener;
  */
 public class Client {
 	
-	//static CalendarView mainWindow;
 	
     public static void main(String[] args) {
     	setupUIManager(); // do first
     	
-    	//final CalendarView mainWindow;
-    	final SocketListener sl = new SocketListener();
-    	
     	EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					CalendarView mainWindow = new CalendarView(sl);
+					new CalendarView();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		});
-    	
-    	
-        //new CalendarView();
-        
     }
     
     

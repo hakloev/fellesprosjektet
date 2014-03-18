@@ -1,5 +1,4 @@
 package controllers;
-import gui.LoginScreen;
 import helperclasses.JSONHandler;
 import helperclasses.Response;
 
@@ -10,16 +9,18 @@ import java.net.Socket;
 /**
  * Created by Torgeir on 11.03.14.
  */
-public class SocketListener extends Thread implements Runnable {
+public class SocketListener extends Thread {
 
     private String hostname;
     private int port;
     private Socket socketClient;
     private boolean connected;
     private BufferedReader readFromServer;
+    private static SocketListener socketListener;
     
-    private Thread registeredWaitingInstance;
+    private ResponseWaiter registeredWaitingInstance;
     private Object responseObject;
+    
 
 
     public SocketListener(String hostname, int port){
@@ -34,7 +35,9 @@ public class SocketListener extends Thread implements Runnable {
     }
     
     
+    @Override
     public void run() {
+    	System.out.println("Response Thread STARTED");
         try {
 
             while(connected) {
@@ -51,22 +54,19 @@ public class SocketListener extends Thread implements Runnable {
 
                 Response response = new Response(responseString);
 
-                System.out.println("Received response from Server: ");
+                System.out.print("Received response from Server: ");
                 System.out.println(response.get_JSONRESPONSE() + "\n");
 
                 responseObject = JSONHandler.parseJSON(response);
-                System.out.println("responseObject " + responseObject);
-                System.out.println("this Thread: " + (Thread)this);
+                System.out.println("ParsedObjectOutput: " + responseObject);
+                System.out.println("this Thread: " + this);
                 
                 if (registeredWaitingInstance != null) {
                 	System.out.println("k test interrupt");
-                	registeredWaitingInstance.join();
-                	//((LoginScreen.LoginWaiter)registeredWaitingInstance).jall();
-                	registeredWaitingInstance.interrupt();
+                	registeredWaitingInstance.setReady(true);
                 	System.out.println("k test interrupt done");
                 }
                 
-                System.out.println("ParsedObjectOutput: " + responseObject);
 
 
                 // TODO: SENDE VIDERE TIL KLASSE SOM OPPDATER KLIENT
@@ -74,13 +74,10 @@ public class SocketListener extends Thread implements Runnable {
             }
 
         } catch (IOException e) {
-            System.err.println("Connection/there is no server");
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+            System.err.println("Connection/there is no server: " + e.getMessage());
+            //e.printStackTrace();
+        }
+        System.out.println("Response Thread ENDED");
     }
 
 
@@ -90,20 +87,13 @@ public class SocketListener extends Thread implements Runnable {
             socketClient = new Socket(hostname, port);
             connected = true;
             System.out.println("Connection Established \n");
-            //InboundWorker inWorker = new InboundWorker(socketClient);
             this.start();
-            System.out.println("Response Thread STARTED");
             OutboundWorker.setSocket(socketClient);
             return true;
 
         } catch (IOException e) {
             e.printStackTrace();
-            
             return false;
-            
-            /* just return true for testing purposes */
-            //return true;
-            
         }
     }
     
@@ -113,6 +103,8 @@ public class SocketListener extends Thread implements Runnable {
     	OutboundWorker.setSocket(null);
     	if (socketClient != null) try {
 			socketClient.close();
+			System.out.println("Socket closed");
+			socketClient = null;
 		} catch (IOException e) {
 			// Don't care!
 			//e.printStackTrace();
@@ -125,12 +117,12 @@ public class SocketListener extends Thread implements Runnable {
     }
     
     
-    public synchronized void register(Thread waiting) {
+    public synchronized void register(ResponseWaiter waiting) {
     	registeredWaitingInstance = waiting;
     	System.out.println("Registered: " + registeredWaitingInstance);
     }
     
-    public synchronized void unregister(Thread waiting) {
+    public synchronized void unregister(ResponseWaiter waiting) {
     	if (registeredWaitingInstance == waiting) {
     		System.out.println("Unregistered: " + registeredWaitingInstance);
     		registeredWaitingInstance = null;
@@ -141,6 +133,16 @@ public class SocketListener extends Thread implements Runnable {
     	return responseObject;
     }
 
+    
+    public static synchronized void setSL(SocketListener sl) {
+    	socketListener = sl;
+    }
+    
+    
+    public static synchronized SocketListener getSL() {
+    	return socketListener;
+    }
+    
     
     
 }

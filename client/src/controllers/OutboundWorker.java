@@ -12,14 +12,9 @@ import java.net.Socket;
  * Created by Torgeir on 11.03.14.
  */
 public class OutboundWorker {
+	
+	
     private static Socket socketClient;
-
-
-    @Deprecated
-    public OutboundWorker(Socket socket) {
-        socketClient = socket;
-
-    }
 
 
     public static void sendRequest(Request request) {

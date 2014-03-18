@@ -29,7 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.Calendar;
 
 @SuppressWarnings("serial")
@@ -49,19 +48,16 @@ public class CalendarView extends JFrame {
 	private JFrame thisFrame;
 	
 	private Employee loggedInEmployee;
-	private SocketListener socketListener;
 
 
 	/**
 	 * Create the main view.
 	 */
-	public CalendarView(SocketListener socketListener) {
+	public CalendarView() {
 		thisFrame = this;
 		this.setTitle("Kalender - Firma X");
 		this.setResizable(false);
 		this.addWindowListener(windowListener);
-		
-		this.socketListener = socketListener;
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -366,13 +362,13 @@ public class CalendarView extends JFrame {
 	
 	
 	private void closeNetworkSocket() {
-		socketListener.close();
+		SocketListener.getSL().close();
 	}
 	
 	
 	private void initializeLoggedInUser() {
 		Employee[] user = new Employee[1]; // point to something mutable so we can get it back
-		new LoginScreen(thisFrame, user, socketListener);
+		new LoginScreen(thisFrame, user);
 		usernameLabel.setText(user[0].getUserName());
 		loggedInEmployee = user[0];
 		
