@@ -3,7 +3,11 @@ package main;
 import controllers.SocketListener;
 
 /**
- * Created by hakloev on 10/03/14.
+ * Created by Håkon Ødegård Løvdal on 10/03/14.
+ *
+ * This is the main class, it's the entry point for the serverprogram.
+ * It creates a socket listener that handles all incoming clients.
+ *
  */
 public class Server {
 

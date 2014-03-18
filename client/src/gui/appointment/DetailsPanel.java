@@ -38,7 +38,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 	private JTextArea descriptionTextArea;
 	private JButton btnVelgRom;
 	private JList<Participant> participantList;
-	
+
 	private boolean enabled = true;
 
 	private Appointment appointment;
@@ -51,7 +51,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		appointment.addPropertyChangeListener(this);
 		this.parent = parent;
 		this.currentUser = currentUser;
-		
+
 		Date startDateDate = new Date(startDate.getTimeInMillis());
 
 		GridBagLayout gbl = new GridBagLayout();
@@ -102,7 +102,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_startTimeTextField.gridy = 1;
 		this.add(startTimeSpinner, gbc_startTimeTextField);
 		//startTimeSpinner.setColumns(10);
-		
+
 		/* Varighet */  // durationSpinner must exist before endTime is set in Appointment!!!
 		JLabel lblVarighet = new JLabel("Varighet");
 		GridBagConstraints gbc_lblVarighet = new GridBagConstraints();
@@ -111,7 +111,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_lblVarighet.gridx = 0;
 		gbc_lblVarighet.gridy = 3;
 		this.add(lblVarighet, gbc_lblVarighet);
-		
+
 		durationSpinner = new JSpinner(new SpinnerDateModel());
 		durationSpinner.addChangeListener(this);
 		JSpinner.DateEditor timeEditor04 = new JSpinner.DateEditor(durationSpinner, "HH:mm");
@@ -151,8 +151,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_stopTimeTextField.gridx = 1;
 		gbc_stopTimeTextField.gridy = 2;
 		this.add(stopTimeSpinner, gbc_stopTimeTextField);
-        //stopTimeSpinner.setColumns(10);
-		
+		//stopTimeSpinner.setColumns(10);
+
 		/* Beskrivelse */
 		JScrollPane descriptionScrollPane = new JScrollPane();
 		GridBagConstraints gbc_descriptionScrollPane = new GridBagConstraints();
@@ -168,6 +168,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		descriptionScrollPane.setColumnHeaderView(lblBeskrivelse);
 
 		descriptionTextArea = new JTextArea();
+		descriptionTextArea.addFocusListener(this);
 		descriptionTextArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		descriptionScrollPane.setViewportView(descriptionTextArea);
 
@@ -271,13 +272,13 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		super.updateUI();
 		if (participantList != null) participantList.updateUI();
 	}
-	
-	
+
+
 	public Participant getSelectedParticipant(){
 		return this.participantList.getSelectedValue();
 	}
-	
-	
+
+
 	ListSelectionListener pllsl = new ListSelectionListener() {
 		@Override
 		public void valueChanged(ListSelectionEvent lse) {
@@ -286,7 +287,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 				participantList.transferFocus();
 				return;
 			}
-			
+
 			if (! (parent instanceof EditAppointment)) return;
 			EditAppointment editParent = (EditAppointment)parent;
 
@@ -295,7 +296,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 				editParent.editButtonPanel.setButtonSlettEnabled(false);
 				return;
 			}
-			
+
 			if ( participantList.getSelectedValue().equals( ((ParticipantListModel)participantList.getModel()).getAppoinmentLeader() ) ) {
 				editParent.editButtonPanel.setBothStatusButtonsEnabled(false);
 				editParent.editButtonPanel.setButtonSlettEnabled(false);
@@ -338,17 +339,17 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
     }
     */
 
-    public void setAlarmTextField(){
-    	if (alarmTime[0] != null) {
-    		String alarmText = new String();
-    		alarmText += alarmTime[0].get(Calendar.DAY_OF_MONTH) + ".";
-    		alarmText += (alarmTime[0].get(Calendar.MONTH) + 1) + ".";  // +1 since Calendar starts months with 0
-    		alarmText += alarmTime[0].get(Calendar.YEAR) + " ";
-    		alarmText += alarmTime[0].get(Calendar.HOUR_OF_DAY) + ":";
-    		alarmText += alarmTime[0].get(Calendar.MINUTE);
-    		alarmTextField.setText(alarmText);
-    	}
-    }
+	public void setAlarmTextField(){
+		if (alarmTime[0] != null) {
+			String alarmText = new String();
+			alarmText += alarmTime[0].get(Calendar.DAY_OF_MONTH) + ".";
+			alarmText += (alarmTime[0].get(Calendar.MONTH) + 1) + ".";  // +1 since Calendar starts months with 0
+			alarmText += alarmTime[0].get(Calendar.YEAR) + " ";
+			alarmText += alarmTime[0].get(Calendar.HOUR_OF_DAY) + ":";
+			alarmText += alarmTime[0].get(Calendar.MINUTE);
+			alarmTextField.setText(alarmText);
+		}
+	}
 
 
 	ActionListener actionListener = new ActionListener() {
@@ -363,13 +364,13 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 				} else {
 					cal.setTimeInMillis(alarmTime[0].getTimeInMillis());
 				}
-				
+
 				new Alarm(parent, cal, alarmTime);
 				if (alarmTime[0] != null) {
 					currentUser.setAlarm(alarmTime[0]);
 				}
-                setAlarmTextField();
-                
+				setAlarmTextField();
+
 			} else if (ae.getActionCommand().equals("Velg rom")) {
 				Room[] room = new Room[1];
 				new RoomChooser(parent, appointment.getParticipantList().getSize(), room);
@@ -412,15 +413,18 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 	@Override
 	public void focusGained(FocusEvent arg0) {
 		// TODO Remove focuslistener?
-		
+
 	}
 
 
 	@Override
 	public void focusLost(FocusEvent arg0) {
-		// TODO Remove focuslistener?
-	}
 
+		if (arg0.getSource() == descriptionTextArea){
+			appointment.setDescription(descriptionTextArea.getText());
+		}
+
+	}
 
 	@Override
 	public void stateChanged(ChangeEvent arg0) {

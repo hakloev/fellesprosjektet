@@ -6,7 +6,11 @@ import java.net.Socket;
 import java.net.SocketAddress;
 
 /**
- * Created by hakloev on 10/03/14.
+ * Created by Håkon Ødegård Løvdal on 10/03/14.
+ *
+ * This is the socket listener, it listens for incoming connections
+ * and creates a ClientHandler for every unique
+ *
  */
 public class SocketListener extends Thread implements Runnable {
 

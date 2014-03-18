@@ -16,6 +16,11 @@ import java.util.Iterator;
 
 /**
  * Created by Håkon Ødegård Løvdal on 11/03/14.
+ *
+ * This class handles all requests from a client, and calls the methods
+ * that make queries with the database.
+ * It parses all incoming requests and create responses.
+ * 
  */
 public class DatabaseWorker {
 

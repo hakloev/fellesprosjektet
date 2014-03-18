@@ -4,7 +4,12 @@ import java.sql.DriverManager;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-
+/**
+ * Created by Kristian Volden and Håkon Ødegård Løvdal March 2014
+ *
+ * Implemented as a singelton class for simplicity
+ *
+ */
 public class DBconnection {
 	
 	private static String URL = "jdbc:mysql://mysql.stud.ntnu.no/trulsmp_fpgruppe7";
@@ -12,14 +17,6 @@ public class DBconnection {
 	private static String PASSWORD = "grp07";
 
 	private static Connection dbCon = null;
-
-	/**
-	 * Implemented as singelton-class
-	 */
-	public DBconnection() {
-		// SINGELTON CLASS
-	}
-
 
 	public static Connection getConnection() {
 		System.out.println("DBConnection.getConnection: REQUESTING DBCONNECTION");
