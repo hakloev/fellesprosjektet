@@ -29,7 +29,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 import java.util.Calendar;
 
 @SuppressWarnings("serial")
@@ -48,7 +47,6 @@ public class CalendarView extends JFrame {
 	
 	private JFrame thisFrame;
 	
-	//private String loggedInUsername;
 	private Employee loggedInEmployee;
 
 
@@ -60,7 +58,6 @@ public class CalendarView extends JFrame {
 		this.setTitle("Kalender - Firma X");
 		this.setResizable(false);
 		this.addWindowListener(windowListener);
-		
 		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -200,8 +197,8 @@ public class CalendarView extends JFrame {
 		logoutButton.addActionListener(actionListener);
 		
 	}
-	
-	
+
+
 	private void addRightPanel() {
 		JPanel rightPanel = new JPanel();
 		GridBagConstraints gbc_rightPanel = new GridBagConstraints();
@@ -294,7 +291,7 @@ public class CalendarView extends JFrame {
 				new EditAppointment(thisFrame, new Appointment(loggedInEmployee));
 				
 			} else if (actionCommand.equals("Avtalevisning")) {
-				// TODO Check if selected appointment is appointment logged in users appointment
+				// TODO Check if selected appointment is logged in users appointment
 				new ViewAppointment(thisFrame, new Appointment(loggedInEmployee));
 				
 			} else if(actionCommand.equals("Slett avtale")) {
@@ -366,14 +363,7 @@ public class CalendarView extends JFrame {
 	
 	
 	private void closeNetworkSocket() {
-		if (SocketListener.getSocket() != null) {
-			try {
-				SocketListener.getSocket().close();
-			} catch (IOException e) {
-				// Don't care
-				//e.printStackTrace();
-			}
-		}
+		SocketListener.getSL().close();
 	}
 	
 	

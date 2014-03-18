@@ -14,30 +14,22 @@ import java.util.ArrayList;
  * Created by Torgeir on 11.03.14.
  */
 public class OutboundWorker {
+	
+	
     private static Socket socketClient;
-
-
-    @Deprecated
-    public OutboundWorker(Socket socket) {
-        socketClient = socket;
-
-    }
 
 
     public static void sendRequest(JSONObject userDataJSON) {
         System.out.println("Sending to server:");
         System.out.println(userDataJSON.toJSONString());
         try {
-            DataOutputStream writeToServer = new DataOutputStream(SocketListener.getSocket().getOutputStream());
+            DataOutputStream writeToServer = new DataOutputStream(socketClient.getOutputStream());
             writeToServer.writeBytes(userDataJSON.toJSONString() + "\n");
-
         } catch (IOException e) {
 
             e.printStackTrace();
 
         }
-
-
     }
     
 
@@ -57,7 +49,6 @@ public class OutboundWorker {
         jsonArray.add(list.get(1));
         json.put("array",jsonArray);
 
-
         sendRequest(json);
 
         return true;
@@ -65,7 +56,16 @@ public class OutboundWorker {
     
     
     public static boolean logout() {
+    	// TODO send som sane info to server
         return true;
     }
-
+    
+    
+    public static void setSocket(Socket socket) {
+    	socketClient = socket;
+    }
+    
+    
 }
+
+

@@ -6,6 +6,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Iterator;
 
 import javax.swing.table.DefaultTableModel;
@@ -140,8 +141,24 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	columnTitles = new String[] {
 			"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
 	}
-
+	
+	
     public ArrayList<Appointment> getAppointmentList() {
         return appointmentList;
     }
+	
+	
+    public void setValueAt(Appointment appointment){
+        Calendar newAppointment = appointment.getStartCal();
+        int row = newAppointment.get(Calendar.DAY_OF_WEEK);
+        int column = newAppointment.get(Calendar.HOUR_OF_DAY);
+        if(column < 7 || column > 20){
+            System.out.println("InvalidTimeException");
+        }
+        else{
+            emptyCalendar[row][column] = appointment.getDescription();
+        }
+    }
+	
+	
 }
