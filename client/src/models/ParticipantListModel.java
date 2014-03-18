@@ -39,14 +39,16 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 		this.appointmentLeader = participantList.getAppoinmentLeader();
 	}
 
+    public ParticipantListModel() {
 
-    @JsonProperty("getParticipants")
-    public Object[] getParticipants() {
-        return this.toArray();
     }
 
 
-	// TRULS: LEGG TIL DISSE!!
+    @JsonProperty("participants")
+    public Object[] participants() {
+        return this.toArray();
+    }
+
 
 	@Override
 	@JsonIgnore
@@ -70,12 +72,19 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 		super.addElement(participant);
 	}
 
-	
+
+    @JsonIgnore
+    @Override
+    public int getSize(){
+        return super.getSize();
+    }
+
+
+	@JsonIgnore
 	public Participant getAppoinmentLeader() {
 		return this.appointmentLeader;
 	}
-	
-	
+
 }
 
 

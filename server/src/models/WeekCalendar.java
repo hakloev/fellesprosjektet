@@ -1,35 +1,37 @@
 package models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import controllers.DBconnection;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 
 import javax.swing.table.DefaultTableModel;
 
 @SuppressWarnings("serial")
-public class WeekCalendar extends DefaultTableModel implements DBInterface, Iterator<Appointment>{
+public class WeekCalendar implements DBInterface {
 	
 
-	@JsonProperty("employee")
 	private Employee employee;
-	@JsonProperty("appointmentList")
 	private ArrayList<Appointment> appointmentList;
-	@JsonProperty("weekNumber")
 	private int weekNumber;
 	private int iteratorIndex;
-	
-	
 
-	
 	public WeekCalendar() {
 		super();
 	}
 	
-	
 	public WeekCalendar(Employee employee, int weekNumber) {
 		this.employee = employee;
 		this.weekNumber = weekNumber;
+		this.appointmentList = new ArrayList<>();
 		iteratorIndex = 0;
 	}
 	
@@ -37,16 +39,39 @@ public class WeekCalendar extends DefaultTableModel implements DBInterface, Iter
 	
 	@Override
 	public void initialize() {
-		// TODO Get appointments for this employee for the specific week
-		
-		
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Calendar c = Calendar.getInstance();
+		c.set(Calendar.WEEK_OF_YEAR, this.weekNumber);
+		c.set(Calendar.HOUR_OF_DAY, 0);
+		c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+		Date startDate = c.getTime();
+		c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+		Date endDate = c.getTime();
+
+		Connection dbCon = DBconnection.getConnection(); // Singelton class
+		try {
+			String sql = "SELECT avtaleid FROM avtale WHERE start >= '" + sdf.format(startDate) + "' AND slutt <= '" + sdf.format(endDate) + "'";
+			Statement stmt = dbCon.createStatement();
+			ResultSet rs = stmt.executeQuery(sql);
+			while (rs.next()) {
+				Appointment a = new Appointment();
+				a.setAppointmentID(rs.getInt(1));
+				a.refresh();
+				this.addAppointment(a);
+			}
+			stmt.close();
+			rs.close();
+			System.out.println(this.appointmentList.toString());
+		} catch (SQLException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	@Override
 	public void refresh() {
-		this.initialize();
+
 	}
-	
+
 	@Override
 	public void save() {
 		// This should probably not be saved as one.
@@ -59,23 +84,38 @@ public class WeekCalendar extends DefaultTableModel implements DBInterface, Iter
 		// Server access should be administered on each Appointment object
 	}
 
-
-	@Override
-	public boolean hasNext() {
-		return iteratorIndex < appointmentList.size();
+	public int getIteratorIndex() {
+		return iteratorIndex;
 	}
 
-	@Override
-	public Appointment next() {
-		return appointmentList.get(iteratorIndex++);
+	public void setIteratorIndex(int iteratorIndex) {
+		this.iteratorIndex = iteratorIndex;
 	}
 
-	@Override
-	public void remove() {
-		// Not allowed!
+	public Employee getEmployee() {
+		return employee;
 	}
-	
-	
+
+	public void setEmployee(Employee employee) {
+		this.employee = employee;
+	}
+
+	public ArrayList<Appointment> getAppointmentList() {
+		return appointmentList;
+	}
+
+	public void setAppointmentList(ArrayList<Appointment> appointmentList) {
+		this.appointmentList = appointmentList;
+	}
+
+	public int getWeekNumber() {
+		return weekNumber;
+	}
+
+	public void setWeekNumber(int weekNumber) {
+		this.weekNumber = weekNumber;
+	}
+
 	public void addAppointment(Appointment appointment) {
 		appointmentList.add(appointment);
 	}

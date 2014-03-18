@@ -1,11 +1,13 @@
 package controllers;
 
-import helperclasses.JSONHandler;
-import helperclasses.Request;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.ArrayList;
 
 
 /**
@@ -22,12 +24,12 @@ public class OutboundWorker {
     }
 
 
-    public static void sendRequest(Request request) {
-
+    public static void sendRequest(JSONObject userDataJSON) {
+        System.out.println("Sending to server:");
+        System.out.println(userDataJSON.toJSONString());
         try {
             DataOutputStream writeToServer = new DataOutputStream(SocketListener.getSocket().getOutputStream());
-            String userDataJSON = JSONHandler.toJson(request);
-            writeToServer.writeBytes(userDataJSON + "\n");
+            writeToServer.writeBytes(userDataJSON.toJSONString() + "\n");
 
         } catch (IOException e) {
 
@@ -38,5 +40,32 @@ public class OutboundWorker {
 
     }
     
+
+    public static boolean login(String username, char[] password) {
+        JSONObject json;
+        StringBuilder sb = new StringBuilder(password.length);
+        for (Character c : password)
+            sb.append(c);
+        String result = sb.toString();
+        ArrayList<String> list = new ArrayList<String>();
+        list.add(username);
+        list.add(result);
+        json = new JSONObject();
+        json.put("request", "login");
+        JSONArray jsonArray = new JSONArray();
+        jsonArray.add(list.get(0));
+        jsonArray.add(list.get(1));
+        json.put("array",jsonArray);
+
+
+        sendRequest(json);
+
+        return true;
+    }
     
+    
+    public static boolean logout() {
+        return true;
+    }
+
 }

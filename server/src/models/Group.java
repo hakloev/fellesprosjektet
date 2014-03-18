@@ -6,15 +6,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 
 @SuppressWarnings("serial")
-public class Group extends ArrayList<Employee> {
-	
-	
+public class Group {
+
+	@JsonProperty("groupname")
 	private String groupName;
+
+	@JsonProperty("employees")
+	private ArrayList<Employee> employees;
 	
 	@JsonCreator
-	public Group(@JsonProperty("groupName") String groupName) {
-		super();
+	public Group(String groupName) {
+		this.employees = new ArrayList<Employee>();
 		this.groupName = groupName;
+	}
+
+	public ArrayList<Employee> getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(ArrayList<Employee> employees) {
+		this.employees = employees;
 	}
 
 	public String getGroupName() {

@@ -1,5 +1,8 @@
 package models;
 
+import controllers.OutboundWorker;
+import helperclasses.Request;
+
 import javax.swing.DefaultListModel;
 
 @SuppressWarnings("serial")
@@ -11,7 +14,9 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements Net
 	@Override
 	public void initialize() {
 		// TODO Auto-generated method stub
-		
+
+        Request request = new Request("employeelistmodel","initialize",null);
+        //OutboundWorker.sendRequest(request);
 		/* test code */
 		this.addElement(new Employee("siri", "Siri Gundersen"));
 		this.addElement(new Employee("arvid", "Arvid Pettersen"));

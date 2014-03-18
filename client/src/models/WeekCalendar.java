@@ -1,5 +1,10 @@
 package models;
 
+import controllers.OutboundWorker;
+import helperclasses.Request;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -15,7 +20,9 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	private int year;
 	private int iteratorIndex;
 
-
+    private JSONObject json;
+	
+	
 	private static Object[][] emptyCalendar = new Object[][] {
 		{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
 		{"07.00", null, null, null, null, null, null, null},
@@ -39,6 +46,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 
 	public WeekCalendar() {
 		super(emptyCalendar, columnTitles);
+        appointmentList = new ArrayList<Appointment>();
 	}
 
 
@@ -54,14 +62,22 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 
 	@Override
 	public void initialize() {
-		// TODO Get appointments for this employee for the specific week
+
+        json = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("employee",this.getEmployee().getUsername());
+        jsonObject.put("week",this.week);
+        jsonObject.put("year",this.year);
+        json.put("request","weekcalendar");
+        json.put("dbmethod","initialize");
+        json.put("model",jsonObject);
+        OutboundWorker.sendRequest(json);
 
 
 	}
 
 	@Override
 	public void refresh() {
-		// TODO Clear first maybe?
 		this.initialize();
 	}
 
@@ -128,4 +144,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface, Ite
 	}
 
 
+    public ArrayList<Appointment> getAppointmentList() {
+        return appointmentList;
+    }
 }

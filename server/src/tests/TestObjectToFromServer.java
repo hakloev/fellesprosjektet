@@ -19,7 +19,7 @@ public class TestObjectToFromServer {
 
 	public static void main(String[] args) {
 		BufferedReader inFromUser = new BufferedReader(new InputStreamReader(System.in));
-		RequestTest request1 = new RequestTest("groupname", "get", new Participant("uname", "derp", ParticipantStatus.participating));
+		RequestTest request1 = new RequestTest("groupname", "get", new Participant("uname", "derp", ParticipantStatus.participating, true));
 		ObjectMapper mapper = new ObjectMapper();
 		ObjectMapper mapper1 = new ObjectMapper();
 		String userDataJSON = null;

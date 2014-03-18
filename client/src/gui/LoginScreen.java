@@ -5,6 +5,8 @@ import helperclasses.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import controllers.OutboundWorker;
+import controllers.SocketListener;
 import models.*;
 import controllers.*;
 
@@ -24,11 +26,15 @@ public class LoginScreen extends JDialog implements ActionListener{
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JLabel usernameLabel, passwordLabel;
+    private String[] saveUsernameHere;
+    SocketListener client;
+    public static Boolean loggedIn;
     private Employee[] saveEmployeeHere;
 
 
     public LoginScreen(Frame parent, Employee[] saveEmployeeHere){
         super(parent,"Innlogging", true);
+
         this.saveEmployeeHere = saveEmployeeHere;
         
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
@@ -134,14 +140,22 @@ public class LoginScreen extends JDialog implements ActionListener{
 					//e.printStackTrace();
 				}
             	
+>>>>>>> origin/K
             } else {
-            	JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Kunne ikke koble til serveren!", "Feil", JOptionPane.ERROR_MESSAGE);
             }
+<<<<<<< HEAD
+
+
+        }
+        else if(e.getActionCommand().equals("Avslutt")) {
+            System.exit(0);
+=======
             */
         
         } else if (ae.getActionCommand() == "Avslutt") {
         	System.exit(0);
-            
+
         }
     }
 

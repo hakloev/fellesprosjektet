@@ -1,5 +1,9 @@
 package models;
 
+import controllers.OutboundWorker;
+import helperclasses.Request;
+import org.json.simple.JSONObject;
+
 import javax.swing.DefaultListModel;
 
 @SuppressWarnings("serial")
@@ -7,9 +11,12 @@ public class RoomListModel extends DefaultListModel<Room> implements NetInterfac
 	
 	
 	private int minimumCapacity;
-	
-	
-	public RoomListModel(int capacity) {
+
+    public RoomListModel() {
+
+    }
+
+    public RoomListModel(int capacity) {
 		this.minimumCapacity = capacity;
 	}
 	
@@ -21,9 +28,14 @@ public class RoomListModel extends DefaultListModel<Room> implements NetInterfac
 	
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
-		
-		/* test code */
+        JSONObject json;
+        json = new JSONObject();
+        JSONObject jsonObject = new JSONObject();
+        json.put("request","roomlistmodel");
+        json.put("dbmethod","initialize");
+        OutboundWorker.sendRequest(json);
+
+		/* test code
 		Room[] rooms = new Room[] {
 			new Room("B1-183C", 6),
 			new Room("WhiteCube", 8),
@@ -36,7 +48,7 @@ public class RoomListModel extends DefaultListModel<Room> implements NetInterfac
 				this.addElement(room);
 			}
 		}
-		/* end test code */
+		 end test code */
 	}
 
 	@Override

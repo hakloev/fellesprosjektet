@@ -2,6 +2,15 @@ package controllers;
 
 import helperclasses.JSONHandler;
 import helperclasses.Response;
+import models.Appointment;
+import models.NotificationListModel;
+import models.RoomListModel;
+import models.WeekCalendar;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import sun.org.mozilla.javascript.internal.json.JsonParser;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -41,22 +50,21 @@ public class InboundWorker extends Thread implements Runnable {
                     break;
                 }
 
-                Response response = new Response(responseString);
-
                 System.out.println("Received response from Server: ");
-                System.out.println(response.get_JSONRESPONSE() + "\n");
-
-                Object object = JSONHandler.parseJSON(response);
-                
-                responseObject = object;
-                	
-                if (registeredWaitingInstance != null) {
-                	registeredWaitingInstance.interrupt();
+                System.out.println(responseString + "\n");
+                Object object = JSONHandler.parseJSON(responseString);
+                if (object instanceof WeekCalendar) {
+                    System.out.println(((WeekCalendar) object).getAppointmentList().toString());
                 }
-                
-                System.out.println("ParsedObjectOutput: " + object);
+                else if (object instanceof RoomListModel) {
+                    System.out.println(((RoomListModel) object).toString());
+                }
+                else if (object instanceof Appointment) {
+                    System.out.println(((Appointment) object).toString());
+                }
+                else if (object instanceof NotificationListModel) {
 
-
+                }
                 // TODO: SENDE VIDERE TIL KLASSE SOM OPPDATER KLIENT
                 
             }

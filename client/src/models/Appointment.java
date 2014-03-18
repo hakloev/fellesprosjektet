@@ -1,38 +1,30 @@
 package models;
 
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import controllers.OutboundWorker;
-import helperclasses.Request;
-
-
-
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Iterator;
 
 public class Appointment implements NetInterface {
+    private ParticipantListModel participantList;
 
-
-	private PropertyChangeSupport pcs;
-
-	@JsonProperty("participantList")
-	private ParticipantListModel participantList;
+    private int appointmentID;
+    private Employee appointmentLeader;
+    private String description;
+    private Room location;
+    private String locationText;
+    private Calendar startDateTime;
+    private Calendar endDateTime;
+    private PropertyChangeSupport pcs;
 	private EmailListModel emailRecipientsList;
-
-	private int appointmentID;
-	private Employee appointmentLeader;
-	private String description;
-	private Room location;
-	private String locationText;
-	
-	private Calendar startDateTime;
-	private Calendar endDateTime;
-	
 	private boolean showInCalendar;
 
 
@@ -48,6 +40,11 @@ public class Appointment implements NetInterface {
 		participantList = new ParticipantListModel(new Participant(appointmentLeader));
 		emailRecipientsList = new EmailListModel();
 	}
+
+    public Appointment() {
+        startDateTime = Calendar.getInstance();
+        endDateTime = Calendar.getInstance();
+    }
 	
 	
 	/* Work in progress. Use refresh instead if appointment editing is canceled.
@@ -128,7 +125,6 @@ public class Appointment implements NetInterface {
 		}
 	}
 
-
 	public String getDate(){
 		if (startDateTime != null) {
 			int day = startDateTime.get(Calendar.DAY_OF_MONTH);
@@ -142,13 +138,13 @@ public class Appointment implements NetInterface {
 			ret += month%10;
 			ret += ".";
 			ret += year;
-			return ret;
+            System.out.println(ret);
+            return ret;
 
 
 		}
 		return "01.01.1970";
 	}
-
 
 	public String getStart(){
 		if (startDateTime != null) {
@@ -165,7 +161,6 @@ public class Appointment implements NetInterface {
 		return "00:00";
 	}
 
-
 	public String getEnd(){
 		if (endDateTime != null) {
 			int hour = endDateTime.get(Calendar.HOUR_OF_DAY);
@@ -180,7 +175,6 @@ public class Appointment implements NetInterface {
 		}
 		return "00:00";
 	}
-
 
 	public String getDuration(){
 		if (startDateTime != null && endDateTime != null) {
@@ -217,7 +211,7 @@ public class Appointment implements NetInterface {
 
 	public void setParticipantList(ParticipantListModel participantList) {
 		if (participantList != null){
-			pcs.firePropertyChange("participantList", this.participantList, participantList);
+			//pcs.firePropertyChange("participantList", this.participantList, participantList);
 			this.participantList = participantList;
 		}
 	}
@@ -242,6 +236,9 @@ public class Appointment implements NetInterface {
 		this.description = description;
 	}
 
+    public void setAppointmentLeader(Employee appointmentLeader) {
+        this.appointmentLeader = appointmentLeader;
+    }
 
 	public String getDescription() {
 		return description;
@@ -259,8 +256,8 @@ public class Appointment implements NetInterface {
 	}
 
 
-	public String getLocation() {
-		return locationText;
+	public Room getLocation() {
+		return location;
 	}
 	
 	
@@ -287,34 +284,92 @@ public class Appointment implements NetInterface {
 
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
+        JSONObject json = new JSONObject();
+        json.put("dbmethod", "initialize");
+        json.put("request","appointment");
+        json.put("appointmentID",this.appointmentID);
+        OutboundWorker.sendRequest(json);
 
 	}
 
 	@Override
 	public void refresh() {
-		// TODO Auto-generated method stub
-		this.initialize();
+        this.initialize();
 
 	}
 
 	@Override
 	public void save() {
-		Request request = new Request("appointment","post",this);
-		OutboundWorker.sendRequest(request);
-	}
+        DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        JSONObject json = new JSONObject();
+        json.put("dbmethod", "save");
+        json.put("request","appointment");
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("appointmentLeader",this.appointmentLeader.getUsername());
+        jsonObject.put("description",this.description);
+        if (this.location.getRoomCode() != null) {
+            jsonObject.put("roomCode",this.location.getRoomCode());
+        }
+        jsonObject.put("locationText",this.locationText);
+        jsonObject.put("startDateTime",sdf.format(startDateTime.getTime()));
+        jsonObject.put("endDateTime",sdf.format(endDateTime.getTime()));
 
-	@Override
+        JSONArray array = new JSONArray();
+        for (int i = 0; i < participantList.getSize(); i++) {
+            JSONObject p = createParticipant(participantList.get(i));
+            array.add(p);
+        }
+
+        jsonObject.put("participants",array);
+        json.put("model",jsonObject);
+
+        OutboundWorker.sendRequest(json);
+
+
+    }
+
+    private JSONObject createParticipant(Participant p) {
+        JSONObject participant = new JSONObject();
+        participant.put("name",p.getName());
+        participant.put("username",p.getUserName());
+        participant.put("participantstatus",p.getParticipantStatus().toString());
+        participant.put("showInCalendar",p.isShowInCalendar());
+        return participant;
+    }
+
+    @Override
 	public void delete() {
-		Request request = new Request("appointment","delete",this);
-		OutboundWorker.sendRequest(request);
-
+        JSONObject json = new JSONObject();
+        json.put("dbmethod", "delete");
+        json.put("request","appointment");
+        json.put("appointmentid",this.appointmentID);
+        OutboundWorker.sendRequest(json);
 	}
 
 
+    public Calendar getEndDateTime() {
+        return endDateTime;
+    }
 
-	
-	
+    public void setEndDateTime(Calendar endDateTime) {
+        this.endDateTime = endDateTime;
+    }
+
+    public void setAppointmentID(int appointmentID) {
+        this.appointmentID = appointmentID;
+    }
+
+    public String getLocationText() {
+        return locationText;
+    }
+
+    public Calendar getStartDateTime() {
+        return startDateTime;
+    }
+
+    public void setStartDateTime(Calendar startDateTime) {
+        this.startDateTime = startDateTime;
+    }
 }
 
 

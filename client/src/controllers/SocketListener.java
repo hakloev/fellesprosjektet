@@ -12,15 +12,8 @@ public class SocketListener{
     private int port;
     private static Socket socketClient;
 
-
-    public SocketListener(String hostname, int port){
-        this.hostname = hostname;
-        this.port = port;
-    }
-    
-    
     public SocketListener() {
-    	this.hostname = "localhost";
+    	this.hostname = "78.91.30.65";
         this.port = 4657;
     }
 

@@ -2,8 +2,6 @@ package models;
 
 import java.util.Calendar;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Participant {
 
@@ -14,9 +12,8 @@ public class Participant {
     private boolean showInCalendar;
     private Calendar alarm;
 
-    @JsonCreator
-    public Participant(@JsonProperty("userName" )String userName, @JsonProperty("name") String name,
-                       @JsonProperty("participantStatus") ParticipantStatus participantStatus) {
+
+    public Participant(String userName, String name, ParticipantStatus participantStatus) {
         this.userName = userName;
         this.name = name;
         this.participantStatus = participantStatus;
@@ -29,7 +26,7 @@ public class Participant {
      * @param employee
      */
     public Participant(Employee employee) {
-        this.userName = employee.getUserName();
+        this.userName = employee.getUsername();
         this.name = employee.getName();
         participantStatus = null;
     }

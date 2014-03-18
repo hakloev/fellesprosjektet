@@ -20,7 +20,7 @@ import java.io.Writer;
 public class TestJson {
 
 	public static void main(String[] args) {
-		RequestTest request = new RequestTest("employee","get",  new Participant("uname", "derp", ParticipantStatus.participating));
+		RequestTest request = new RequestTest("employee","get",  new Participant("uname", "derp", ParticipantStatus.participating, true));
 		ObjectMapper mapper = new ObjectMapper();
 
 		try {

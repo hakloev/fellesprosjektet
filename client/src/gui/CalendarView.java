@@ -318,6 +318,7 @@ public class CalendarView extends JFrame {
 				sendWeekCalendarRequest(calendarTableModel.getEmployee());
 				
 			} else if(actionCommand.equals("Logg ut")) {
+
 				
 				closeNetworkSocket();
 				
@@ -379,7 +380,7 @@ public class CalendarView extends JFrame {
 	private void initializeLoggedInUser() {
 		Employee[] user = new Employee[1]; // point to something mutable so we can get it back
 		new LoginScreen(thisFrame, user);
-		usernameLabel.setText(user[0].getUserName());
+		usernameLabel.setText(user[0].getUsername());
 		loggedInEmployee = user[0];
 		
 		/* Do initialization */

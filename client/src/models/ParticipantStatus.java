@@ -13,8 +13,9 @@ public enum ParticipantStatus {
 	public static final ImageIcon noStatusIcon = new ImageIcon("resources/noStatus-14.png");
 	public static final ImageIcon leaderIcon = new ImageIcon("resources/leader-14.png");
 	private final ImageIcon statusIcon;
-	
-	
+
+
+
 	private ParticipantStatus(String status, String iconPath) {
 		this.status = status;
 		this.statusIcon = new ImageIcon(iconPath);
