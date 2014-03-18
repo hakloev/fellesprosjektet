@@ -176,6 +176,18 @@ public class DatabaseWorker {
 			array.add(participant);
 		}
 		appointment.put("participants", array);
+
+		EmailListModel emailListModel = new EmailListModel();
+		emailListModel.setAppointmentID(a.getAppointmentID());
+		emailListModel.initialize();
+		if (!emailListModel.isEmpty()) {
+			JSONArray array1 = new JSONArray();
+			for (int i = 0; i < emailListModel.size(); i++) {
+				array1.add(emailListModel.get(i).toString());
+			}
+			appointment.put("emaillistmodel", array1);
+		}
+
 		jsonObject.put("response", "appointment");
 		jsonObject.put("dbmethod", "initialize");
 		jsonObject.put("model", appointment);
@@ -226,13 +238,15 @@ public class DatabaseWorker {
 		plm.setAppointmentID(a.getAppointmentID());
 		plm.save();
 
-		
+		EmailListModel emailListModel = new EmailListModel();
 		JSONArray email = (JSONArray) model.get("emaillistmodel");
-		Iterator<JSONObject> iterator1 = email.iterator();
+		Iterator iterator1 = email.iterator();
 		while (iterator1.hasNext()) {
-			JSONObject emailaddress = iterator1.next();
-
+			Object emailaddress = iterator1.next();
+			emailListModel.addElement((String) emailaddress);
 		}
+		emailListModel.setAppointmentID(a.getAppointmentID());
+		emailListModel.save();
 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("response", "appointment");

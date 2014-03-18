@@ -84,7 +84,7 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 						deltar = "deltar_ikke";
 					}
 				}
-				sql = "insert into deltager values ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', null, '" + show + "')";
+				sql = "insert into deltager values ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', 'null', '" + show + "')";
 				System.out.println(sql);
 				stmt.executeUpdate(sql);
 			}
