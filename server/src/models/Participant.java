@@ -24,8 +24,6 @@ public class Participant {
                 '}';
     }
 
-
-
 	public boolean isShowInCalendar() {
 		return showInCalendar;
 	}

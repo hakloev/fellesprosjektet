@@ -1,6 +1,7 @@
 package main;
 
 import controllers.SocketListener;
+import helperclasses.Request;
 
 /**
  * Created by Håkon Ødegård Løvdal on 10/03/14.
@@ -13,8 +14,8 @@ public class Server {
 
 	public static void main(String[] args) {
 		SocketListener socketListener = new SocketListener();
+		System.out.println("Server.main: SOCKETLISTENER STARTED AT " + Request.getTime());
 		socketListener.start();
-		System.out.println("Server.main: SOCKETLISTENER STARTED");
 	}
 
 }

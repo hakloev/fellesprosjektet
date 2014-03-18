@@ -33,11 +33,12 @@ public class Room implements DBInterface {
 
 	@Override
 	public void initialize() {
-
+		System.out.println("Room.initialize");
 	}
 
 	@Override
 	public void refresh() {
+		System.out.println("Room.refresh");
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		try {
 			String sql = "SELECT * FROM moterom WHERE romkode = '" + this.roomCode + "'";
@@ -56,11 +57,11 @@ public class Room implements DBInterface {
 
 	@Override
 	public void save() {
-
+		System.out.println("Room.save");
 	}
 
 	@Override
 	public void delete() {
-
+		System.out.println("Room.delete");
 	}
 }
