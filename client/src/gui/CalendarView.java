@@ -27,6 +27,8 @@ import controllers.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Calendar;
@@ -35,7 +37,7 @@ import java.util.Calendar;
 public class CalendarView extends JFrame {
 
 	private JPanel contentPane;
-	
+
 	private JTable calendarTable;
 	private WeekCalendar calendarTableModel;
 	private JComboBox<Integer> weekComboBox;
@@ -44,9 +46,9 @@ public class CalendarView extends JFrame {
 	private JLabel usernameLabel;
 	private JList<Notification> notificationList;
 	private JSpinner yearSpinner;
-	
+
 	private JFrame thisFrame;
-	
+
 	private Employee loggedInEmployee;
 
 
@@ -58,28 +60,28 @@ public class CalendarView extends JFrame {
 		this.setTitle("Kalender - Firma X");
 		this.setResizable(false);
 		this.addWindowListener(windowListener);
-		
+
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		this.setContentPane(contentPane);
-		
+
 		GridBagLayout gbl = new GridBagLayout();
 		contentPane.setLayout(gbl);
-		
+
 		addTopPanel();
 		addCalendar();
 		addRightPanel();
-		
+
 		this.pack();
 		this.setLocationRelativeTo(null);
 		this.setVisible(true);
-		
+
 		/* login */
 		initializeLoggedInUser();
-		
+
 	}
 
-	
+
 	private void addTopPanel() {
 		JPanel topPanel = new JPanel();
 		GridBagConstraints gbc_topPanel = new GridBagConstraints();
@@ -89,7 +91,7 @@ public class CalendarView extends JFrame {
 		gbc_topPanel.gridwidth = 2;
 		gbc_topPanel.anchor = GridBagConstraints.WEST;
 		contentPane.add(topPanel, gbc_topPanel);
-		
+
 		GridBagLayout gbl_topPanel = new GridBagLayout();
 		gbl_topPanel.columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0, 0};
 		topPanel.setLayout(gbl_topPanel);
@@ -113,7 +115,7 @@ public class CalendarView extends JFrame {
 		gbc_nextButton.gridy = 0;
 		topPanel.add(nextButton, gbc_nextButton);
 		nextButton.addActionListener(actionListener);
-		
+
 		/* Week */
 		JLabel weekLabel = new JLabel("Uke");
 		GridBagConstraints gbc_weekLabel = new GridBagConstraints();
@@ -134,7 +136,7 @@ public class CalendarView extends JFrame {
 			weekComboBox.addItem(week);
 		}
 		weekComboBox.setActionCommand("week");
-		
+
 		/* Year */
 		yearSpinner = new JSpinner();
 		yearSpinner.setModel(new SpinnerNumberModel(1970, 1970, 2070, 1));
@@ -144,13 +146,13 @@ public class CalendarView extends JFrame {
 		gbc_yearSpinner.gridx = 4;
 		gbc_yearSpinner.gridy = 0;
 		topPanel.add(yearSpinner, gbc_yearSpinner);
-		
+
 		/* Set current week and year */
 		Calendar currentCal = Calendar.getInstance();
 		weekComboBox.setSelectedIndex(currentCal.get(Calendar.WEEK_OF_YEAR) - 1);
 		yearSpinner.setValue(currentCal.get(Calendar.YEAR));
 		weekComboBox.addActionListener(actionListener); // Add this here to avoid action event from setting current week
-		
+
 		/* Showing calendar of employee */
 		JLabel showingLabel = new JLabel("Viser kalender for");
 		GridBagConstraints gbc_showingLabel = new GridBagConstraints();
@@ -168,7 +170,7 @@ public class CalendarView extends JFrame {
 		gbc_employeeComboBox.gridy = 0;
 		topPanel.add(employeeComboBox, gbc_employeeComboBox);
 		employeeComboBox.setPreferredSize(new Dimension(200, 23));
-		
+
 		/* Logged in user */
 		JLabel loginLabel = new JLabel("Innlogget som:");
 		GridBagConstraints gbc_loginLabel = new GridBagConstraints();
@@ -177,7 +179,7 @@ public class CalendarView extends JFrame {
 		gbc_loginLabel.gridx = 7;
 		gbc_loginLabel.gridy = 0;
 		topPanel.add(loginLabel, gbc_loginLabel);
-		
+
 		usernameLabel = new JLabel();
 		GridBagConstraints gbc_usernameLabel = new GridBagConstraints();
 		gbc_usernameLabel.anchor = GridBagConstraints.EAST;
@@ -186,7 +188,7 @@ public class CalendarView extends JFrame {
 		gbc_usernameLabel.gridy = 0;
 		topPanel.add(usernameLabel, gbc_usernameLabel);
 		usernameLabel.setForeground(new Color(150, 0, 0));
-		
+
 		JButton logoutButton = new JButton("Logg ut");
 		GridBagConstraints gbc_logoutButton = new GridBagConstraints();
 		gbc_logoutButton.anchor = GridBagConstraints.EAST;
@@ -195,7 +197,7 @@ public class CalendarView extends JFrame {
 		gbc_logoutButton.gridy = 0;
 		topPanel.add(logoutButton, gbc_logoutButton);
 		logoutButton.addActionListener(actionListener);
-		
+
 	}
 
 
@@ -207,7 +209,7 @@ public class CalendarView extends JFrame {
 		gbc_rightPanel.gridx = 1;
 		gbc_rightPanel.gridy = 1;
 		contentPane.add(rightPanel, gbc_rightPanel);
-		
+
 		GridBagLayout gbl_rightPanel = new GridBagLayout();
 		gbl_rightPanel.rowHeights = new int[]{0, 0, 0, 0, 30, 0, 0};
 		gbl_rightPanel.rowWeights = new double[]{1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0};
@@ -239,7 +241,7 @@ public class CalendarView extends JFrame {
 		gbc_deleteAppointmentButton.gridy = 3;
 		rightPanel.add(deleteAppointmentButton, gbc_deleteAppointmentButton);
 		deleteAppointmentButton.addActionListener(actionListener);
-		
+
 		newAppointmentButton.setPreferredSize(showAppointmentButton.getPreferredSize());
 		deleteAppointmentButton.setPreferredSize(showAppointmentButton.getPreferredSize());
 
@@ -250,18 +252,19 @@ public class CalendarView extends JFrame {
 		gbc_notificationScrollPane.gridy = 5;
 		rightPanel.add(notificationScrollPane, gbc_notificationScrollPane);
 		notificationScrollPane.setPreferredSize(new Dimension(180, 200));
-		
+
 		notificationList = new JList<Notification>();
+		notificationList.addMouseListener(mouseListener);
 		notificationScrollPane.setViewportView(notificationList);
-		
+
 		JLabel notificationLabel = new JLabel(" Varsler");
 		notificationScrollPane.setColumnHeaderView(notificationLabel);
 	}
-	
-	
-	
+
+
+
 	private void addCalendar() {
-		
+
 		/* Kalendervisning */
 		JPanel calendarPanel = new JPanel();
 		GridBagConstraints gbc_calendarPanel = new GridBagConstraints();
@@ -269,7 +272,7 @@ public class CalendarView extends JFrame {
 		gbc_calendarPanel.gridx = 0;
 		gbc_calendarPanel.gridy = 1;
 		contentPane.add(calendarPanel, gbc_calendarPanel);
-		
+
 		calendarTableModel = new WeekCalendar();
 		calendarTable = new JTable(calendarTableModel);
 		//calendarTable.setColumnSelectionAllowed(true);
@@ -281,13 +284,12 @@ public class CalendarView extends JFrame {
 		calendarPanel.add(calendarTable);
 	}
 
-	
+
 	ActionListener actionListener = new ActionListener() {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			String actionCommand = ae.getActionCommand();
 			if (actionCommand.equals("Ny avtale")) {
-				// TODO get time and date from selection
 				int column = calendarTable.getSelectedColumn();
 				int row = calendarTable.getSelectedRow();
 				Calendar startDate = Calendar.getInstance();
@@ -295,142 +297,183 @@ public class CalendarView extends JFrame {
 				if (column > 0 && row > 0 && column < 8 && row < 15){
 					startDate.set(Calendar.YEAR, (int) yearSpinner.getValue() );
 					startDate.set(Calendar.WEEK_OF_YEAR, (int) weekComboBox.getSelectedItem());
+					
 					int day = 0;
-					if (column == 1){
-						day = Calendar.MONDAY;
-					}
-					else if (column == 2){
-						day = Calendar.TUESDAY;
-					}
-					else if (column == 3){
-						day = Calendar.WEDNESDAY;
-					}
-					else if (column == 4){
-						day = Calendar.THURSDAY;
-					}
-					else if (column == 5){
-						day = Calendar.FRIDAY;
-					}
-					else if (column == 6){
-						day = Calendar.SATURDAY;
-					}
-					else if (column == 7){
+					if (column == 7) {
 						day = Calendar.SUNDAY;
+					} else {
+						day = column + 1;
 					}
+					
 					startDate.set(Calendar.DAY_OF_WEEK, day);
 					int hour = row + 6;
 					startDate.set(Calendar.HOUR, hour);
-					app.setStartDateTime(startDate);
+					startDate.set(Calendar.MINUTE, 0);
 				}
+				app.setStartDateTime(startDate);
 				new EditAppointment(thisFrame, app);
-				
-			} else if (actionCommand.equals("Avtalevisning")) {
-				// TODO Check if selected appointment is logged in users appointment
-				new ViewAppointment(thisFrame, new Appointment(loggedInEmployee));
-				
-			} else if(actionCommand.equals("Slett avtale")) {
-				//TODO delete the chose appointment
-				int choice = JOptionPane.showConfirmDialog(thisFrame,
-						"Er du sikker på at du vil slette denne avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
-				
-				if (choice == 0) {
-					// slett avtale
+
+			}
+			else{
+				Appointment app = (Appointment) calendarTableModel.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
+				if (actionCommand.equals("Avtalevisning") && app != null) {
+					if (app.getAppointmentLeader().equals(loggedInEmployee)){
+						new EditAppointment(thisFrame, app);
+					}
+					else{
+						new ViewAppointment(thisFrame, app);
+					}
 				}
-				
-			} else if(actionCommand.equals("->")) {
+				else if(actionCommand.equals("Slett avtale") && app != null) {
+					int choice = JOptionPane.showConfirmDialog(thisFrame,
+							"Er du sikker på at du vil slette denne avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
+
+					if (choice == 0) { // delete
+						if (app.getAppointmentLeader().equals(loggedInEmployee)) {
+							app.delete();
+						} else {
+							app.setShowInCalendar(false);
+							ParticipantListModel plModel = app.getParticipantList();
+							Participant currentUser = plModel.get(plModel.indexOf(new Participant(loggedInEmployee)));
+							currentUser.setShowInCalendar(false);
+							currentUser.setParticipantStatus(ParticipantStatus.notParticipating);
+							currentUser.setAlarm(null);
+							currentUser.save(app.getAppointmentID());
+						}
+						calendarTableModel.setValueAt(null, calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
+					}
+
+				}
+			} if(actionCommand.equals("->")) {
 				weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() + 1);
 				sendWeekCalendarRequest(calendarTableModel.getEmployee());
-				
+
 			} else if(actionCommand.equals("<-")) {
 				weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() - 1);
 				sendWeekCalendarRequest(calendarTableModel.getEmployee());
-				
+
 			} else if(actionCommand.equals("week")) {
 				sendWeekCalendarRequest(calendarTableModel.getEmployee());
-				
-			} else if(actionCommand.equals("Logg ut")) {
 
-				
-				closeNetworkSocket();
-				
-				// clear text
-				employeeComboBox.setSelectedItem(null);
-				loggedInEmployee = null;
-				usernameLabel.setText("");
-				
-				// clear calendar table
-				calendarTableModel.resetDefaultCalendar();
-				calendarTableModel = new WeekCalendar();
-				calendarTable.setModel(calendarTableModel);
-				
-				// clear notifications
-				notificationList.setModel(new NotificationListModel());
-				
-				// reset week and year to current
-				Calendar currentCal = Calendar.getInstance();
-				weekComboBox.setSelectedIndex(currentCal.get(Calendar.WEEK_OF_YEAR) - 1);
-				yearSpinner.setValue(currentCal.get(Calendar.YEAR));
-				
+			} else if(actionCommand.equals("Logg ut")) {
+				logoutUser();
 				initializeLoggedInUser();
 			}
 		}
 	};
-	
-	
-	
-	
+
+
 	WindowAdapter windowListener = new WindowAdapter() {
 		@Override
 		public void windowClosing(WindowEvent we) {
-			closeNetworkSocket();
+			logoutUser();
 			System.exit(0);
 		}
 		@Override
 		public void windowClosed(WindowEvent we) {
 		}
 	};
-	
-	
+
+
 	public Employee getLoggedInEmployee() {
 		return loggedInEmployee;
 	}
-	
-	
-	private void closeNetworkSocket() {
+
+
+	private void logoutUser() {
+		OutboundWorker.logout();
 		SocketListener.getSL().close();
+		
+		// clear text
+		employeeComboBox.setSelectedItem(null);
+		loggedInEmployee = null;
+		usernameLabel.setText("");
+
+		// clear calendar table
+		calendarTableModel.resetDefaultCalendar();
+		calendarTableModel = new WeekCalendar();
+		calendarTable.setModel(calendarTableModel);
+
+		// clear notifications
+		notificationList.setModel(new NotificationListModel());
+
+		// reset week and year to current
+		Calendar currentCal = Calendar.getInstance();
+		weekComboBox.setSelectedIndex(currentCal.get(Calendar.WEEK_OF_YEAR) - 1);
+		yearSpinner.setValue(currentCal.get(Calendar.YEAR));
 	}
-	
-	
+
+
 	private void initializeLoggedInUser() {
 		Employee[] user = new Employee[1]; // point to something mutable so we can get it back
 		new LoginScreen(thisFrame, user);
 		usernameLabel.setText(user[0].getUsername());
 		loggedInEmployee = user[0];
-		
+
 		/* Do initialization */
 		// TODO proper initialization
 		EmployeeComboBoxModel ecbModel = new EmployeeComboBoxModel();
-		ecbModel.initialize();
+		try {
+			ecbModel.initialize();
+		} catch (LogoutException e) {
+			logoutUser();
+			initializeLoggedInUser(); // tjuvtriks
+			return;
+		}
 		employeeComboBox.setModel(ecbModel);
 		employeeComboBox.setSelectedItem(loggedInEmployee);
 		//employeeComboBox.updateUI();
-		
+
 		NotificationListModel notiListModel = new NotificationListModel();
 		notiListModel.initialize();
 		notificationList.setModel(notiListModel);
-		
+
 		sendWeekCalendarRequest(loggedInEmployee);
 	}
-	
-	
+
+
 	private void sendWeekCalendarRequest(Employee employee) {
-		calendarTableModel.resetDefaultCalendar();
-		calendarTableModel = new WeekCalendar(employee, (int)weekComboBox.getSelectedItem(), (int)yearSpinner.getValue());
-		calendarTableModel.initialize();
-		calendarTable.setModel(calendarTableModel);
+		if (employee != null) {
+			calendarTableModel.resetDefaultCalendar();
+			calendarTableModel = new WeekCalendar(employee, (int)weekComboBox.getSelectedItem(), (int)yearSpinner.getValue());
+			try {
+				calendarTableModel.initialize();
+			} catch (LogoutException e) {
+				logoutUser();
+				initializeLoggedInUser();
+				return;
+			}
+			calendarTable.setModel(calendarTableModel);
+		}
 	}
+
+
+	private MouseAdapter mouseListener = new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent me) {
+			if (me.getSource() == notificationList && me.getClickCount() == 2) {
+				Notification notification = notificationList.getSelectedValue();
+				int appointmentID = notification.getAppointmentID();
+				Appointment app = new Appointment(appointmentID);
+				try {
+					app.initialize();
+				} catch (LogoutException e) {
+					logoutUser();
+					initializeLoggedInUser();
+					return;
+				}
+				if (app.getAppointmentLeader().equals(loggedInEmployee)) {
+					new EditAppointment(thisFrame, app);
+				}
+				else{
+					new ViewAppointment(thisFrame, app);
+				}
+			}
+		}
+	};
 	
-	
-	
+
+
+
 }
 

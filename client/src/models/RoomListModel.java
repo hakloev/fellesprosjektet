@@ -1,6 +1,10 @@
 package models;
 
+import controllers.LogoutException;
 import controllers.OutboundWorker;
+import controllers.ResponseWaiter;
+import controllers.SocketListener;
+
 import org.json.simple.JSONObject;
 
 import javax.swing.DefaultListModel;
@@ -26,18 +30,27 @@ public class RoomListModel extends DefaultListModel<Room> implements NetInterfac
 	
 	
 	@Override
-	public void initialize() {
+	public void initialize() throws LogoutException {
         JSONObject json;
         json = new JSONObject();
         JSONObject jsonObject = new JSONObject();
         json.put("request","roomlistmodel");
         json.put("dbmethod","initialize");
+        json.put("capacity", minimumCapacity);
         OutboundWorker.sendRequest(json);
-
+        
+        Object[] response = new Object[1];
+        new ResponseWaiter(SocketListener.getSL(), response);
+        
+        if (response[0] != null && response[0] instanceof RoomListModel) {
+        	for (Object room : ((RoomListModel)response[0]).toArray() ) {
+        		this.addElement((Room)room);
+        	}
+        }
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh() throws LogoutException {
 		this.clear();
 		this.initialize();
 	}

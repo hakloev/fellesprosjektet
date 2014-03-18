@@ -9,8 +9,10 @@ import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import controllers.LogoutException;
 import models.Appointment;
 import models.Participant;
+import models.ParticipantStatus;
 
 @SuppressWarnings("serial")
 class OKButtonPanel extends JPanel implements ActionListener {
@@ -50,19 +52,21 @@ class OKButtonPanel extends JPanel implements ActionListener {
 		if(actionCommand.equals("OK")){
 			if (parent instanceof EditAppointment) {
 				appointment.save();
-				/* TODO
-				 * ID for new appointment
-				 * show in calendar
-				 */
 				
 			} else if (parent instanceof ViewAppointment) {
-				// TODO code for saving participantstatus & alarm & if shown in calendar
+				currentUser.save(appointment.getAppointmentID());
 			}
 			parent.dispose();
 			
 		} else if(actionCommand.equals("Avbryt")){
 			if (appointment.getAppointmentID() != 0) {
-				appointment.refresh(); // TODO Implement proper cancel logic instead of using refresh
+				try {
+					appointment.refresh(); // TODO Implement proper cancel logic instead of using refresh
+				} catch (LogoutException e) {
+					// TODO notify calendarView
+					//e.printStackTrace();
+					System.out.println(e.getMessage());
+				} 
 			}
 			parent.dispose();
 			
@@ -71,8 +75,12 @@ class OKButtonPanel extends JPanel implements ActionListener {
 				int choice = JOptionPane.showConfirmDialog(null,
 						"Er du sikker på at du vil slette avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
 				if (choice == 0) {
-					// TODO slett avtalen fra kalenderen
-					appointment.delete();
+					if (appointment.getAppointmentID() != 0) {
+						appointment.delete();
+					}
+					
+					// TODO delete appointment from calendar view. fire property change maybe?
+					//calendarTableModel.removeAppointment(appointment);
 					parent.dispose();
 				}
 				
@@ -80,9 +88,14 @@ class OKButtonPanel extends JPanel implements ActionListener {
 				int choice = JOptionPane.showConfirmDialog(null,
 						"Er du sikker på at du vil slette avtalen fra din kalender?", "Bekreft", JOptionPane.YES_NO_OPTION);
 				if (choice == 0) {
-					//TODO slett avtalen fra kalenderen
 					appointment.setShowInCalendar(false);
 					currentUser.setShowInCalendar(false);
+					currentUser.setParticipantStatus(ParticipantStatus.notParticipating);
+					currentUser.setAlarm(null);
+					currentUser.save(appointment.getAppointmentID());
+					
+					// TODO delete appointment from calendar view. fire property change maybe?
+					//calendarTableModel.removeAppointment(appointment);
 					parent.dispose();
 				}
 			}

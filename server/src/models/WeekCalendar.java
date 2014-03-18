@@ -37,6 +37,7 @@ public class WeekCalendar implements DBInterface {
 		c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 		Date endDate = c.getTime();
 
+		Calendar start = Calendar.getInstance();
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		try {
 			String sql = "SELECT avtaleid FROM avtale WHERE start >= '" + sdf.format(startDate) + "' AND slutt <= '" + sdf.format(endDate) + "'";
@@ -54,6 +55,8 @@ public class WeekCalendar implements DBInterface {
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}
+		Calendar end = Calendar.getInstance();
+		System.out.println("WeekCalendar.initialize: DB QUERY TOOK: " + (end.getTimeInMillis() - start.getTimeInMillis()) + " millis");
 	}
 	
 	@Override

@@ -17,6 +17,7 @@ public class SocketListener extends Thread {
     private boolean connected;
     private BufferedReader readFromServer;
     private static SocketListener socketListener;
+    private InputStream in;
     
     private ResponseWaiter registeredWaitingInstance;
     private Object object;
@@ -40,11 +41,13 @@ public class SocketListener extends Thread {
         try {
 
             while(connected) {
+            	
+            	in = socketClient.getInputStream();
+            	DataInputStream inFromServer = new DataInputStream(in); 
+            	
+                //readFromServer = new BufferedReader(new InputStreamReader(socketClient.getInputStream(), "UTF-8"));
 
-                readFromServer = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
-
-
-                String responseString = readFromServer.readLine();
+                String responseString = inFromServer.readUTF();
 
                 if (responseString == null) {
                     System.out.println("CLOSED WHEN RECEIVING NO DATA");
@@ -122,39 +125,21 @@ public class SocketListener extends Thread {
     	socketListener = sl;
     }
     
-    
     public static synchronized SocketListener getSL() {
     	return socketListener;
     }
 
+
     public void handleResponse(String responseString) {
 
         object = JSONHandler.parseJSON(responseString);
-        if (object instanceof Employee){
-            System.out.println(((Employee)object).toString());
-
+        if (object instanceof Notification) {
+        	// TODO invoke later on EDT
         }
-        else if (object instanceof WeekCalendar) {
-            System.out.println(((WeekCalendar) object).getAppointmentList().toString());
-        }
-        else if (object instanceof RoomListModel) {
-            System.out.println(((RoomListModel) object).toString());
-        }
-        else if (object instanceof Appointment) {
-            System.out.println(((Appointment) object).toString());
-        }
-        else if (object instanceof NotificationListModel) {
-            System.out.println("");
-        }
-        else if (object instanceof GroupListModel) {
-            System.out.println(((GroupListModel) object).toString());
-        }
-
-        System.out.println("this Thread: " + this);
+        
         if (registeredWaitingInstance != null) {
-            System.out.println("k test interrupt");
             registeredWaitingInstance.setReady(true);
-            System.out.println("k test interrupt done");
+            System.out.println("Other thread set ready");
         }
     }
     

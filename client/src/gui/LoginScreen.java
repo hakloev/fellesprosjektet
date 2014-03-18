@@ -3,6 +3,7 @@ package gui;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import controllers.LogoutException;
 import controllers.OutboundWorker;
 import controllers.SocketListener;
 import models.*;
@@ -110,13 +111,15 @@ public class LoginScreen extends JDialog implements ActionListener{
             	OutboundWorker.login(usernameField.getText(), passwordField.getPassword());
             	//new Request("login", null, new Login(usernameField.getText(), passwordField.getPassword().toString())));
             	
-            	new ResponseWaiter(socketListener, response);
+            	try {
+					new ResponseWaiter(socketListener, response);
+				} catch (LogoutException e) {
+					socketListener.close();
+					return;
+				}
             	
             	if (response[0] != null) {
-            		if (response[0] instanceof Integer) {
-            			JOptionPane.showMessageDialog(null, "Tidsavbrudd!", "Feil", JOptionPane.ERROR_MESSAGE);
-            			
-            		} else if (response[0] instanceof Employee) {
+            		if (response[0] instanceof Employee) {
             			saveEmployeeHere[0] = (Employee)response[0];
             			this.dispose();
             			return;

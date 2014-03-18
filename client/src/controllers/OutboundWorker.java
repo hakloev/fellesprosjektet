@@ -23,7 +23,7 @@ public class OutboundWorker {
         System.out.println(userDataJSON.toJSONString());
         try {
             DataOutputStream writeToServer = new DataOutputStream(socketClient.getOutputStream());
-            writeToServer.writeBytes(userDataJSON.toJSONString() + "\n");
+            writeToServer.writeUTF(userDataJSON.toJSONString());
         } catch (IOException e) {
 
             e.printStackTrace();

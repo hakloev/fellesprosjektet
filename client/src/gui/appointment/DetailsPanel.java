@@ -21,6 +21,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+
+import controllers.LogoutException;
 import models.*;
 
 @SuppressWarnings("serial")
@@ -52,7 +54,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.parent = parent;
 		this.currentUser = currentUser;
 
-		Date startDateDate = appointment.getStartDateTime().getTime();
+		Date startDateTime = appointment.getStartDateTime().getTime();
+		Date endDateTime = appointment.getEndDateTime().getTime();
 
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);
@@ -70,7 +73,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		dateSpinner.addChangeListener(this);
 		JSpinner.DateEditor timeEditor01 = new JSpinner.DateEditor(dateSpinner, "dd.MM.yyyy");
 		dateSpinner.setEditor(timeEditor01);
-		dateSpinner.setValue(startDateDate);
+		dateSpinner.setValue(startDateTime);
 		dateSpinner.addFocusListener(this);
 		GridBagConstraints gbc_dateTextField = new GridBagConstraints();
 		gbc_dateTextField.fill = GridBagConstraints.HORIZONTAL;
@@ -93,7 +96,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		startTimeSpinner.addChangeListener(this);
 		JSpinner.DateEditor timeEditor02 = new JSpinner.DateEditor(startTimeSpinner, "HH:mm");
 		startTimeSpinner.setEditor(timeEditor02);
-		startTimeSpinner.setValue(startDateDate);
+		startTimeSpinner.setValue(startDateTime);
 		startTimeSpinner.addFocusListener(this);
 		GridBagConstraints gbc_startTimeTextField = new GridBagConstraints();
 		gbc_startTimeTextField.insets = new Insets(0, 0, 5, 5);
@@ -140,10 +143,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		stopTimeSpinner.addChangeListener(this);
 		JSpinner.DateEditor timeEditor03 = new JSpinner.DateEditor(stopTimeSpinner, "HH:mm");
 		stopTimeSpinner.setEditor(timeEditor03);
-		Date endDate = new Date(startDateDate.getTime());
-		endDate.setHours(startDateDate.getHours()+1);
-		this.appointment.setEnd(endDate);
-		stopTimeSpinner.setValue(endDate);
+		stopTimeSpinner.setValue(endDateTime);
 		stopTimeSpinner.addFocusListener(this);
 		GridBagConstraints gbc_stopTimeTextField = new GridBagConstraints();
 		gbc_stopTimeTextField.insets = new Insets(0, 0, 5, 5);
@@ -171,6 +171,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		descriptionTextArea.addFocusListener(this);
 		descriptionTextArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
 		descriptionScrollPane.setViewportView(descriptionTextArea);
+		descriptionTextArea.setText(appointment.getDescription());
 
 		/* Deltagere */
 		JScrollPane participantScrollPane = new JScrollPane();
@@ -208,6 +209,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_placeTextField.gridx = 1;
 		gbc_placeTextField.gridy = 4;
 		this.add(placeTextField, gbc_placeTextField);
+		placeTextField.setText(appointment.getLocationText());
 
 		btnVelgRom = new JButton("Velg rom");
 		GridBagConstraints gbc_btnVelgRom = new GridBagConstraints();
@@ -236,6 +238,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.add(alarmTextField, gbc_alarmTextField);
 		alarmTextField.setEditable(false);
 		alarmTextField.setColumns(11);
+		// TODO set text based on user alarm
+		//alarmTextField.setText(currentUser.getAlarm());
 
 		JButton btnVelgTid = new JButton("Velg tid");
 		GridBagConstraints gbc_btnVelgTid = new GridBagConstraints();
@@ -373,7 +377,13 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 			} else if (ae.getActionCommand().equals("Velg rom")) {
 				Room[] room = new Room[1];
-				new RoomChooser(parent, appointment.getParticipantList().getSize(), room);
+				try {
+					new RoomChooser(parent, appointment.getParticipantList().getSize(), room);
+				} catch (LogoutException e) {
+					// TODO notify calendarView
+					//e.printStackTrace();
+					System.out.println(e.getMessage());
+				}
 				if (room[0] != null) {
 					appointment.setLocation(room[0]);
 					placeTextField.setText(room[0].toString());

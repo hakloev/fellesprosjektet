@@ -148,11 +148,11 @@ public class JSONHandler {
             while (iterator.hasNext()) {
                 JSONObject jp = new JSONObject();
                 jp =  (JSONObject) iterator.next();
-                ParticipantStatus status;
+                ParticipantStatus status = null;
                 if (jp.get("participantstatus").toString().equals("Deltar")) {
                     status = ParticipantStatus.participating;
                 }
-                else {
+                else if (jp.get("participantstatus").toString().equals("Deltar ikke")){
                     status = ParticipantStatus.notParticipating;
                 }
                 Participant participant = new Participant((String) jp.get("username").toString(),(String) jp.get("name"),status);
@@ -160,7 +160,7 @@ public class JSONHandler {
                     participant.setShowInCalendar(true);
                 }
                 else {
-                    participant.setShowInCalendar(true);
+                    participant.setShowInCalendar(false);
                 }
 
                 appointment.getParticipantList().addElement(participant);
