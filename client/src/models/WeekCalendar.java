@@ -1,8 +1,6 @@
 package models;
 
 import controllers.OutboundWorker;
-import helperclasses.Request;
-
 import org.json.simple.JSONArray;
 
 import org.json.simple.JSONObject;
