@@ -288,6 +288,9 @@ public class CalendarView extends JFrame {
 			String actionCommand = ae.getActionCommand();
 			if (actionCommand.equals("Ny avtale")) {
 				// TODO get time and date from selection
+				//Appointment app = new Appointment(1);
+				//app.initialize();
+				//new EditAppointment(thisFrame, app);
 				new EditAppointment(thisFrame, new Appointment(loggedInEmployee));
 				
 			} else if (actionCommand.equals("Avtalevisning")) {
@@ -390,10 +393,12 @@ public class CalendarView extends JFrame {
 	
 	
 	private void sendWeekCalendarRequest(Employee employee) {
-		calendarTableModel.resetDefaultCalendar();
-		calendarTableModel = new WeekCalendar(employee, (int)weekComboBox.getSelectedItem(), (int)yearSpinner.getValue());
-		calendarTableModel.initialize();
-		calendarTable.setModel(calendarTableModel);
+		if (employee != null) {
+			calendarTableModel.resetDefaultCalendar();
+			calendarTableModel = new WeekCalendar(employee, (int)weekComboBox.getSelectedItem(), (int)yearSpinner.getValue());
+			calendarTableModel.initialize();
+			calendarTable.setModel(calendarTableModel);
+		}
 	}
 	
 	

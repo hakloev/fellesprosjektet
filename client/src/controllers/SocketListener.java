@@ -17,6 +17,7 @@ public class SocketListener extends Thread {
     private boolean connected;
     private BufferedReader readFromServer;
     private static SocketListener socketListener;
+    private InputStream in;
     
     private ResponseWaiter registeredWaitingInstance;
     private Object object;
@@ -40,11 +41,15 @@ public class SocketListener extends Thread {
         try {
 
             while(connected) {
+            	
+            	in = socketClient.getInputStream();
+            	DataInputStream inFromServer = new DataInputStream(in); 
 
-                readFromServer = new BufferedReader(new InputStreamReader(socketClient.getInputStream()));
+            	
+                //readFromServer = new BufferedReader(new InputStreamReader(socketClient.getInputStream(), "UTF-8"));
 
 
-                String responseString = readFromServer.readLine();
+                String responseString = inFromServer.readUTF();
 
                 if (responseString == null) {
                     System.out.println("CLOSED WHEN RECEIVING NO DATA");

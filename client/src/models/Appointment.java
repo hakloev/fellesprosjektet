@@ -1,8 +1,12 @@
 package models;
 
 import controllers.OutboundWorker;
+import controllers.ResponseWaiter;
+import controllers.SocketListener;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+
 
 
 import java.beans.PropertyChangeListener;
@@ -13,8 +17,9 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Appointment implements NetInterface {
+	
+	
     private ParticipantListModel participantList;
-
     private int appointmentID;
     private Employee appointmentLeader;
     private String description;
@@ -41,8 +46,15 @@ public class Appointment implements NetInterface {
 	}
 
     public Appointment() {
+    	pcs = new PropertyChangeSupport(this);
         startDateTime = Calendar.getInstance();
         endDateTime = Calendar.getInstance();
+    }
+    
+    
+    public Appointment(int appointmentID) {
+    	pcs = new PropertyChangeSupport(this);
+    	this.appointmentID = appointmentID;
     }
 	
 	
@@ -229,7 +241,7 @@ public class Appointment implements NetInterface {
 
 	public void setParticipantList(ParticipantListModel participantList) {
 		if (participantList != null){
-			//pcs.firePropertyChange("participantList", this.participantList, participantList);
+			pcs.firePropertyChange("participantList", this.participantList, participantList);
 			this.participantList = participantList;
 		}
 	}
@@ -307,6 +319,24 @@ public class Appointment implements NetInterface {
         json.put("request","appointment");
         json.put("appointmentID",this.appointmentID);
         OutboundWorker.sendRequest(json);
+        
+        Object[] response = new Object[1];
+        new ResponseWaiter(SocketListener.getSL(), response);
+        
+        if (response[0] != null && response[0] instanceof Appointment) {
+        	Appointment app = (Appointment)response[0];
+        	this.appointmentLeader = app.appointmentLeader;
+        	this.participantList = app.participantList;
+        	this.participantList.locateAppointmentLeader(this.appointmentLeader);
+        	this.appointmentID = app.appointmentID;
+        	this.description = app.description;
+        	this.location = app.location;
+        	this.locationText = app.locationText;
+        	this.startDateTime = app.startDateTime;
+        	this.endDateTime = app.endDateTime;
+        	this.emailRecipientsList = app.emailRecipientsList;
+        	// TODO showInCalendar;
+        }
 
 	}
 
@@ -325,12 +355,19 @@ public class Appointment implements NetInterface {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("appointmentLeader",this.appointmentLeader.getUsername());
         jsonObject.put("description",this.description);
-        if (this.location.getRoomCode() != null) {
+        if (this.location != null) {
             jsonObject.put("roomCode",this.location.getRoomCode());
         }
         jsonObject.put("locationText",this.locationText);
         jsonObject.put("startDateTime",sdf.format(startDateTime.getTime()));
         jsonObject.put("endDateTime",sdf.format(endDateTime.getTime()));
+        jsonObject.put("appointmentID", appointmentID);
+        
+        JSONArray emailarray = new JSONArray();
+        for (int i = 0; i < emailRecipientsList.getSize(); i++) {
+        	emailarray.add(emailRecipientsList.get(i));
+        }
+        jsonObject.put("emaillistmodel", emailarray);
 
         JSONArray array = new JSONArray();
         for (int i = 0; i < participantList.getSize(); i++) {
@@ -350,7 +387,11 @@ public class Appointment implements NetInterface {
         JSONObject participant = new JSONObject();
         participant.put("name",p.getName());
         participant.put("username",p.getUserName());
-        participant.put("participantstatus",p.getParticipantStatus().toString());
+        if (p.getParticipantStatus() != null) {
+        	participant.put("participantstatus",p.getParticipantStatus().toString());
+        } else {
+        	participant.put("participantstatus",null);
+        }
         participant.put("showInCalendar",p.isShowInCalendar());
         return participant;
     }

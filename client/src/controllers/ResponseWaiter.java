@@ -35,6 +35,10 @@ public class ResponseWaiter extends Thread {
 		response[0] = socketListener.getResponse();
 		socketListener.unregister(this);
 		System.out.println(counter);
+		
+		// TODO cast exception  on timeout 
+		// throw new Time
+		
 	}
 	
 	/**
