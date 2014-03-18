@@ -61,7 +61,7 @@ public class InboundWorker extends Thread implements Runnable {
                     System.out.println(((Appointment) object).toString());
                 }
                 else if (object instanceof NotificationListModel) {
-
+                    System.out.println("");
                 }
                 else if (object instanceof GroupListModel) {
                     System.out.println(((GroupListModel) object).toString());
