@@ -7,13 +7,15 @@ import java.sql.*;
 
 @SuppressWarnings("serial")
 public class RoomListModel extends DefaultListModel<Room> implements DBInterface {
-	
+
+	private int capacity;
+
 	@Override
 	public void initialize() {
 		System.out.println("RoomListModel.initialize");
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		try {
-			String sql = "SELECT * FROM moterom";
+			String sql = "SELECT * FROM moterom WHERE maks_personer >= " + capacity + "ORDER BY maks_personer ASC";
 			Statement stmt = dbCon.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
@@ -44,4 +46,7 @@ public class RoomListModel extends DefaultListModel<Room> implements DBInterface
 		// Do not add code. This model can not be deleted from server
 	}
 
+	public void setCapacity(int capacity) {
+		this.capacity = capacity;
+	}
 }
