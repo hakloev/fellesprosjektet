@@ -202,6 +202,7 @@ public class DatabaseWorker {
 		} catch (java.text.ParseException e1) {
 			e1.printStackTrace();
 		}
+
 		JSONArray array = (JSONArray) model.get("participants");
 		ParticipantListModel plm = new ParticipantListModel();
 		Iterator<JSONObject> iterator = array.iterator();
@@ -219,9 +220,20 @@ public class DatabaseWorker {
 					pStatus, Boolean.valueOf(p.get("showInCalendar").toString()));
 		    plm.addElement(participant);
 		}
+
+		a.setAppointmentID(Integer.valueOf(model.get("appointmentID").toString()));
 		a.save();
 		plm.setAppointmentID(a.getAppointmentID());
 		plm.save();
+
+		
+		JSONArray email = (JSONArray) model.get("emaillistmodel");
+		Iterator<JSONObject> iterator1 = email.iterator();
+		while (iterator1.hasNext()) {
+			JSONObject emailaddress = iterator1.next();
+
+		}
+
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("response", "appointment");
 		jsonObject.put("dbmethod", "save");

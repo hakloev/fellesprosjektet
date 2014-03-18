@@ -15,7 +15,7 @@ public class RoomListModel extends DefaultListModel<Room> implements DBInterface
 		System.out.println("RoomListModel.initialize");
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		try {
-			String sql = "SELECT * FROM moterom WHERE maks_personer >= " + capacity + "ORDER BY maks_personer ASC";
+			String sql = "SELECT * FROM moterom WHERE maks_personer >= " + capacity + " ORDER BY maks_personer ASC";
 			Statement stmt = dbCon.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
