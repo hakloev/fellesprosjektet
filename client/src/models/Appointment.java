@@ -44,6 +44,7 @@ public class Appointment implements NetInterface {
         startDateTime = Calendar.getInstance();
         endDateTime = Calendar.getInstance();
     }
+    
     public Appointment(int appointmentID){
     	this.appointmentID = appointmentID;
     }
@@ -78,14 +79,12 @@ public class Appointment implements NetInterface {
 	}
 	*/
 
-
 	public void setDate(Date date) {
 		if (startDateTime == null) startDateTime = Calendar.getInstance();
 
 		//startDateTime.set(date.getYear(), date.getMonth(), date.getDate());
 		startDateTime.setTimeInMillis(date.getTime());
 	}
-
 
 	public void setStart(Date start){
 		if (startDateTime == null) startDateTime = Calendar.getInstance();
@@ -95,7 +94,6 @@ public class Appointment implements NetInterface {
 
 
 	}
-
 
 	public void setEnd(Date end){
 		if (endDateTime == null) endDateTime = Calendar.getInstance();
@@ -119,7 +117,6 @@ public class Appointment implements NetInterface {
 			endDateTime.set(Calendar.MINUTE, end.getMinutes());
 		}
 	}
-
 
 	public void setDuration(Date duration){
 		if (startDateTime != null) {
@@ -172,9 +169,6 @@ public class Appointment implements NetInterface {
 		return "00:00";
 	}
 	
-	
- 
-
 	public String getEnd(){
 		if (endDateTime != null) {
 			int hour = endDateTime.get(Calendar.HOUR_OF_DAY);
@@ -190,14 +184,12 @@ public class Appointment implements NetInterface {
 		return "00:00";
 	}
 
-
     public Calendar getEndCal(){
         if(endDateTime != null){
             return endDateTime;
         }
         return Calendar.getInstance();
     }
-    
     
 	public String getDuration(){
 		if (startDateTime != null && endDateTime != null) {
@@ -216,21 +208,17 @@ public class Appointment implements NetInterface {
 		return "00:00";
 	}
 
-
 	public void addPropertyChangeListener(PropertyChangeListener listener){
 		pcs.addPropertyChangeListener(listener);
 	}
-
 
 	public void removePropertyChangeListener(PropertyChangeListener listener){
 		pcs.removePropertyChangeListener(listener);
 	}
 
-
 	public ParticipantListModel getParticipantList() {
 		return participantList;
 	}
-
 
 	public void setParticipantList(ParticipantListModel participantList) {
 		if (participantList != null){
@@ -239,21 +227,17 @@ public class Appointment implements NetInterface {
 		}
 	}
 	
-	
 	public EmailListModel getEmailRecipientsList() {
 		return emailRecipientsList;
 	}
-	
 	
 	public void setEmailRecipientsList(EmailListModel emailList) {
 		this.emailRecipientsList = emailList;
 	}
 
-
 	public Employee getAppointmentLeader() {
 		return appointmentLeader;
 	}
-
 
 	public void setDescription(String description) {
 		this.description = description;
@@ -267,43 +251,35 @@ public class Appointment implements NetInterface {
 		return description;
 	}
 
-
 	public void setLocation(String location) {
 		this.locationText = location;
 	}
-
 
 	public void setLocation(Room location) {
 		this.location = location;
 		this.locationText = location.getRoomCode();
 	}
 
-
 	public Room getLocation() {
 		return location;
 	}
-	
-	
+
 	public int getAppointmentID() {
 		return appointmentID;
 	}
-
 
 	public boolean isShowInCalendar() {
 		return showInCalendar;
 	}
 
-
 	public void setShowInCalendar(boolean showInCalendar) {
 		this.showInCalendar = showInCalendar;
 	}
-
 
 	@Override
 	public String toString() {
 		return appointmentLeader.getName().split(" ")[0] + " : " + locationText;
 	}
-
 
 	@Override
 	public void initialize() {
@@ -368,7 +344,6 @@ public class Appointment implements NetInterface {
         json.put("appointmentid",this.appointmentID);
         OutboundWorker.sendRequest(json);
 	}
-
 
     public Calendar getEndDateTime() {
         return endDateTime;
