@@ -8,6 +8,9 @@ import java.util.Date;
 
 /**
  * Created by Håkon Ødegård Løvdal on 10/03/14.
+ *
+ * Request object for holding the incoming json-request and time of request
+ *
  */
 public class Request {
 
@@ -17,6 +20,7 @@ public class Request {
 
 	public Request(String jsonRequest) {
 		_TIMEOFREQUEST = getTime();
+		System.out.println("Request.request: TIME OF REQUEST: " + getTime());
 		_JSONREQUEST = jsonRequest;
 		_REQUESTTYPE = null;
 	}
