@@ -17,10 +17,6 @@ public class Room implements DBInterface {
 		this.capacity = capacity;
 	}
 
-	public void setRoomCode(String roomCode) {
-		this.roomCode = roomCode;
-	}
-
 	public String getRoomCode() {
 		return roomCode;
 	}

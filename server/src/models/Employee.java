@@ -1,6 +1,5 @@
 package models;
 
-
 import controllers.DBconnection;
 
 import java.sql.Connection;
@@ -18,14 +17,6 @@ public class Employee implements DBInterface {
 		this.username = userName;
 		this.name = name;
 	}
-
-    public void setUsername(String userName) {
-        this.username = userName;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getUsername() {
 		return username;

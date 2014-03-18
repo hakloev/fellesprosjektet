@@ -22,14 +22,18 @@ public class DBconnection {
 
 
 	public static Connection getConnection() {
+		System.out.println("DBConnection.getConnection: REQUESTING DBCONNECTION");
 		if (dbCon == null) {
+			System.out.println("DBConnection.getConnection: NOT INITIALIZED, INITIALIZING");
 			createConnection();
 		}
+		System.out.println("DBConnection.getConnection: INITIALIZED, RETURNING CONNECTION");
 		return dbCon;
 	}
 
 	public static Connection createConnection() {
 		if (dbCon == null) {
+			System.out.println("DBConnection.createConnection: TRYING TO CREATE CONNECTION");
 			try {
 				Class.forName("com.mysql.jdbc.Driver").newInstance();
 				dbCon = DriverManager.getConnection(URL, USERNAME, PASSWORD);
@@ -38,6 +42,7 @@ public class DBconnection {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("DBConnection.createConnection: CREATED CONNECTION SUCCESSFULLY");
 		return dbCon;
 	}
 	

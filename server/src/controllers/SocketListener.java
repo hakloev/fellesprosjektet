@@ -19,7 +19,7 @@ public class SocketListener extends Thread implements Runnable {
 		int connectionID = 1;
 		try {
 			ServerSocket serverSocket = new ServerSocket(_PORT);
-			System.out.println("SocketListener.run: SERVING ON " + serverSocket.getInetAddress() + " PORT " + serverSocket.getLocalPort());
+			System.out.println("SocketListener.run: SERVING ON " + serverSocket.getInetAddress().getLocalHost() + " PORT " + serverSocket.getLocalPort());
 			while (_SERVING) {
 				System.out.println("SocketListener.run: SERVERSOCKET WAITING FOR INCOMING CONNECTION");
 				Socket incomingConnection = serverSocket.accept();

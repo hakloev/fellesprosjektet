@@ -1,10 +1,6 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Participant {
-
 
     private String userName;
     private String name;
@@ -34,20 +30,8 @@ public class Participant {
 		return showInCalendar;
 	}
 
-	public void setShowInCalendar(boolean showInCalendar) {
-		this.showInCalendar = showInCalendar;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
 	public String getName() {
 		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	public String getUserName() {
@@ -57,13 +41,6 @@ public class Participant {
     public ParticipantStatus getParticipantStatus() {
         return participantStatus;
     }
-
-
-    public void setParticipantStatus(ParticipantStatus participantStatus) {
-        this.participantStatus = participantStatus;
-    }
-
-
 
     @Override
     public boolean equals(Object participant){

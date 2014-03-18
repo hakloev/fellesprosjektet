@@ -28,7 +28,7 @@ public class ClientHandler extends Thread implements Runnable {
 	@Override
 	public void run() {
 		try {
-			System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
+			System.out.println("ClientHandler.run " + _CONNECTIONID + ": CLIENT CONNECTED FROM " +
 					 _SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 
 			writeToClient = new DataOutputStream(_SOCKET.getOutputStream());
@@ -38,7 +38,7 @@ public class ClientHandler extends Thread implements Runnable {
 
 				Request request = acceptIncomingRequest(readFromClient.readLine());
 				if (request == null) {
-					System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
+					System.out.println("ClientHandler.run " + _CONNECTIONID + ": CLIENT FROM " +
 							_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " CLOSED WHEN RECEIVING NO DATA");
 					break;
 				}
@@ -50,26 +50,26 @@ public class ClientHandler extends Thread implements Runnable {
 				if (response != null) {
 					sendOutgoingResponse(response.getResponse());
 				} else {
-					System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
+					System.out.println("ClientHandler.run " + _CONNECTIONID + ": CLIENT FROM " +
 							_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " GOT NULL RESPONSE, NOTHING TO SEND");
 				}
 			}
 
 		} catch (SocketException e) {
-			System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
+			System.out.println("ClientHandler.run " + _CONNECTIONID + ": CLIENT FROM " +
 					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + "CLOSED UNEXPECTEDLY (SocketException)");
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
-			System.out.println("ClientHandler.run " + _CONNECTIONID + ": " +
+			System.out.println("ClientHandler.run " + _CONNECTIONID + ": CLIENT FROM " +
 					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " FINISHED (finally CLAUSE)");
 		}
 	}
 
 	private void sendOutgoingResponse(String response) {
 		try {
-			System.out.println("ClientHandler.sendOutgoingResponse " + _CONNECTIONID + ": SENDING " + response + " TO " +
+			System.out.println("ClientHandler.sendOutgoingResponse " + _CONNECTIONID + ": SENDING " + response + " TO CLIENT FROM " +
 					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 			writeToClient.writeBytes(response + "\n");
 		} catch (IOException e) {
@@ -82,7 +82,7 @@ public class ClientHandler extends Thread implements Runnable {
 		if (incomingJSON == null) {
 			return null;
 		}
-		System.out.println("ClientHandler.acceptIncomingRequest " + _CONNECTIONID + ": RECEIVED " + incomingJSON + " FROM " +
+		System.out.println("ClientHandler.acceptIncomingRequest " + _CONNECTIONID + ": RECEIVED " + incomingJSON + " FROM CLIENT " +
 				_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 		return new Request(incomingJSON);
 	}

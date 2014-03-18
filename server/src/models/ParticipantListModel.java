@@ -18,21 +18,6 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 		super();
 	}
 
-    public Object[] getParticipants() {
-        return this.toArray();
-    }
-
-    public ParticipantListModel(ParticipantListModel participantList) {
-		super();
-		for (Object participant : participantList.toArray()){
-			this.addElement((Participant) participant);
-		}
-	}
-
-	public int getAppointmentID() {
-		return appointmentID;
-	}
-
 	public void setAppointmentID(int appointmentID) {
 		this.appointmentID = appointmentID;
 	}
