@@ -1,5 +1,6 @@
 package controllers;
 
+import com.sun.corba.se.spi.activation._InitialNameServiceImplBase;
 import models.*;
 
 /**
@@ -28,6 +29,9 @@ public class InboundWorker{
                 }
                 else if (object instanceof GroupListModel) {
                     System.out.println(((GroupListModel) object).toString());
+                }
+	            else if (object instanceof EmployeeListModel) {
+	                System.out.println(((EmailListModel) object).toString());
                 }
 
 
