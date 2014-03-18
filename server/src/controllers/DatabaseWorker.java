@@ -11,6 +11,7 @@ import org.json.simple.parser.ParseException;
 import java.sql.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 
 /**
@@ -20,6 +21,7 @@ public class DatabaseWorker {
 
 	// Do handling based on request type (request.get_REQUESTTYPE())
 	public static Response handleRequest(Request request) {
+		System.out.println("DatabaseWorker.handleRequest: PARSING REQUEST");
 		JSONParser parser = new JSONParser();
 		Response response = null;
 		try {
@@ -27,14 +29,17 @@ public class DatabaseWorker {
 			JSONObject jsonObject = (JSONObject) obj;
 			String requestType = (String) jsonObject.get("request");
 			if (requestType.equals("login")) {
+				System.out.println("DatabaseWorker.handleRequest: LOGIN");
 				JSONArray array = (JSONArray) jsonObject.get("array");
 				JSONObject responseJSON = new JSONObject();
 				responseJSON.put("response", "login");
 				responseJSON.put("array", login(array));
 				response = new Response(responseJSON.toJSONString());
 			} else if (requestType.equals("weekcalendar")) {
+				System.out.println("DatabaseWorker.handleRequest: WEEKCALENDAR");
 				String dbMethod = (String) jsonObject.get("dbmethod");
 				if (dbMethod.equals("initialize")) {
+					System.out.println("DatabaseWorker.handleRequest: WEEKCALENDAR INITIALIZE");
 					JSONObject model = (JSONObject) jsonObject.get("model");
 					int weekNumber = Integer.valueOf(model.get("week").toString());
 					Employee e = new Employee(model.get("employee").toString(), "navn");
@@ -44,11 +49,14 @@ public class DatabaseWorker {
 					response = new Response(weekCalendarAsJSON(weekCalendar));
 				}
 			} else if (requestType.equals("appointment")) {
+				System.out.println("DatabaseWorker.handleRequest: APPOINTMENT");
 				String dbMethod = (String) jsonObject.get("dbmethod");
 				if (dbMethod.equals("save")) {
+					System.out.println("DatabaseWorker.handleRequest: APPOINTMENT SAVE");
 					JSONObject model = (JSONObject) jsonObject.get("model");
 					response = new Response(createAppointment(model));
 				} else if (dbMethod.equals("initialize")) {
+					System.out.println("DatabaseWorker.handleRequest: APPOINTMENT INITIALIZE");
 					int appointmentID = Integer.valueOf(jsonObject.get("appointmentID").toString());
 					Appointment a = new Appointment();
 					a.setAppointmentID(appointmentID);
@@ -56,11 +64,22 @@ public class DatabaseWorker {
 					response = new Response(sendAppointment(a));
 				}
 			} else if (requestType.equals("roomlistmodel")) {
+				System.out.println("DatabaseWorker.handleRequest: ROOMLISTMODEL");
 				String dbMethod = (String) jsonObject.get("dbmethod");
 				if (dbMethod.equals("initialize")) {
+					System.out.println("DatabaseWorker.handleRequest: ROOMLISTMODEL INITIALIZE");
 					RoomListModel roomListModel = new RoomListModel();
 					roomListModel.initialize();
 					response = new Response(roomListModelAsJSON(roomListModel));
+				}
+			} else if (requestType.equals("grouplistmodel")) {
+				System.out.println("DatabaseWorker.handleRequest: GROUPLISTMODEL");
+				String dbMethod = (String) jsonObject.get("dbmethod");
+				if (dbMethod.equals("initialize")) {
+					System.out.println("DatabaseWorker.handleRequest: GROUPLISTMODEL INITIALIZE");
+					GroupListModel groupListModel = new GroupListModel();
+					groupListModel.initialize();
+					response = new Response(groupListModelAsJSON(groupListModel));
 				}
 			}
 		} catch (ParseException e) {
@@ -69,7 +88,32 @@ public class DatabaseWorker {
 		return response;
 	}
 
+	private static String groupListModelAsJSON(GroupListModel groupListModel) {
+		System.out.println("DatabaseWorker.groupListModelAsJSON: PARSING REQUEST");
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("response", "grouplistmodel");
+		jsonObject.put("dbmethod", "initialize");
+		JSONArray array = new JSONArray();
+		for (int i = 0; i < groupListModel.size(); i++) {
+			JSONObject group = new JSONObject();
+			ArrayList<Employee> participants = groupListModel.get(i).getEmployees();
+			JSONArray array1 = new JSONArray();
+			for (int j = 0; j < groupListModel.get(i).getEmployees().size(); j++) {
+				JSONObject employee = new JSONObject();
+				employee.put("name", participants.get(j).getName());
+				employee.put("username", participants.get(j).getUsername());
+				array1.add(employee);
+			}
+			group.put("group", groupListModel.get(i).getGroupName());
+			group.put("employees", array1);
+			array.add(group);
+		}
+		jsonObject.put("model", array);
+		return jsonObject.toJSONString();
+	}
+
 	private static String sendAppointment(Appointment a) {
+		System.out.println("DatabaseWorker.sendAppointment: PARSING REQUEST");
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		JSONObject appointment = new JSONObject();
 		appointment.put("appointmentID", a.getAppointmentID());
@@ -107,6 +151,7 @@ public class DatabaseWorker {
 	}
 
 	private static String createAppointment(JSONObject model) {
+		System.out.println("DatabaseWorker.createAppointment: PARSING REQUEST");
 		Appointment a = new Appointment();
 		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Employee e = new Employee((String) model.get("appointmentLeader"), "navn");
@@ -152,6 +197,7 @@ public class DatabaseWorker {
 	}
 
 	private static String roomListModelAsJSON(RoomListModel roomListModel) {
+		System.out.println("DatabaseWorker.roomListModelAsJSON: PARSING REQUEST");
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("response", "roomlistmodel");
 		jsonObject.put("dbmethod", "initialize");
@@ -167,6 +213,7 @@ public class DatabaseWorker {
 	}
 
 	private static String weekCalendarAsJSON(WeekCalendar weekCalendar) {
+		System.out.println("DatabaseWorker.weekCalendarAsJSON: PARSING REQUEST");
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("response", "weekcalendar");
 		jsonObject.put("dbmethod", "initialize");
@@ -193,6 +240,7 @@ public class DatabaseWorker {
 	}
 
 	private static JSONArray login(JSONArray array) {
+		System.out.println("DatabaseWorker.login: PARSING REQUEST");
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		JSONArray userArray = new JSONArray();
 		try {

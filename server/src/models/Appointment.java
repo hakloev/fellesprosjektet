@@ -1,6 +1,5 @@
 package models;
 
-
 import controllers.DBconnection;
 
 import java.sql.Connection;
@@ -37,23 +36,6 @@ public class Appointment implements DBInterface {
 	}
 
 
-	public void setDate(Date date) {
-		if (startDateTime == null) startDateTime = Calendar.getInstance();
-
-		startDateTime.set(date.getYear(), date.getMonth(), date.getDate());
-	}
-
-
-	public void setStart(Date start){
-		if (startDateTime == null) startDateTime = Calendar.getInstance();
-
-		startDateTime.set(Calendar.HOUR_OF_DAY, start.getHours());
-		startDateTime.set(Calendar.MINUTE, start.getMinutes());
-
-
-	}
-
-
 	public void setAppointmentLeader(Employee appointmentLeader) {
 		this.appointmentLeader = appointmentLeader;
 	}
@@ -70,127 +52,9 @@ public class Appointment implements DBInterface {
 		return startDateTime;
 	}
 
-	public void setStartDateTime(Calendar startDateTime) {
-		this.startDateTime = startDateTime;
-	}
-
 	public Calendar getEndDateTime() {
 		return endDateTime;
 	}
-
-	public void setEndDateTime(Calendar endDateTime) {
-		this.endDateTime = endDateTime;
-	}
-
-	public void setEnd(Date end){
-		if (endDateTime == null) endDateTime = Calendar.getInstance();
-
-		String oldDuration = this.getDuration();
-
-		if (startDateTime != null) {
-			endDateTime.set(
-					startDateTime.get(Calendar.YEAR),
-					startDateTime.get(Calendar.MONTH),
-					startDateTime.get(Calendar.DAY_OF_MONTH),
-					end.getHours(),
-					end.getMinutes());
-		} else {
-			endDateTime.set(Calendar.HOUR_OF_DAY, end.getHours());
-			endDateTime.set(Calendar.MINUTE, end.getMinutes());
-		}
-	}
-
-
-	public void setDuration(Date duration){
-		if (startDateTime != null) {
-			String oldValue = this.getDuration();
-
-			if (endDateTime == null) endDateTime = Calendar.getInstance();
-
-			endDateTime.set(startDateTime.get(Calendar.YEAR),
-					startDateTime.get(Calendar.MONTH),
-					startDateTime.get(Calendar.DAY_OF_MONTH),
-					startDateTime.get(Calendar.HOUR_OF_DAY) + duration.getHours(),
-					startDateTime.get(Calendar.MINUTE) + duration.getMinutes());
-		}
-	}
-
-
-	public String getDate(){
-		if (startDateTime != null) {
-			int day = startDateTime.get(Calendar.DAY_OF_MONTH);
-			int month = startDateTime.get(Calendar.MONTH);
-			int year = startDateTime.get(Calendar.YEAR);
-			String ret = "";
-			ret += day/10;
-			ret += day % 10;
-			ret += ".";
-			ret += month/10;
-			ret += month%10;
-			ret += ".";
-			ret += year;
-			return ret;
-
-
-		}
-		return "01.01.1970";
-	}
-
-
-	public String getStart(){
-		if (startDateTime != null) {
-			int hour = startDateTime.get(Calendar.HOUR_OF_DAY);
-			int min = startDateTime.get(Calendar.MINUTE);
-			String ret = "";
-			ret += hour /10;
-			ret += hour % 10;
-			ret += ":";
-			ret += min /10;
-			ret += min%10;
-			return ret;
-		}
-		return "00:00";
-	}
-
-
-	public String getEnd(){
-		if (endDateTime != null) {
-			int hour = endDateTime.get(Calendar.HOUR_OF_DAY);
-			int min = endDateTime.get(Calendar.MINUTE);
-			String ret = "";
-			ret += hour /10;
-			ret += hour % 10;
-			ret += ":";
-			ret += min /10;
-			ret += min%10;
-			return ret;
-		}
-		return "00:00";
-	}
-
-
-	public String getDuration(){
-		if (startDateTime != null && endDateTime != null) {
-			long difference = endDateTime.getTimeInMillis() - startDateTime.getTimeInMillis();
-			difference /= 60000;
-			long hour = difference /60;
-			long min = difference % 60;
-			String ret = "";
-			ret += hour /10;
-			ret += hour % 10;
-			ret += ":";
-			ret += min /10;
-			ret += min%10;
-			return ret;
-		}
-		return "00:00";
-	}
-
-
-	public ParticipantListModel getParticipantList() {
-		return participantList;
-	}
-
 
 	public void setParticipantList(ParticipantListModel participantList) {
 		if (participantList != null){
@@ -210,11 +74,6 @@ public class Appointment implements DBInterface {
 		return description;
 	}
 
-	public void setLocation(String location) {
-		this.locationText = location;
-	}
-
-
 	public void setLocation(Room location) {
 		this.location = location;
 		this.locationText = location.getRoomCode();
@@ -226,10 +85,6 @@ public class Appointment implements DBInterface {
 
 	public void setAppointmentID(int appointmentID) {
 		this.appointmentID = appointmentID;
-	}
-
-	public String getLocation() {
-		return locationText;
 	}
 
 	public Room getRoom() {return this.location;}
