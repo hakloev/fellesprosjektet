@@ -51,7 +51,8 @@ public class SocketListener extends Thread {
 
                 System.out.print("Received response from Server: ");
                 System.out.println(responseString + "\n");
-                InboundWorker.handleResponse(responseString);
+                InboundWorker inboundWorker = new InboundWorker();
+                inboundWorker.handleResponse(responseString);
 
             }
 

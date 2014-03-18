@@ -5,9 +5,12 @@ import models.*;
 /**
  * Created by Truls on 12.03.14.
  */
-public class InboundWorker extends Thread implements Runnable {
+public class InboundWorker{
 
-    public static void handleResponse(String responseString) {
+    private ResponseWaiter registeredWaitingInstance;
+    private Object responseObject;
+
+    public void handleResponse(String responseString) {
 
                 Object object = JSONHandler.parseJSON(responseString);
 
@@ -26,8 +29,15 @@ public class InboundWorker extends Thread implements Runnable {
                 else if (object instanceof GroupListModel) {
                     System.out.println(((GroupListModel) object).toString());
                 }
-                // TODO: SENDE VIDERE TIL KLASSE SOM OPPDATER KLIENT
 
+
+        System.out.println("ParsedObjectOutput: " + responseObject);
+        System.out.println("this Thread: " + this);
+            if (registeredWaitingInstance != null) {
+            System.out.println("k test interrupt");
+            registeredWaitingInstance.setReady(true);
+           System.out.println("k test interrupt done");
+           }
     }
 }
 
