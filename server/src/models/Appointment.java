@@ -157,7 +157,7 @@ public class Appointment implements DBInterface {
 			} else {
 				if (this.location == null) {
 					sql = "UPDATE avtale SET avtaleansvarlig = '" + this.getAppointmentLeader().getUsername() + "', beskrivelse = '" + this.description + "', sted = '"
-				            + this.locationText + "', start = '" + sdf.format(this.startDateTime.getTime()) + "', slutt = '" + sdf.format(this.endDateTime.getTime())
+							+ this.locationText + "', start = '" + sdf.format(this.startDateTime.getTime()) + "', slutt = '" + sdf.format(this.endDateTime.getTime())
 							+ "' WHERE avtale.avtaleid = " + this.getAppointmentID() + " LIMIT 1";
 
 				} else {

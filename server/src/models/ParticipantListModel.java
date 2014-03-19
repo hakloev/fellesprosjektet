@@ -39,11 +39,14 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 			Statement stmt = dbCon.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {
-				ParticipantStatus participating = ParticipantStatus.participating;
-				if (rs.getString(3).equals("deltar_ikke")) {
-					participating = ParticipantStatus.notParticipating;
-				} else if (rs.getString(3).equals("null")) {
-					participating = null;
+				ParticipantStatus participating = null;
+				if (rs.getString(3) != null) {
+					participating = ParticipantStatus.participating;
+					if (rs.getString(3).equals("deltar_ikke")) {
+						participating = ParticipantStatus.notParticipating;
+					} /* else if (rs.getString(3).equals("null")) {
+						participating = null;
+					}*/
 				}
 				boolean show = true;
 				if (rs.getInt(5) == 0) {
@@ -73,6 +76,16 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 			String sql = null;
 			for (int i = 0; i < this.size(); i++) {
 				Participant p = this.get(i);
+
+				sql = "SELECT count(*) FROM deltager WHERE brukernavn = '" + p.getUserName() + "' AND avtaleid = " + this.appointmentID;
+				ResultSet rs = stmt.executeQuery(sql);
+				int isParticipant = -1;
+				if (rs.next()) {
+					isParticipant = rs.getInt(1);
+					System.out.println("Participating = " + isParticipant);
+				}
+				rs.close();
+
 				int show = 0;
 				if (p.isShowInCalendar()) {
 					show = 1;
@@ -80,16 +93,23 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 				String deltar = null;
 				if (p.getParticipantStatus() != null) {
 					deltar = "deltar";
-					if (p.getParticipantStatus().toString().equals("deltar_ikke")) {
+					if (p.getParticipantStatus().toString().equals("Deltar ikke")) {
 						deltar = "deltar_ikke";
 					}
 				}
-				if (deltar == null) {
-				// TODO: SKILLER FORHÅPENTLIGVIS MELLOM DELTAR SATT ELLER IKKE
-					sql = "insert into deltager (brukernavn, avtaleid, vises) values ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + show + "')";
-				} else {
-					sql = "insert into deltager values ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', 'null', '" + show + "')";
 
+				if (isParticipant == 0) {
+					if (deltar == null) {
+						sql = "INSERT INTO deltager (brukernavn, avtaleid, vises) VALUES ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + show + "')";
+					} else {
+						sql = "UPDATE INTO deltager (brukernavn, avtaleid, deltagerstatus, vises) VALUES ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', '" + show + "')";
+					}
+				} else {
+					if (deltar == null) {
+						sql = "UPDATE deltager SET vises = '" + show + "', deltagerstatus = '" + deltar + "' WHERE brukernavn = '" + p.getUserName() + "' AND avtaleid = '" + this.appointmentID;
+					} else {
+						sql = "UPDATE deltager SET vises = '" + show + "' WHERE brukernavn = '" + p.getUserName() + "' AND avtaleid = '" + this.appointmentID;
+					}
 				}
 				System.out.println(sql);
 				stmt.executeUpdate(sql);

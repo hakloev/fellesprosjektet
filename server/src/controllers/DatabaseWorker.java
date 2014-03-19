@@ -188,7 +188,11 @@ public class DatabaseWorker {
 			JSONObject participant = new JSONObject();
 			participant.put("name",model.get(i).getName());
 			participant.put("username", model.get(i).getUserName());
-			participant.put("participantstatus", model.get(i).getParticipantStatus().toString());
+			if (model.get(i).getParticipantStatus() != null) {
+				participant.put("participantstatus", model.get(i).getParticipantStatus().toString());
+			} else {
+				participant.put("participantstatus", "null");
+			}
 			participant.put("showInCalendar", model.get(i).isShowInCalendar());
 			array.add(participant);
 		}
@@ -255,23 +259,25 @@ public class DatabaseWorker {
 		plm.setAppointmentID(a.getAppointmentID());
 		plm.save();
 
-		if (model.get("emaillistmodel") != null) {
+		if (model.get("emaillistmodel").toString() != null) {
 			EmailListModel emailListModel = new EmailListModel();
 			JSONArray email = (JSONArray) model.get("emaillistmodel");
-			Iterator iterator1 = email.iterator();
-			while (iterator1.hasNext()) {
-				Object emailaddress = iterator1.next();
-				emailListModel.addElement((String) emailaddress);
-			}
-			emailListModel.setAppointmentID(a.getAppointmentID());
-			emailListModel.save();
-			for (int i = 0; i < emailListModel.size(); i++) {
-				GMail sendMail = new GMail();
-				String subject = "Invitert til avtale '" + a.getDescription() + "' hos Firma X";
-				String text = "Du er invitert til avtale '" + a.getDescription() + "' av " + a.getAppointmentLeader().getName() + "\n\n" +
-						"Avtalen finner sted i rom " + a.getLocationText() + "\nStart: " + a.getStartDateTime().getTime() + "Slutt: " + a.getEndDateTime().getTime() +
-						"\nHilsen Firma X sin superduper server som håndterer dette for deg!";
-				sendMail.sendMail(emailListModel.get(i).toString(), subject, text);
+			if (!email.isEmpty()) {
+				Iterator iterator1 = email.iterator();
+				while (iterator1.hasNext()) {
+					Object emailaddress = iterator1.next();
+					emailListModel.addElement((String) emailaddress);
+				}
+				emailListModel.setAppointmentID(a.getAppointmentID());
+				emailListModel.save();
+				for (int i = 0; i < emailListModel.size(); i++) {
+					GMail sendMail = new GMail();
+					String subject = "Invitert til avtale '" + a.getDescription() + "' hos Firma X";
+					String text = "Du er invitert til avtale '" + a.getDescription() + "' av " + a.getAppointmentLeader().getName() + "\n\n" +
+							"Avtalen finner sted i rom " + a.getLocationText() + "\nStart: " + a.getStartDateTime().getTime() + "Slutt: " + a.getEndDateTime().getTime() +
+							"\nHilsen Firma X sin superduper server som håndterer dette for deg!";
+					sendMail.sendMail(emailListModel.get(i).toString(), subject, text);
+				}
 			}
 		}
 

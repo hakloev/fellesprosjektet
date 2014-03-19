@@ -14,7 +14,7 @@ public class Server {
 
 	public static void main(String[] args) {
 		SocketListener socketListener = new SocketListener();
-		System.out.println("Server.main: SOCKETLISTENER STARTED AT " + Request.getTime());
+		System.out.println("Server.main: SOCKETLISTENER STARTED AT " + Request.getTime() + " (PS: TAKE THIS SWORD, YOU NEED IT: ()==[:::::::::::::> )");
 		socketListener.start();
 	}
 

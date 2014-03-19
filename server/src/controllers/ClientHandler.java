@@ -20,7 +20,6 @@ public class ClientHandler extends Thread implements Runnable {
 	private final Socket _SOCKET;
 	private final int _CONNECTIONID;
 	private boolean _SERVING;
-	//private BufferedReader readFromClient;
 	private DataInputStream inFromClient;
 	private DataOutputStream writeToClient;
 	private Calendar start;
@@ -45,12 +44,12 @@ public class ClientHandler extends Thread implements Runnable {
 
 			while (_SERVING) {
 				inFromClient = new DataInputStream(_SOCKET.getInputStream());
-				//readFromClient = new BufferedReader(new InputStreamReader(_SOCKET.getInputStream(), "UTF-8"));
 				Request request = null;
 				try {
 					request = acceptIncomingRequest(inFromClient.readUTF()); //readFromClient.readLine());
 				} catch (EOFException e) {
-					System.out.println("ClientHandler.run: EOFException, BUT WHHHHHHYYYYYY (PS: KILLROY WAS HERE)");
+					System.out.println("ClientHandler.run: EOFException, BUT WHY (PS: KILROY WAS HERE)");
+					printKillroy();
 				}
 				start = Calendar.getInstance();
 				if (request == null) {
@@ -106,4 +105,21 @@ public class ClientHandler extends Thread implements Runnable {
 				_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
 		return new Request(incomingJSON);
 	}
+
+	private void printKillroy() {
+		System.out.println(
+				"\n..................................................\n" +
+				":                    ......                      :\n"+
+				":                 .:||||||||:.                   :\n"+
+				":                /            \\                  :\n"+
+				":               (   o      o   )                 :\n"+
+				":-------@@@@----------:  :----------@@@@---------:\n"+
+				":                     `--'                       :\n"+
+				":                                                :\n"+
+				":                                                :\n"+
+				":         K I L R O Y   S A Y S   H I !          :\n"+
+				":................................................:\n"
+		);
+	}
+
 }
