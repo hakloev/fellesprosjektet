@@ -85,7 +85,7 @@ public class ClientHandler extends Thread implements Runnable {
 		try {
 			System.out.println("ClientHandler.sendOutgoingResponse " + _CONNECTIONID + ": SENDING " + response + " TO CLIENT FROM " +
 					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort());
-			writeToClient.writeUTF(response + "\n");
+			writeToClient.writeUTF(response);
 			System.out.println("ClientHandler.sendOutgoingResponse " + _CONNECTIONID + ": SENT " + response + " TO CLIENT FROM " +
 					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " AT " + Request.getTime());
 		} catch (IOException e) {
