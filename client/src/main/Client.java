@@ -1,11 +1,14 @@
 package main;
 
+import controllers.LogoutException;
 import controllers.SocketListener;
 import gui.CalendarView;
 import models.*;
+
 import java.awt.EventQueue;
 
 import javax.swing.*;
+
 import java.util.Calendar;
 import java.util.Date;
 
@@ -82,7 +85,12 @@ public class Client {
         //roomListModel.initialize();
 
         GroupListModel groupListModel = new GroupListModel();
-        groupListModel.initialize();
+        try {
+			groupListModel.initialize();
+		} catch (LogoutException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 
     }

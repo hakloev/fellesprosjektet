@@ -27,14 +27,14 @@ import controllers.*;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Calendar;
 
 @SuppressWarnings("serial")
-public class CalendarView extends JFrame implements MouseListener {
+public class CalendarView extends JFrame {
 
 	private JPanel contentPane;
 
@@ -254,7 +254,7 @@ public class CalendarView extends JFrame implements MouseListener {
 		notificationScrollPane.setPreferredSize(new Dimension(180, 200));
 
 		notificationList = new JList<Notification>();
-		notificationList.addMouseListener(this);
+		notificationList.addMouseListener(mouseListener);
 		notificationScrollPane.setViewportView(notificationList);
 
 		JLabel notificationLabel = new JLabel(" Varsler");
@@ -297,40 +297,27 @@ public class CalendarView extends JFrame implements MouseListener {
 				if (column > 0 && row > 0 && column < 8 && row < 15){
 					startDate.set(Calendar.YEAR, (int) yearSpinner.getValue() );
 					startDate.set(Calendar.WEEK_OF_YEAR, (int) weekComboBox.getSelectedItem());
+					
 					int day = 0;
-					if (column == 1){
-						day = Calendar.MONDAY;
-					}
-					else if (column == 2){
-						day = Calendar.TUESDAY;
-					}
-					else if (column == 3){
-						day = Calendar.WEDNESDAY;
-					}
-					else if (column == 4){
-						day = Calendar.THURSDAY;
-					}
-					else if (column == 5){
-						day = Calendar.FRIDAY;
-					}
-					else if (column == 6){
-						day = Calendar.SATURDAY;
-					}
-					else if (column == 7){
+					if (column == 7) {
 						day = Calendar.SUNDAY;
+					} else {
+						day = column + 1;
 					}
+					
 					startDate.set(Calendar.DAY_OF_WEEK, day);
 					int hour = row + 6;
 					startDate.set(Calendar.HOUR, hour);
-					app.setStartDateTime(startDate);
+					startDate.set(Calendar.MINUTE, 0);
 				}
+				app.setStartDateTime(startDate);
 				new EditAppointment(thisFrame, app);
 
 			}
 			else{
 				Appointment app = (Appointment) calendarTableModel.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
 				if (actionCommand.equals("Avtalevisning") && app != null) {
-					if (app.getAppointmentLeader()== loggedInEmployee){
+					if (app.getAppointmentLeader().equals(loggedInEmployee)){
 						new EditAppointment(thisFrame, app);
 					}
 					else{
@@ -338,12 +325,22 @@ public class CalendarView extends JFrame implements MouseListener {
 					}
 				}
 				else if(actionCommand.equals("Slett avtale") && app != null) {
-					//TODO delete the chose appointment
 					int choice = JOptionPane.showConfirmDialog(thisFrame,
 							"Er du sikker på at du vil slette denne avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
 
-					if (choice == 0) {
-						// slett avtale
+					if (choice == 0) { // delete
+						if (app.getAppointmentLeader().equals(loggedInEmployee)) {
+							app.delete();
+						} else {
+							app.setShowInCalendar(false);
+							ParticipantListModel plModel = app.getParticipantList();
+							Participant currentUser = plModel.get(plModel.indexOf(new Participant(loggedInEmployee)));
+							currentUser.setShowInCalendar(false);
+							currentUser.setParticipantStatus(ParticipantStatus.notParticipating);
+							currentUser.setAlarm(null);
+							currentUser.save(app.getAppointmentID());
+						}
+						calendarTableModel.setValueAt(null, calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
 					}
 
 				}
@@ -359,40 +356,17 @@ public class CalendarView extends JFrame implements MouseListener {
 				sendWeekCalendarRequest(calendarTableModel.getEmployee());
 
 			} else if(actionCommand.equals("Logg ut")) {
-
-
-				closeNetworkSocket();
-
-				// clear text
-				employeeComboBox.setSelectedItem(null);
-				loggedInEmployee = null;
-				usernameLabel.setText("");
-
-				// clear calendar table
-				calendarTableModel.resetDefaultCalendar();
-				calendarTableModel = new WeekCalendar();
-				calendarTable.setModel(calendarTableModel);
-
-				// clear notifications
-				notificationList.setModel(new NotificationListModel());
-
-				// reset week and year to current
-				Calendar currentCal = Calendar.getInstance();
-				weekComboBox.setSelectedIndex(currentCal.get(Calendar.WEEK_OF_YEAR) - 1);
-				yearSpinner.setValue(currentCal.get(Calendar.YEAR));
-
+				logoutUser();
 				initializeLoggedInUser();
 			}
 		}
 	};
 
 
-
-
 	WindowAdapter windowListener = new WindowAdapter() {
 		@Override
 		public void windowClosing(WindowEvent we) {
-			closeNetworkSocket();
+			logoutUser();
 			System.exit(0);
 		}
 		@Override
@@ -406,8 +380,27 @@ public class CalendarView extends JFrame implements MouseListener {
 	}
 
 
-	private void closeNetworkSocket() {
+	private void logoutUser() {
+		OutboundWorker.logout();
 		SocketListener.getSL().close();
+		
+		// clear text
+		employeeComboBox.setSelectedItem(null);
+		loggedInEmployee = null;
+		usernameLabel.setText("");
+
+		// clear calendar table
+		calendarTableModel.resetDefaultCalendar();
+		calendarTableModel = new WeekCalendar();
+		calendarTable.setModel(calendarTableModel);
+
+		// clear notifications
+		notificationList.setModel(new NotificationListModel());
+
+		// reset week and year to current
+		Calendar currentCal = Calendar.getInstance();
+		weekComboBox.setSelectedIndex(currentCal.get(Calendar.WEEK_OF_YEAR) - 1);
+		yearSpinner.setValue(currentCal.get(Calendar.YEAR));
 	}
 
 
@@ -420,7 +413,13 @@ public class CalendarView extends JFrame implements MouseListener {
 		/* Do initialization */
 		// TODO proper initialization
 		EmployeeComboBoxModel ecbModel = new EmployeeComboBoxModel();
-		ecbModel.initialize();
+		try {
+			ecbModel.initialize();
+		} catch (LogoutException e) {
+			logoutUser();
+			initializeLoggedInUser(); // tjuvtriks
+			return;
+		}
 		employeeComboBox.setModel(ecbModel);
 		employeeComboBox.setSelectedItem(loggedInEmployee);
 		//employeeComboBox.updateUI();
@@ -434,57 +433,45 @@ public class CalendarView extends JFrame implements MouseListener {
 
 
 	private void sendWeekCalendarRequest(Employee employee) {
-		calendarTableModel.resetDefaultCalendar();
-		calendarTableModel = new WeekCalendar(employee, (int)weekComboBox.getSelectedItem(), (int)yearSpinner.getValue());
-		calendarTableModel.initialize();
-		calendarTable.setModel(calendarTableModel);
+		if (employee != null) {
+			calendarTableModel.resetDefaultCalendar();
+			calendarTableModel = new WeekCalendar(employee, (int)weekComboBox.getSelectedItem(), (int)yearSpinner.getValue());
+			try {
+				calendarTableModel.initialize();
+			} catch (LogoutException e) {
+				logoutUser();
+				initializeLoggedInUser();
+				return;
+			}
+			calendarTable.setModel(calendarTableModel);
+		}
 	}
 
 
-	@Override
-	public void mouseClicked(MouseEvent arg0) {
-		if (arg0.getClickCount() == 2 && arg0.getSource() == notificationList){
-			Notification notification = notificationList.getSelectedValue();
-			int appointmentID = notification.getAppointmentID();
-			Appointment app = new Appointment(appointmentID);
-			app.initialize();
-			if (app.getAppointmentLeader()== loggedInEmployee){
-				new EditAppointment(thisFrame, app);
-			}
-			else{
-				new ViewAppointment(thisFrame, app);
+	private MouseAdapter mouseListener = new MouseAdapter() {
+		@Override
+		public void mouseClicked(MouseEvent me) {
+			if (me.getSource() == notificationList && me.getClickCount() == 2) {
+				Notification notification = notificationList.getSelectedValue();
+				int appointmentID = notification.getAppointmentID();
+				Appointment app = new Appointment(appointmentID);
+				try {
+					app.initialize();
+				} catch (LogoutException e) {
+					logoutUser();
+					initializeLoggedInUser();
+					return;
+				}
+				if (app.getAppointmentLeader().equals(loggedInEmployee)) {
+					new EditAppointment(thisFrame, app);
+				}
+				else{
+					new ViewAppointment(thisFrame, app);
+				}
 			}
 		}
-		
-	}
-
-
-	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-		
-	}
+	};
+	
 
 
 

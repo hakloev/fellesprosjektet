@@ -74,6 +74,7 @@ public class DatabaseWorker {
 				if (dbMethod.equals("initialize")) {
 					System.out.println("DatabaseWorker.handleRequest: ROOMLISTMODEL INITIALIZE");
 					RoomListModel roomListModel = new RoomListModel();
+					roomListModel.setCapacity(Integer.valueOf(jsonObject.get("capacity").toString()));
 					roomListModel.initialize();
 					response = new Response(roomListModelAsJSON(roomListModel));
 				}
@@ -207,12 +208,13 @@ public class DatabaseWorker {
 		while (iterator.hasNext()) {
 			JSONObject p = iterator.next();
 			ParticipantStatus pStatus = null;
-			if (p.get("participantstatus").toString().equals("Deltar")) {
-				pStatus = ParticipantStatus.participating;
-			} else {
-				pStatus = ParticipantStatus.notParticipating;
+			if (p.get("participantstatus") != null) {
+				if (p.get("participantstatus").toString().equals("Deltar")) {
+					pStatus = ParticipantStatus.participating;
+				} else {
+					pStatus = ParticipantStatus.notParticipating;
+				}
 			}
-
 			Participant participant = new Participant((String) p.get("username"), (String) p.get("name"),
 					pStatus, Boolean.valueOf(p.get("showInCalendar").toString()));
 		    plm.addElement(participant);

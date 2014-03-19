@@ -1,6 +1,10 @@
 package models;
 
+import controllers.LogoutException;
 import controllers.OutboundWorker;
+import controllers.ResponseWaiter;
+import controllers.SocketListener;
+
 import org.json.simple.JSONObject;
 
 import javax.swing.DefaultListModel;
@@ -15,18 +19,27 @@ public class GroupListModel extends DefaultListModel<Group> implements NetInterf
 	
 	
 	@Override
-	public void initialize() {
-		// TODO Auto-generated method stub
+	public void initialize() throws LogoutException {
         JSONObject json;
         json = new JSONObject();
         json.put("request","grouplistmodel");
         json.put("dbmethod","initialize");
         OutboundWorker.sendRequest(json);
+        
+        Object[] response = new Object[1];
+        new ResponseWaiter(SocketListener.getSL(), response);
+        
+        if (response[0] != null && response[0] instanceof GroupListModel) {
+        	for (Object group : ((GroupListModel)response[0]).toArray() ) {
+        		this.addElement((Group)group);
+        	}
+        }
+        
 
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh() throws LogoutException {
 		this.clear();
 		this.initialize();
 	}

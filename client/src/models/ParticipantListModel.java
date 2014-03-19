@@ -1,5 +1,7 @@
 package models;
 
+import gui.CalendarView;
+
 import javax.swing.DefaultListModel;
 import javax.swing.event.ListDataListener;
 
@@ -10,7 +12,7 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 	private Participant appointmentLeader;
 	
 	/**
-	 * Creates a new empty list
+	 * Creates a new empty list for a new appointment
 	 */
 	public ParticipantListModel(Participant appointmentLeader) {
 		super();
@@ -32,8 +34,11 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 		this.appointmentLeader = participantList.getAppoinmentLeader();
 	}
 
+    /**
+     * JSON constructor
+     */
     public ParticipantListModel() {
-
+    	super();
     }
 
 
@@ -71,6 +76,11 @@ public class ParticipantListModel extends DefaultListModel<Participant> {
 
 	public Participant getAppoinmentLeader() {
 		return this.appointmentLeader;
+	}
+	
+	
+	public void locateAppointmentLeader(Employee appLeader) {
+		this.appointmentLeader = this.get(this.indexOf(new Participant(appLeader)));
 	}
 
 }

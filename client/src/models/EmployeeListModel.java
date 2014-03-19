@@ -2,6 +2,13 @@ package models;
 
 import javax.swing.DefaultListModel;
 
+import org.json.simple.JSONObject;
+
+import controllers.LogoutException;
+import controllers.OutboundWorker;
+import controllers.ResponseWaiter;
+import controllers.SocketListener;
+
 @SuppressWarnings("serial")
 public class EmployeeListModel extends DefaultListModel<Employee> implements NetInterface {
 	
@@ -9,19 +16,26 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements Net
 	
 	
 	@Override
-	public void initialize() {
-		// TODO: ADD THIS
-
-        //OutboundWorker.sendRequest(request);
-		/* test code */
-		this.addElement(new Employee("siri", "Siri Gundersen"));
-		this.addElement(new Employee("arvid", "Arvid Pettersen"));
-		this.addElement(new Employee("per", "Per Haraldsen"));
-		/* end test code */
+	public void initialize() throws LogoutException {
+		
+		JSONObject json;
+        json = new JSONObject();
+        json.put("request","employeelistmodel");
+        json.put("dbmethod","initialize");
+        OutboundWorker.sendRequest(json);
+        
+        Object[] response = new Object[1];
+        new ResponseWaiter(SocketListener.getSL(), response);
+        
+        if (response[0] != null && response[0] instanceof EmployeeListModel) {
+        	for (Object employee : ((EmployeeListModel)response[0]).toArray() ) {
+        		this.addElement((Employee)employee);
+        	}
+        }
 	}
 
 	@Override
-	public void refresh() {
+	public void refresh() throws LogoutException {
 		this.clear();
 		this.initialize();
 	}

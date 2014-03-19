@@ -8,6 +8,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 
+import controllers.LogoutException;
 import models.*;
 
 import java.awt.Dimension;
@@ -30,8 +31,9 @@ public class EditParticipants extends JDialog implements ActionListener{
 
 	/**
 	 * Create the frame.
+	 * @throws LogoutException 
 	 */
-	public EditParticipants(JDialog parent, Appointment appointment) {
+	public EditParticipants(JDialog parent, Appointment appointment) throws LogoutException {
 		super(parent, true);
 		this.setTitle("Rediger deltagere");
 		this.setResizable(false);
@@ -57,7 +59,7 @@ public class EditParticipants extends JDialog implements ActionListener{
 	}
 
 
-	private void addListsPanel() {
+	private void addListsPanel() throws LogoutException {
 		/* Grupper */
 		JScrollPane groupSscrollPane = new JScrollPane();
 		groupSscrollPane.setPreferredSize(new Dimension(120, 0));

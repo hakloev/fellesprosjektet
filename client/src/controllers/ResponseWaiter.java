@@ -1,5 +1,7 @@
 package controllers;
 
+import javax.swing.JOptionPane;
+
 public class ResponseWaiter extends Thread {
 	
 	private boolean ready = false;
@@ -7,20 +9,20 @@ public class ResponseWaiter extends Thread {
 	
 	/**
 	 * Waits for response
-	 * stores an Integer(0) in response on timeout
 	 * 
 	 * @param socketListener
 	 * @param response
+	 * @throws LogoutException 
 	 */
-	public ResponseWaiter(SocketListener socketListener, Object[] response) {
+	public ResponseWaiter(SocketListener socketListener, Object[] response) throws LogoutException {
 		socketListener.register(this);
 		int counter = 0;
 		
 		while(! ready) {
-			if (counter > 200) { // Timeout
+			if (counter > 200) { // Timeout 10s
 				socketListener.unregister(this);
-				response[0] = new Integer(1);
-				return;
+				JOptionPane.showMessageDialog(null, "Tidsavbrudd!", "Feil", JOptionPane.ERROR_MESSAGE);
+				throw new LogoutException("Timed out waiting for response");
 			}
 			counter++;
 			
@@ -34,7 +36,6 @@ public class ResponseWaiter extends Thread {
 		
 		response[0] = socketListener.getResponse();
 		socketListener.unregister(this);
-		System.out.println(counter);
 	}
 	
 	/**
