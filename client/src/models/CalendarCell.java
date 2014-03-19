@@ -13,7 +13,9 @@ public class CalendarCell {
 	public void removeAppointment(Appointment app){
 		appointments.remove(app);
 	}
-
+	public Appointment getfirst(){
+		return appointments.get(0);
+	}
 	public String toString(){
 		String ret = "";
 		for (Appointment app: appointments){

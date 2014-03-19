@@ -316,7 +316,7 @@ public class CalendarView extends JFrame {
 
 			}
 			else{
-				Appointment app = (Appointment) calendarTableModel.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
+				Appointment app = ((CalendarCell) calendarTableModel.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn())).getfirst();
 				if (actionCommand.equals("Avtalevisning") && app != null) {
 					if (app.getAppointmentLeader().equals(loggedInEmployee)){
 						new EditAppointment(thisFrame, app);
