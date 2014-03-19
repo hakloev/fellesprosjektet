@@ -25,6 +25,8 @@ import java.util.Iterator;
  */
 public class DatabaseWorker {
 
+	private static ClientHandler clientHandler;
+
 	// Do handling based on request type (request.get_REQUESTTYPE())
 	public static Response handleRequest(Request request) {
 		System.out.println("DatabaseWorker.handleRequest: PARSING REQUEST");
@@ -331,7 +333,7 @@ public class DatabaseWorker {
 		return jsonObject.toJSONString();
 	}
 
-	private static JSONArray login(JSONArray array) {
+	private static synchronized JSONArray login(JSONArray array) {
 		System.out.println("DatabaseWorker.login: PARSING REQUEST");
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		JSONArray userArray = new JSONArray();
@@ -343,6 +345,13 @@ public class DatabaseWorker {
 				if (rs.getString(2).equals(array.get(1)) && rs.getString(1).equals(array.get(0))) {
 					userArray.add(rs.getString(1));
 					userArray.add(rs.getString(3));
+					if (!ClientHandler.loggedInClients.containsKey(clientHandler)) {
+						ClientHandler.loggedInClients.put(clientHandler, rs.getString(1));
+						System.out.println("********************************************************************************************");
+						System.out.println("DatabaseWorker.login: " + rs.getString(1) + " ADDED TO LOGGEDINCLIENTS");
+						System.out.println("DatabaseWorker.login: LOGGED IN: " + ClientHandler.loggedInClients.toString());
+						System.out.println("********************************************************************************************");
+					}
 				}
 			}
 			stmt.close();
@@ -351,5 +360,9 @@ public class DatabaseWorker {
 			e1.printStackTrace();
 		}
 		return userArray;
+	}
+
+	public static void addClientHandler(ClientHandler handler) {
+		clientHandler = handler;
 	}
 }

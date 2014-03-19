@@ -15,7 +15,6 @@ import java.net.SocketAddress;
 public class SocketListener extends Thread implements Runnable {
 
 	private static final int _PORT = 4657; // 4603 to 4657 are unassigned ports
-	// Do we want to gather all clienthandlers in an arraylist here?
 
 	@Override
 	public void run() {

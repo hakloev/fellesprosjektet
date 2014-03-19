@@ -6,7 +6,7 @@ import helperclasses.Request;
 /**
  * Created by Håkon Ødegård Løvdal on 10/03/14.
  *
- * This is the main class, it's the entry point for the serverprogram.
+ * This is the main class, it's the entry point for the server program.
  * It creates a socket listener that handles all incoming clients.
  *
  */
