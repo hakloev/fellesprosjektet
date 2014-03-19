@@ -1,5 +1,6 @@
 package controllers;
 
+import helperclasses.GMail;
 import helperclasses.Request;
 import helperclasses.Response;
 import models.*;
@@ -67,8 +68,8 @@ public class DatabaseWorker {
 					a.setAppointmentID(appointmentID);
 					a.initialize();
 					response = new Response(sendAppointment(a));
-				} else if (dbMethod.equals("save")) {
-					System.out.println("DatabaseWorker.handleRequest: APPOINTMENT SAVE");
+				} else if (dbMethod.equals("delete")) {
+					System.out.println("DatabaseWorker.handleRequest: APPOINTMENT DELETE");
 					int appointmentID = Integer.valueOf(jsonObject.get("appointmentID").toString());
 					Appointment a = new Appointment();
 					a.setAppointmentID(appointmentID);
@@ -254,15 +255,25 @@ public class DatabaseWorker {
 		plm.setAppointmentID(a.getAppointmentID());
 		plm.save();
 
-		EmailListModel emailListModel = new EmailListModel();
-		JSONArray email = (JSONArray) model.get("emaillistmodel");
-		Iterator iterator1 = email.iterator();
-		while (iterator1.hasNext()) {
-			Object emailaddress = iterator1.next();
-			emailListModel.addElement((String) emailaddress);
+		if (model.get("emaillistmodel") != null) {
+			EmailListModel emailListModel = new EmailListModel();
+			JSONArray email = (JSONArray) model.get("emaillistmodel");
+			Iterator iterator1 = email.iterator();
+			while (iterator1.hasNext()) {
+				Object emailaddress = iterator1.next();
+				emailListModel.addElement((String) emailaddress);
+			}
+			emailListModel.setAppointmentID(a.getAppointmentID());
+			emailListModel.save();
+			for (int i = 0; i < emailListModel.size(); i++) {
+				GMail sendMail = new GMail();
+				String subject = "Invitert til avtale '" + a.getDescription() + "' hos Firma X";
+				String text = "Du er invitert til avtale '" + a.getDescription() + "' av " + a.getAppointmentLeader().getName() + "\n\n" +
+						"Avtalen finner sted i rom " + a.getLocationText() + "\nStart: " + a.getStartDateTime().getTime() + "Slutt: " + a.getEndDateTime().getTime() +
+						"\nHilsen Firma X sin superduper server som håndterer dette for deg!";
+				sendMail.sendMail(emailListModel.get(i).toString(), subject, text);
+			}
 		}
-		emailListModel.setAppointmentID(a.getAppointmentID());
-		emailListModel.save();
 
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("response", "appointment");
