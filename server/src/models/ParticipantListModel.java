@@ -102,13 +102,13 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 					if (deltar == null) {
 						sql = "INSERT INTO deltager (brukernavn, avtaleid, vises) VALUES ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + show + "')";
 					} else {
-						sql = "UPDATE INTO deltager (brukernavn, avtaleid, deltagerstatus, vises) VALUES ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', '" + show + "')";
+						sql = "INSERT INTO deltager (brukernavn, avtaleid, deltagerstatus, vises) VALUES ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', '" + show + "')";
 					}
 				} else {
 					if (deltar == null) {
-						sql = "UPDATE deltager SET vises = '" + show + "', deltagerstatus = '" + deltar + "' WHERE brukernavn = '" + p.getUserName() + "' AND avtaleid = '" + this.appointmentID;
+						sql = "UPDATE deltager SET vises = '" + show + "' WHERE brukernavn = '" + p.getUserName() + "' AND avtaleid = '" + this.appointmentID + "'";
 					} else {
-						sql = "UPDATE deltager SET vises = '" + show + "' WHERE brukernavn = '" + p.getUserName() + "' AND avtaleid = '" + this.appointmentID;
+						sql = "UPDATE deltager SET vises = '" + show + "', deltagerstatus = '" + deltar + "' WHERE brukernavn = '" + p.getUserName() + "' AND avtaleid = '" + this.appointmentID + "'";
 					}
 				}
 				System.out.println(sql);
