@@ -275,6 +275,7 @@ public class CalendarView extends JFrame {
 
 		calendarTableModel = new WeekCalendar();
 		calendarTable = new JTable(calendarTableModel);
+		calendarTable.setModel(calendarTableModel);
 		//calendarTable.setColumnSelectionAllowed(true);
 		calendarTable.setCellSelectionEnabled(true);
 		//calendarTable.setFillsViewportHeight(true);
