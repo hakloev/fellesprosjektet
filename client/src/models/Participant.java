@@ -100,7 +100,7 @@ public class Participant {
      * @param appointmentID
      */
     public void save(int appointmentID) {
-    	// TODO netcode for saving to server
+    	// TODO netcode for saving status & alarm to server
     }
     
     

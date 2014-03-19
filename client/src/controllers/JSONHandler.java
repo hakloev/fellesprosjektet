@@ -35,7 +35,6 @@ public class JSONHandler {
             if (jsonObject.get("response").equals("login")) {
                 JSONArray array = (JSONArray) jsonObject.get("array");
                 if (array.isEmpty()) {
-                    // TODO: invalid login, send response to GUI
                     System.out.println("Invalid Login");
                     return null;
                 }
@@ -113,6 +112,9 @@ public class JSONHandler {
 	            }
 	            return employeeListModel;
             }
+            
+            // TODO Notification (for single notification push)
+            // TODO NotificationListModel
 
 
         }
@@ -139,7 +141,10 @@ public class JSONHandler {
         if (jsonObject.get("location") != null) {
             //TODO: legge til room
         }
+        // TODO email list
+        
         appointment.setLocation((String) jsonObject.get("locationText"));
+        
         if (jsonObject.get("participants") != null) {
             ParticipantListModel model = new ParticipantListModel();
             appointment.setParticipantList(model);

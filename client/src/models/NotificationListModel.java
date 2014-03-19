@@ -13,7 +13,7 @@ public class NotificationListModel extends DefaultListModel<Notification> implem
 	
 	@Override
 	public void initialize() {
-		// TODO Auto-generated method stub
+		// TODO NotificationList initialization
 
         //OutboundWorker.sendRequest(request);
 		/* test code
