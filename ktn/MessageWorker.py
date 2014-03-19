@@ -23,8 +23,8 @@ class ReceiveMessageWorker(Thread):
     def __init__(self, listener, connection, debug=False):
         Thread.__init__(self)
         self.debug = debug
-        self.daemon = True
-        self.listener = listener
+        self.daemon = True # We want to be able to close with Ctrl + c
+        self.listener = listener # Reference to the client itself
         self.connection = connection
 
     def run(self):

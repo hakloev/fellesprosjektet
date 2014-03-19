@@ -13,19 +13,19 @@ import time
 
 class Client(object):
     
-    # Init method for class
+    # Init method for the Client
     def __init__(self, debug=False):
         self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.debug = debug
         self.username = None
+        self.printWelcomeMessage()
 
     def start(self, HOST='localhost', PORT=9999):
         # Initate the connection
         self.connection.connect((HOST, PORT))
         
-        print 'CONNECTION ESTABLISHED WITH SERVER'
-        print 'EXIT [/q], LOGIN WITH [/login *username*], LOGOUT WITH [/logout]'
-        
+        self.printConnectionSuccess()
+
         # Create a messageworker thread to listen for incoming messages from server
         self.messageWorker = MessageWorker.ReceiveMessageWorker(self, self.connection)    
         self.messageWorker.start()
@@ -41,11 +41,31 @@ class Client(object):
                 self.login(data[data.find('/LOGIN') + 7:])
             elif data == '/LOGOUT':
                 if self.username == None:
-                    print '%s  CLIENT | You are not logged in' % time.strftime("%H:%M:%S")
+                    print '|  %s  CLIENT | You are not logged in                             |' % time.strftime("%H:%M:%S")
                 else:
                     self.logout()
             else:
                 self.send(self.createJSON(data, 'message'))
+    
+    def printWelcomeMessage(self):
+        print '*==================================================================================*'
+        print '|                                                                                  |'
+        print '|                             WELCOME TO THE CHATCLIENT                            |'
+        print '|                                      GROUP 7                                     |'
+        print '|                                                                                  |'
+        print '*==================================================================================*'
+        print '|                                                                                  |'
+        #string = '|                                                                                  |'
+        #print str(len(string)) + ' lang'
+    
+    def printConnectionSuccess(self):
+        print '|                                                                                  |'
+        print '|                      CONNECTION ESTABLISHED WITH SERVER                          |'
+        print '|                                                                                  |'
+        print '|         EXIT [/q], LOGIN WITH [/login *username*], LOGOUT WITH [/logout]         |'
+        print '|                                                                                  |'
+        print '*==================================================================================*'
+        print '|                                                                                  |'
 
     # Called from messageWorker when message received from server
     def message_received(self, message, connection):
@@ -55,7 +75,12 @@ class Client(object):
         
     # Called when connection to server is broken    
     def connection_closed(self, connection):
-        print 'Will terminate'
+        print '|                                                                                  |'
+        print '|                           CONNECTION TO SERVER LOST                              |'
+        print '|                                WILL TERMINATE                                    |'
+        print '|                                                                                  |'
+        print '|                                   GOOD BYE!                                      |'
+        print '*==================================================================================*'
         sys.exit(0)
     
     # Method that sends data to the server
@@ -63,7 +88,6 @@ class Client(object):
         try:
             self.connection.sendall(data)
         except socket.error:
-            print 'Connection to server broken'
             self.connection_closed(self.connection)
 
     # If the user wants to quit, we force a disconnect
@@ -101,11 +125,11 @@ class Client(object):
                 print data['error']
             else:
                 if self.debug: print 'Client.handleJSON: LOGGED IN'
-                print '%s  CLIENT | Logged in with: %s' % (time.strftime("%H:%M:%S"), data['username'])
+                print data['message']
                 self.username = data['username']
         elif data['response'] == 'logout':
             if self.debug: print 'Client.handleJSON: LOGOUT'
-            print '%s  CLIENT | You are logged out' % time.strftime("%H:%M:%S")
+            print data['message']
             self.username = None
         elif data['response'] == 'message':
             if self.debug: print 'Client.handleJSON: MESSAGE'
@@ -117,7 +141,8 @@ class Client(object):
 # Main method
 if __name__ == "__main__":
     client = Client()
-    ip = raw_input('''Choose IP: [''] for localhost, [out] for router-IP: ''')
+    print '|             CHOOSE IP: [ ] for localhost, [out] for router-IP                    |'
+    ip = raw_input()
     if str(ip) == '': # User wants to start on localhost
         client.start()
     elif str(ip).upper() == 'OUT': # User wants to use the IP given by local router
