@@ -35,7 +35,6 @@ public class JSONHandler {
             if (jsonObject.get("response").equals("login")) {
                 JSONArray array = (JSONArray) jsonObject.get("array");
                 if (array.isEmpty()) {
-                    // TODO: invalid login, send response to GUI
                     System.out.println("Invalid Login");
                     return null;
                 }
