@@ -1,12 +1,19 @@
 package models;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
-public class CalendarCell {
+public class CalendarCell implements Iterable<Appointment> {
+	
+	
 	private ArrayList<Appointment> appointments;
 	
+	public CalendarCell() {
+		appointments = new ArrayList<Appointment>();
+	}
+	
 	public void addAppointment(Appointment app){
-		if (!appointments.contains(app)){
+		if (! appointments.contains(app)) {
 			appointments.add(app);
 		}
 	}
@@ -16,6 +23,8 @@ public class CalendarCell {
 	public Appointment getfirst(){
 		return appointments.get(0);
 	}
+	
+	@Override
 	public String toString(){
 		String ret = "";
 		for (Appointment app: appointments){
@@ -27,5 +36,10 @@ public class CalendarCell {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public Iterator<Appointment> iterator() {
+		return appointments.iterator();
 	}
 }

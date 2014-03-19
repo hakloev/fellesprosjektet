@@ -21,6 +21,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import controllers.*;
 
@@ -280,9 +281,11 @@ public class CalendarView extends JFrame {
 		//calendarTable.setColumnSelectionAllowed(true);
 		calendarTable.setCellSelectionEnabled(true);
 		//calendarTable.setFillsViewportHeight(true);
-		calendarTable.setPreferredSize(new Dimension(800, 435));
-		calendarTable.setRowHeight(29);
+		int rowHeight = 45; // 29
+		calendarTable.setPreferredSize(new Dimension(800, rowHeight * 15));
+		calendarTable.setRowHeight(rowHeight);
 		calendarTable.setGridColor(new Color(200, 200, 200));
+		//calendarTable.setDefaultRenderer(CalendarCell.class, new DefaultTableCellRenderer());
 		calendarPanel.add(calendarTable);
 	}
 

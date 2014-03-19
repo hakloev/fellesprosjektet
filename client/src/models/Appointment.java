@@ -403,6 +403,13 @@ public class Appointment implements NetInterface {
     	return participant;
     }
     
+    @Override
+    public boolean equals(Object object) {
+    	if (object instanceof Appointment) {
+    		return ((Appointment)object).appointmentID == this.appointmentID;
+    	}
+    	return false;
+    }
     
     
 }

@@ -83,9 +83,11 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
         	WeekCalendar weekCal = (WeekCalendar)response[0];
         	Vector dataVector = weekCal.getDataVector();
         	for (Object vector : dataVector) {
-        		for (Object app : (Vector)vector) {
-        			if (app != null && app instanceof Appointment) {
-        				this.addAppointment((Appointment)app);
+        		for (Object cell : (Vector)vector) {
+        			if (cell != null && cell instanceof CalendarCell) {
+        				for (Appointment app : (CalendarCell)cell) {
+        					this.addAppointment((Appointment)app);
+        				}
         			}
         		}
         	}
@@ -133,21 +135,21 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 	/* Don't ask.. */
 	public void resetDefaultCalendar() {
 		emptyCalendar = new Object[][] {
-				{null, "Mandag", "Tirsdag", "Onsdag", "Torsdag", "Fredag", "Lørdag", "Søndag"},
-				{"07.00", null, null, null, null, null, null, null},
-				{"08.00", null, null, null, null, null, null, null},
-				{"09.00", null, null, null, null, null, null, null},
-				{"10.00", null, null, null, null, null, null, null},
-				{"11.00", null, null, null, null, null, null, null},
-				{"12.00", null, null, null, null, null, null, null},
-				{"13.00", null, null, null, null, null, null, null},
-				{"14.00", null, null, null, null, null, null, null},
-				{"15.00", null, null, null, null, null, null, null},
-				{"16.00", null, null, null, null, null, null, null},
-				{"17.00", null, null, null, null, null, null, null},
-				{"18.00", null, null, null, null, null, null, null},
-				{"19.00", null, null, null, null, null, null, null},
-				{"20.00", null, null, null, null, null, null, null},
+				{null, " Mandag", " Tirsdag", " Onsdag", " Torsdag", " Fredag", " Lørdag", " Søndag"},
+				{" 07.00", null, null, null, null, null, null, null},
+				{" 08.00", null, null, null, null, null, null, null},
+				{" 09.00", null, null, null, null, null, null, null},
+				{" 10.00", null, null, null, null, null, null, null},
+				{" 11.00", null, null, null, null, null, null, null},
+				{" 12.00", null, null, null, null, null, null, null},
+				{" 13.00", null, null, null, null, null, null, null},
+				{" 14.00", null, null, null, null, null, null, null},
+				{" 15.00", null, null, null, null, null, null, null},
+				{" 16.00", null, null, null, null, null, null, null},
+				{" 17.00", null, null, null, null, null, null, null},
+				{" 18.00", null, null, null, null, null, null, null},
+				{" 19.00", null, null, null, null, null, null, null},
+				{" 20.00", null, null, null, null, null, null, null},
 		};
 		columnTitles = new String[] {
 				"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
@@ -172,19 +174,21 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 			row -= 6;
 			System.out.println("Column: " + column);
 			System.out.println("Row: " + row);
-			if (row < 1 || row > 14) {
-				System.out.println("InvalidTimeException");
-			}
-			else {
-				CalendarCell cell = (CalendarCell) this.getValueAt(row, column);
+			if (column > 0 && column < 8 && row > 0 && row < 15) {
+				CalendarCell cell = (CalendarCell)this.getValueAt(row, column);
 				if (cell == null){
+					System.out.println("Found null");
 					cell = new CalendarCell();
 					this.setValueAt(cell, row, column);
+					
+				} else if (! (cell instanceof CalendarCell)) {
+					System.out.println("Not a calendar cell!");
+					return;
 				}
 				cell.addAppointment(appointment);
-				//emptyCalendar[row][column] = appointment.getDescription();
+				System.out.println("Appointment added; " + appointment);
+				System.out.println(this.getValueAt(row, column));
 			}
-			System.out.println("Appointment added; " + appointment);
 		//}
 		//appointmentList.add(appointment);
 	}
@@ -203,8 +207,6 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 		if (cell != null){
 			cell.removeAppointment(appointment);
 		}
-		
-		
 	}
 
 
