@@ -1,7 +1,6 @@
 package main;
 
-import controllers.LogoutException;
-import controllers.SocketListener;
+import controllers.*;
 import gui.CalendarView;
 import models.*;
 

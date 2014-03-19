@@ -1,9 +1,12 @@
 package controllers;
 
 import models.*;
+import gui.CalendarView;
 
 import java.io.*;
 import java.net.Socket;
+
+import javax.swing.SwingUtilities;
 
 
 /**
@@ -125,11 +128,16 @@ public class SocketListener extends Thread {
     }
 
 
-    public void handleResponse(String responseString) {
+    private void handleResponse(String responseString) {
         object = JSONHandler.parseJSON(responseString);
         
         if (object instanceof Notification) {
-        	// FIXME invoke later on EDT
+        	SwingUtilities.invokeLater(new Runnable() {
+				@Override
+				public void run() {
+					CalendarView.addNotification((Notification)object);
+				}
+			});
         	
         } else if (registeredWaitingInstance != null) {
             registeredWaitingInstance.setReady(true);

@@ -44,6 +44,8 @@ public class CalendarView extends JFrame {
 	private JLabel usernameLabel;
 	private JList<Notification> notificationList;
 	private JSpinner yearSpinner;
+	
+	private static NotificationListModel notificationListModel;
 
 	private JFrame thisFrame;
 
@@ -255,6 +257,7 @@ public class CalendarView extends JFrame {
 
 		notificationList = new JList<Notification>();
 		notificationList.addMouseListener(mouseListener);
+		notificationList.setCellRenderer(new NotificationRenderer());
 		notificationScrollPane.setViewportView(notificationList);
 
 		JLabel notificationLabel = new JLabel(" Varsler");
@@ -445,6 +448,7 @@ public class CalendarView extends JFrame {
 			NotificationListModel notiListModel = new NotificationListModel(loggedInEmployee);
 			notiListModel.initialize();
 			notificationList.setModel(notiListModel);
+			notificationListModel = notiListModel;
 			
 		} catch (LogoutException e) {
 			logoutUser();
@@ -453,6 +457,11 @@ public class CalendarView extends JFrame {
 		}
 
 		//sendWeekCalendarRequest(loggedInEmployee); // probably redundant
+	}
+	
+	
+	public static void addNotification(Notification notification) {
+		notificationListModel.addElement(notification);
 	}
 
 
@@ -475,25 +484,32 @@ public class CalendarView extends JFrame {
 	private MouseAdapter mouseListener = new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent me) {
-			if (me.getSource() == notificationList && me.getClickCount() == 2) {
+			if (me.getSource() == notificationList) {
 				Notification notification = notificationList.getSelectedValue();
 				if (notification == null) return;
 				
-				int appointmentID = notification.getAppointmentID();
-				Appointment app = new Appointment(appointmentID);
-				try {
-					app.initialize();
-					
-					if (app.getAppointmentLeader().equals(loggedInEmployee)) {
-						new EditAppointment(thisFrame, app);
+				if (! notification.isSeen()) {
+					notification.setSeen(true);
+					notification.save();
+				}
+				
+				if (me.getClickCount() == 2) {
+					int appointmentID = notification.getAppointmentID();
+					Appointment app = new Appointment(appointmentID);
+					try {
+						app.initialize();
+						
+						if (app.getAppointmentLeader().equals(loggedInEmployee)) {
+							new EditAppointment(thisFrame, app);
+						}
+						else{
+							new ViewAppointment(thisFrame, app);
+						}
+					} catch (LogoutException e) {
+						logoutUser();
+						initializeLoggedInUser();
+						return;
 					}
-					else{
-						new ViewAppointment(thisFrame, app);
-					}
-				} catch (LogoutException e) {
-					logoutUser();
-					initializeLoggedInUser();
-					return;
 				}
 			}
 		}
