@@ -14,13 +14,16 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
+
 import controllers.*;
 
 import java.awt.Color;
@@ -31,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Calendar;
+import java.util.Iterator;
 
 @SuppressWarnings("serial")
 public class CalendarView extends JFrame {
@@ -279,14 +283,13 @@ public class CalendarView extends JFrame {
 		calendarTableModel = new WeekCalendar();
 		calendarTable = new JTable(calendarTableModel);
 		calendarTable.setModel(calendarTableModel);
-		//calendarTable.setColumnSelectionAllowed(true);
 		calendarTable.setCellSelectionEnabled(true);
-		//calendarTable.setFillsViewportHeight(true);
 		int rowHeight = 45; // 29
 		calendarTable.setPreferredSize(new Dimension(800, rowHeight * 15));
 		calendarTable.setRowHeight(rowHeight);
 		calendarTable.setGridColor(new Color(200, 200, 200));
 		//calendarTable.setDefaultRenderer(CalendarCell.class, new DefaultTableCellRenderer());
+		calendarTable.addMouseListener(mouseListener);
 		calendarPanel.add(calendarTable);
 	}
 
@@ -386,6 +389,29 @@ public class CalendarView extends JFrame {
 			} else if(actionCommand.equals("Logg ut")) {
 				logoutUser();
 				initializeLoggedInUser();
+				
+			} else if(actionCommand.split(" ")[0].equals("cellRightClick")) {
+				if ( column > 0 && row > 0 && column < 8 && row < 15 && loggedInEmployee.equals(calendarTableModel.getEmployee()) ) {
+					int index = Integer.parseInt(actionCommand.split(" ")[1]);
+					CalendarCell calCell = (CalendarCell)calendarTable.getValueAt(row, column);
+					Appointment app = calCell.get(index);
+					
+					try {
+						if (app.getAppointmentLeader().equals(loggedInEmployee)){
+							new EditAppointment(thisFrame, app);
+						}
+						else{
+							new ViewAppointment(thisFrame, app);
+						}
+					} catch (LogoutException e) {
+						logoutUser();
+						initializeLoggedInUser();
+						return;
+					}
+					
+					
+					
+				}
 			}
 		}
 	};
@@ -511,11 +537,33 @@ public class CalendarView extends JFrame {
 						return;
 					}
 				}
+			} else if (me.getSource() == calendarTable && me.getButton() == MouseEvent.BUTTON3) {
+				int column = calendarTable.getSelectedColumn();
+				int row = calendarTable.getSelectedRow();
+				if (column > 0 && row > 0 && column < 8 && row < 15) {
+					CalendarCell calCell = (CalendarCell)calendarTable.getValueAt(row, column);
+					
+					JPopupMenu popup = new JPopupMenu();
+					JMenuItem menuItem;
+					int index = 0;
+					if (calCell != null) for (Appointment app : calCell) {
+						menuItem = new JMenuItem(app.toString());
+						menuItem.setActionCommand("cellRightClick " + index);
+						menuItem.addActionListener(actionListener);
+						popup.add(menuItem);
+						index++;
+					}
+					popup.show(me.getComponent(), me.getX(), me.getY());
+				}
 			}
 		}
 	};
+	
+	
 
 
 
 }
+
+
 

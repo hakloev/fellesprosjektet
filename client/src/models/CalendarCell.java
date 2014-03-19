@@ -43,4 +43,12 @@ public class CalendarCell implements Iterable<Appointment> {
 	public Iterator<Appointment> iterator() {
 		return appointments.iterator();
 	}
+	
+	public Appointment get(int index) {
+		return appointments.get(index);
+	}
+	
+	
 }
+
+
