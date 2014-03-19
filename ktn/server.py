@@ -140,10 +140,12 @@ class Server(object):
                     self.msgQ[sock].put(self.createJSON('message', None, msgToOthers + self.generateWhiteSpaces(84 - len(msgToOthers)), None))
                 else:
                     if self.debug: print 'Server.handleJSON: INVALID USERNAME %s' % data['username']
-                    self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, 'Invalid username!'))
+                    errorMsg = '| %s  SERVER | Invalid username!' % time.strftime("%H:%M:%S")
+                    self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, errorMsg + self.generateWhiteSpaces(84 - len(errorMsg))))
         else:
             if self.debug: print 'Server.handleJSON: USERNAME %s ALREADY TAKEN' % data['username'] 
-            self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, 'Name already taken!'))
+            errorMsg = '| %s  SERVER | Name already taken!' % time.strftime("%H:%M:%S")
+            self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, errorMsg + self.generateWhiteSpaces(84 - len(errorMsg))))
 
     def logoutRequest(self, sock):
         if sock in self.usernames.keys():
