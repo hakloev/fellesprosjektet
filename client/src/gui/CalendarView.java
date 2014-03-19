@@ -276,6 +276,7 @@ public class CalendarView extends JFrame {
 
 		calendarTableModel = new WeekCalendar();
 		calendarTable = new JTable(calendarTableModel);
+		calendarTable.setModel(calendarTableModel);
 		//calendarTable.setColumnSelectionAllowed(true);
 		calendarTable.setCellSelectionEnabled(true);
 		//calendarTable.setFillsViewportHeight(true);
@@ -320,11 +321,10 @@ public class CalendarView extends JFrame {
 					initializeLoggedInUser();
 					return;
 				}
-
 			}
 			else if (actionCommand.equals("Avtalevisning")) {
 				if (column > 0 && row > 0 && column < 8 && row < 15) {
-					Appointment app = (Appointment) calendarTableModel.getValueAt(row, column);
+					Appointment app = ((CalendarCell)calendarTableModel.getValueAt(row, column)).getfirst();
 					if (app == null) return;
 					
 					try {
@@ -339,12 +339,11 @@ public class CalendarView extends JFrame {
 						initializeLoggedInUser();
 						return;
 					}
-					
 				}
 			}
 			else if(actionCommand.equals("Slett avtale")) {
 				if (column > 0 && row > 0 && column < 8 && row < 15) {
-					Appointment app = (Appointment) calendarTableModel.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
+					Appointment app = ((CalendarCell)calendarTableModel.getValueAt(row, column)).getfirst();
 					if (app == null) return;
 					
 					int choice = JOptionPane.showConfirmDialog(thisFrame,

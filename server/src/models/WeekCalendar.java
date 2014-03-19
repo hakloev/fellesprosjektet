@@ -40,7 +40,9 @@ public class WeekCalendar implements DBInterface {
 		Calendar start = Calendar.getInstance();
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		try {
-			String sql = "SELECT avtaleid FROM avtale WHERE start >= '" + sdf.format(startDate) + "' AND slutt <= '" + sdf.format(endDate) + "'";
+			String sql = "SELECT a.avtaleid FROM avtale a, deltager d WHERE start >= '" +
+					sdf.format(startDate) + "' AND slutt <= '" + sdf.format(endDate) + "' AND d.brukernavn = '" +
+					employee.getUsername() + "' AND a.avtaleid = d.avtaleid";
 			Statement stmt = dbCon.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {

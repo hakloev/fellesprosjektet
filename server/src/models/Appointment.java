@@ -144,14 +144,27 @@ public class Appointment implements DBInterface {
 			Statement stmt = dbCon.createStatement();
 			DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String sql;
-			if (this.location == null) {
-				sql = "insert into avtale (avtaleansvarlig, start, slutt, beskrivelse, sted, romkode) values ('" + this.getAppointmentLeader().getUsername()
-						+ "', '"  + sdf.format(this.startDateTime.getTime()) + "', '" + sdf.format(this.endDateTime.getTime()) + "', '" + this.description + "', '" + this.locationText
-						+ "', null)";
+			if (this.getAppointmentID() == 0) {
+				if (this.location == null) {
+					sql = "INSERT INTO avtale (avtaleansvarlig, start, slutt, beskrivelse, sted, romkode) VALUES ('" + this.getAppointmentLeader().getUsername()
+							+ "', '"  + sdf.format(this.startDateTime.getTime()) + "', '" + sdf.format(this.endDateTime.getTime()) + "', '" + this.description + "', '" + this.locationText
+							+ "', null)";
+				} else {
+					sql = "insert into avtale (avtaleansvarlig, start, slutt, beskrivelse, sted, romkode) values ('" + this.getAppointmentLeader().getUsername()
+							+ "', '"  + sdf.format(this.startDateTime.getTime()) + "', '" + sdf.format(this.endDateTime.getTime()) + "', '" + this.description + "', '" + this.locationText
+							+ "', '" + this.location.getRoomCode() + "')";
+				}
 			} else {
-				sql = "insert into avtale (avtaleansvarlig, start, slutt, beskrivelse, sted, romkode) values ('" + this.getAppointmentLeader().getUsername()
-						+ "', '"  + sdf.format(this.startDateTime.getTime()) + "', '" + sdf.format(this.endDateTime.getTime()) + "', '" + this.description + "', '" + this.locationText
-						+ "', '" + this.location.getRoomCode() + "')";
+				if (this.location == null) {
+					sql = "UPDATE avtale SET avtaleansvarlig = '" + this.getAppointmentLeader().getUsername() + "', beskrivelse = '" + this.description + "', sted = '"
+				            + this.locationText + "', start = '" + sdf.format(this.startDateTime.getTime()) + "', slutt = '" + sdf.format(this.endDateTime.getTime())
+							+ "' WHERE avtale.avtaleid = " + this.getAppointmentID() + " LIMIT 1";
+
+				} else {
+					sql = "UPDATE avtale SET avtaleansvarlig = '" + this.getAppointmentLeader().getUsername() + "', beskrivelse = '" + this.description + "', sted = '"
+							+ this.locationText + "', start = '" + sdf.format(this.startDateTime.getTime()) + "', slutt = '" + sdf.format(this.endDateTime.getTime())
+							+ "', romkode = '" + this.location.getRoomCode() + "' WHERE avtale.avtaleid = " + this.getAppointmentID() + " LIMIT 1";
+				}
 			}
 			System.out.println(sql);
 			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);

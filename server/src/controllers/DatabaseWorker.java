@@ -176,6 +176,18 @@ public class DatabaseWorker {
 			array.add(participant);
 		}
 		appointment.put("participants", array);
+
+		EmailListModel emailListModel = new EmailListModel();
+		emailListModel.setAppointmentID(a.getAppointmentID());
+		emailListModel.initialize();
+		if (!emailListModel.isEmpty()) {
+			JSONArray array1 = new JSONArray();
+			for (int i = 0; i < emailListModel.size(); i++) {
+				array1.add(emailListModel.get(i).toString());
+			}
+			appointment.put("emaillistmodel", array1);
+		}
+
 		jsonObject.put("response", "appointment");
 		jsonObject.put("dbmethod", "initialize");
 		jsonObject.put("model", appointment);
@@ -202,6 +214,7 @@ public class DatabaseWorker {
 		} catch (java.text.ParseException e1) {
 			e1.printStackTrace();
 		}
+
 		JSONArray array = (JSONArray) model.get("participants");
 		ParticipantListModel plm = new ParticipantListModel();
 		Iterator<JSONObject> iterator = array.iterator();
@@ -219,9 +232,22 @@ public class DatabaseWorker {
 					pStatus, Boolean.valueOf(p.get("showInCalendar").toString()));
 		    plm.addElement(participant);
 		}
+
+		a.setAppointmentID(Integer.valueOf(model.get("appointmentID").toString()));
 		a.save();
 		plm.setAppointmentID(a.getAppointmentID());
 		plm.save();
+
+		EmailListModel emailListModel = new EmailListModel();
+		JSONArray email = (JSONArray) model.get("emaillistmodel");
+		Iterator iterator1 = email.iterator();
+		while (iterator1.hasNext()) {
+			Object emailaddress = iterator1.next();
+			emailListModel.addElement((String) emailaddress);
+		}
+		emailListModel.setAppointmentID(a.getAppointmentID());
+		emailListModel.save();
+
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("response", "appointment");
 		jsonObject.put("dbmethod", "save");
