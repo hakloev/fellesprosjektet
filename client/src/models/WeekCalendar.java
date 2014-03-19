@@ -175,7 +175,12 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 				System.out.println("InvalidTimeException");
 			}
 			else {
-				this.setValueAt(appointment, row, column);
+				CalendarCell cell = (CalendarCell) this.getValueAt(row, column);
+				if (cell == null){
+					cell = new CalendarCell();
+					this.setValueAt(cell, row, column);
+				}
+				cell.addAppointment(appointment);
 				//emptyCalendar[row][column] = appointment.getDescription();
 			}
 		}
@@ -185,6 +190,19 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 	
 	public void removeAppointment(Appointment appointment) {
 		// TODO implement logic to remove appointment based on its data
+		int hour = appointment.getStartDateTime().get(Calendar.HOUR_OF_DAY);
+		hour-= 6;
+		int day = appointment.getStartDateTime().get(Calendar.DAY_OF_WEEK);
+		if (day == 1){
+			day = 7;
+		}
+		day -= 1;
+		CalendarCell cell = (CalendarCell) this.getValueAt(day, hour);
+		if (cell != null){
+			cell.removeAppointment(appointment);
+		}
+		
+		
 	}
 
 
