@@ -55,7 +55,13 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.currentUser = currentUser;
 
 		Date startDateTime = appointment.getStartDateTime().getTime();
-		Date endDateTime = appointment.getEndDateTime().getTime();
+		Date endDateTime;
+		if (appointment.getEndDateTime() != null) {
+			endDateTime = appointment.getEndDateTime().getTime();
+		} else {
+			endDateTime = new Date(startDateTime.getTime());
+			endDateTime.setHours(endDateTime.getHours() + 1);
+		}
 
 		GridBagLayout gbl = new GridBagLayout();
 		this.setLayout(gbl);
@@ -210,6 +216,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_placeTextField.gridy = 4;
 		this.add(placeTextField, gbc_placeTextField);
 		placeTextField.setText(appointment.getLocationText());
+		placeTextField.addFocusListener(this);
 
 		btnVelgRom = new JButton("Velg rom");
 		GridBagConstraints gbc_btnVelgRom = new GridBagConstraints();
@@ -422,18 +429,15 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 	@Override
 	public void focusGained(FocusEvent arg0) {
-		// TODO Remove focuslistener?
-
+		// Empty
 	}
-
-
 	@Override
 	public void focusLost(FocusEvent arg0) {
-
 		if (arg0.getSource() == descriptionTextArea){
 			appointment.setDescription(descriptionTextArea.getText());
+		} else if (arg0.getSource() == placeTextField) {
+			appointment.setLocation(placeTextField.getText());
 		}
-
 	}
 
 	@Override
