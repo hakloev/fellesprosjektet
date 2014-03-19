@@ -150,7 +150,7 @@ public class Appointment implements DBInterface {
 							+ "', '"  + sdf.format(this.startDateTime.getTime()) + "', '" + sdf.format(this.endDateTime.getTime()) + "', '" + this.description + "', '" + this.locationText
 							+ "', null)";
 				} else {
-					sql = "insert into avtale (avtaleansvarlig, start, slutt, beskrivelse, sted, romkode) values ('" + this.getAppointmentLeader().getUsername()
+					sql = "INSERT INTO avtale (avtaleansvarlig, start, slutt, beskrivelse, sted, romkode) VALUES ('" + this.getAppointmentLeader().getUsername()
 							+ "', '"  + sdf.format(this.startDateTime.getTime()) + "', '" + sdf.format(this.endDateTime.getTime()) + "', '" + this.description + "', '" + this.locationText
 							+ "', '" + this.location.getRoomCode() + "')";
 				}
