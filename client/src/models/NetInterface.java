@@ -19,8 +19,9 @@ public interface NetInterface {
 	
 	/**
 	 * Saves this object to the server
+	 * @throws LogoutException 
 	 */
-	public void save();
+	public void save() throws LogoutException;
 	
 	/**
 	 * Deletes this object from the server

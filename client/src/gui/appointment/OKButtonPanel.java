@@ -51,7 +51,13 @@ class OKButtonPanel extends JPanel implements ActionListener {
 		
 		if(actionCommand.equals("OK")){
 			if (parent instanceof EditAppointment) {
-				appointment.save();
+				try {
+					appointment.save();
+				} catch (LogoutException e) {
+					// TODO notify calendarView of logout
+					//e.printStackTrace();
+					System.out.println(e.getMessage());
+				}
 				
 			} else if (parent instanceof ViewAppointment) {
 				currentUser.save(appointment.getAppointmentID());
@@ -63,7 +69,7 @@ class OKButtonPanel extends JPanel implements ActionListener {
 				try {
 					appointment.refresh(); // TODO Implement proper cancel logic instead of using refresh
 				} catch (LogoutException e) {
-					// TODO notify calendarView
+					// TODO notify calendarView of logout
 					//e.printStackTrace();
 					System.out.println(e.getMessage());
 				} 
@@ -79,7 +85,7 @@ class OKButtonPanel extends JPanel implements ActionListener {
 						appointment.delete();
 					}
 					
-					// TODO delete appointment from calendar view. fire property change maybe?
+					// FIXME delete appointment from calendar view. fire property change maybe?
 					//calendarTableModel.removeAppointment(appointment);
 					parent.dispose();
 				}
@@ -94,7 +100,7 @@ class OKButtonPanel extends JPanel implements ActionListener {
 					currentUser.setAlarm(null);
 					currentUser.save(appointment.getAppointmentID());
 					
-					// TODO delete appointment from calendar view. fire property change maybe?
+					// FIXME delete appointment from calendar view. fire property change maybe?
 					//calendarTableModel.removeAppointment(appointment);
 					parent.dispose();
 				}

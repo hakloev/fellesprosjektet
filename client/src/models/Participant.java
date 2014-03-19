@@ -1,6 +1,12 @@
 package models;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+
+import org.json.simple.JSONObject;
+
+import controllers.OutboundWorker;
 
 
 public class Participant {
@@ -99,8 +105,29 @@ public class Participant {
      * 
      * @param appointmentID
      */
-    public void save(int appointmentID) {
-    	// TODO netcode for saving status & alarm to server
+    @SuppressWarnings("unchecked")
+	public void save(int appointmentID) {
+    	JSONObject json;
+        json = new JSONObject();
+        json.put("request","participant");
+        json.put("dbmethod","save");
+        json.put("username", this.userName);
+        json.put("appointmentID", appointmentID);
+        if (this.participantStatus != null) {
+        	json.put("participantstatus", this.participantStatus.toString());
+        } else {
+        	json.put("participantstatus", null);
+        }
+        json.put("showincalendar", this.showInCalendar);
+        if (alarm != null) {
+        	DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        	json.put("alarm", sdf.format(alarm.getTime()));
+        } else {
+        	json.put("alarm", null);
+        }
+        OutboundWorker.sendRequest(json);
+    	
+        // Not really interrested in response
     }
     
     

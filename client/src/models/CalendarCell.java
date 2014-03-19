@@ -26,15 +26,16 @@ public class CalendarCell implements Iterable<Appointment> {
 	
 	@Override
 	public String toString(){
-		String ret = "";
+		String ret = "<html>";
 		for (Appointment app: appointments){
 			if (ret.equals("")){
 				ret += app;
 			}
 			else{
-				ret += "\n" + app;
+				ret += "<br>" + app;
 			}
 		}
+		ret += "</html>";
 		return ret;
 	}
 

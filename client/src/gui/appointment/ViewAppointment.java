@@ -4,9 +4,6 @@ import gui.CalendarView;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.Calendar;
-import java.util.Date;
-
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -43,7 +40,6 @@ public class ViewAppointment extends JDialog {
 		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
-		// TODO send proper time
 		DetailsPanel detailsPanel = new DetailsPanel(this, appointment, currentUser);
 		contentPane.add(detailsPanel, gbc_detailsPanel);
 		detailsPanel.setEnabled(false);

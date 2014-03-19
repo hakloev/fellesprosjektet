@@ -104,7 +104,7 @@ class EditButtonPanel extends JPanel implements ActionListener {
 			try {
 				new EditParticipants(parent, appointment);
 			} catch (LogoutException e) {
-				// TODO notify calendarView
+				// TODO notify calendarView of logout
 				//e.printStackTrace();
 				System.out.println(e.getMessage());
 			}

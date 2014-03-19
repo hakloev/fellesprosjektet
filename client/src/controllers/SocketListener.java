@@ -15,9 +15,7 @@ public class SocketListener extends Thread {
     private int port;
     private Socket socketClient;
     private boolean connected;
-    private BufferedReader readFromServer;
     private static SocketListener socketListener;
-    private InputStream in;
     
     private ResponseWaiter registeredWaitingInstance;
     private Object object;
@@ -44,8 +42,6 @@ public class SocketListener extends Thread {
             	
             	DataInputStream inFromServer = new DataInputStream(socketClient.getInputStream()); 
             	
-                //readFromServer = new BufferedReader(new InputStreamReader(socketClient.getInputStream(), "UTF-8"));
-
                 String responseString = inFromServer.readUTF();
 
                 if (responseString == null) {
@@ -130,17 +126,17 @@ public class SocketListener extends Thread {
 
 
     public void handleResponse(String responseString) {
-
         object = JSONHandler.parseJSON(responseString);
-        if (object instanceof Notification) {
-        	// TODO invoke later on EDT
-        }
         
-        if (registeredWaitingInstance != null) {
+        if (object instanceof Notification) {
+        	// FIXME invoke later on EDT
+        	
+        } else if (registeredWaitingInstance != null) {
             registeredWaitingInstance.setReady(true);
             System.out.println("Other thread set ready");
         }
     }
+    
     
 }
 

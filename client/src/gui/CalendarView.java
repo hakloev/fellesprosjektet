@@ -21,8 +21,6 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
-
 import controllers.*;
 
 import java.awt.Color;
@@ -43,7 +41,6 @@ public class CalendarView extends JFrame {
 	private WeekCalendar calendarTableModel;
 	private JComboBox<Integer> weekComboBox;
 	private JComboBox<Employee> employeeComboBox;
-	private EmployeeComboBoxModel employeeComboBoxModel;
 	private JLabel usernameLabel;
 	private JList<Notification> notificationList;
 	private JSpinner yearSpinner;
@@ -171,7 +168,8 @@ public class CalendarView extends JFrame {
 		gbc_employeeComboBox.gridy = 0;
 		topPanel.add(employeeComboBox, gbc_employeeComboBox);
 		employeeComboBox.setPreferredSize(new Dimension(200, 23));
-		// TODO add listener to combo box
+		employeeComboBox.setActionCommand("employeeComboBox");
+		employeeComboBox.addActionListener(actionListener);
 
 		/* Logged in user */
 		JLabel loginLabel = new JLabel("Innlogget som:");
@@ -297,7 +295,7 @@ public class CalendarView extends JFrame {
 			int column = calendarTable.getSelectedColumn();
 			int row = calendarTable.getSelectedRow();
 			
-			if (actionCommand.equals("Ny avtale")) {
+			if (actionCommand.equals("Ny avtale") && loggedInEmployee.equals(calendarTableModel.getEmployee())) {
 				Calendar startDate = Calendar.getInstance();
 				Appointment app = new Appointment(loggedInEmployee);
 				if (column > 0 && row > 0 && column < 8 && row < 15){
@@ -325,7 +323,7 @@ public class CalendarView extends JFrame {
 					return;
 				}
 			}
-			else if (actionCommand.equals("Avtalevisning")) {
+			else if (actionCommand.equals("Avtalevisning") && loggedInEmployee.equals(calendarTableModel.getEmployee())) {
 				if (column > 0 && row > 0 && column < 8 && row < 15) {
 					Appointment app = ((CalendarCell)calendarTableModel.getValueAt(row, column)).getfirst();
 					if (app == null) return;
@@ -344,7 +342,7 @@ public class CalendarView extends JFrame {
 					}
 				}
 			}
-			else if(actionCommand.equals("Slett avtale")) {
+			else if(actionCommand.equals("Slett avtale") && loggedInEmployee.equals(calendarTableModel.getEmployee())) {
 				if (column > 0 && row > 0 && column < 8 && row < 15) {
 					Appointment app = ((CalendarCell)calendarTableModel.getValueAt(row, column)).getfirst();
 					if (app == null) return;
@@ -378,6 +376,9 @@ public class CalendarView extends JFrame {
 
 			} else if(actionCommand.equals("week")) {
 				sendWeekCalendarRequest(calendarTableModel.getEmployee());
+				
+			} else if(actionCommand.equals("employeeComboBox")) {
+				sendWeekCalendarRequest((Employee)employeeComboBox.getSelectedItem());
 
 			} else if(actionCommand.equals("Logg ut")) {
 				logoutUser();
@@ -429,30 +430,29 @@ public class CalendarView extends JFrame {
 
 
 	private void initializeLoggedInUser() {
-		Employee[] user = new Employee[1]; // point to something mutable so we can get it back
+		Employee[] user = new Employee[1]; // point to something mutable so we can get the user back
 		new LoginScreen(thisFrame, user);
 		usernameLabel.setText(user[0].getUsername());
 		loggedInEmployee = user[0];
 
 		/* Do initialization */
-		// TODO proper initialization
 		EmployeeComboBoxModel ecbModel = new EmployeeComboBoxModel();
 		try {
 			ecbModel.initialize();
+			employeeComboBox.setModel(ecbModel);
+			employeeComboBox.setSelectedItem(loggedInEmployee);
+			
+			NotificationListModel notiListModel = new NotificationListModel(loggedInEmployee);
+			notiListModel.initialize();
+			notificationList.setModel(notiListModel);
+			
 		} catch (LogoutException e) {
 			logoutUser();
 			initializeLoggedInUser(); // tjuvtriks
 			return;
 		}
-		employeeComboBox.setModel(ecbModel);
-		employeeComboBox.setSelectedItem(loggedInEmployee);
-		//employeeComboBox.updateUI();
 
-		NotificationListModel notiListModel = new NotificationListModel();
-		notiListModel.initialize();
-		notificationList.setModel(notiListModel);
-
-		sendWeekCalendarRequest(loggedInEmployee);
+		//sendWeekCalendarRequest(loggedInEmployee); // probably redundant
 	}
 
 

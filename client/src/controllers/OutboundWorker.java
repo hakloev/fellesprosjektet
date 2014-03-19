@@ -3,7 +3,6 @@ package controllers;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import java.io.BufferedOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
@@ -33,7 +32,8 @@ public class OutboundWorker {
     }
     
 
-    public static boolean login(String username, char[] password) {
+    @SuppressWarnings("unchecked")
+	public static boolean login(String username, char[] password) {
         JSONObject json;
         StringBuilder sb = new StringBuilder(password.length);
         for (Character c : password)

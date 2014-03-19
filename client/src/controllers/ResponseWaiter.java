@@ -19,7 +19,7 @@ public class ResponseWaiter extends Thread {
 		int counter = 0;
 		
 		while(! ready) {
-			if (counter > 200) { // Timeout 10s
+			if (counter > 400) { // Timeout 10s
 				socketListener.unregister(this);
 				JOptionPane.showMessageDialog(null, "Tidsavbrudd!", "Feil", JOptionPane.ERROR_MESSAGE);
 				throw new LogoutException("Timed out waiting for response");
@@ -27,9 +27,9 @@ public class ResponseWaiter extends Thread {
 			counter++;
 			
 			try {
-				Thread.sleep(50);
+				Thread.sleep(25);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
+				// Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
