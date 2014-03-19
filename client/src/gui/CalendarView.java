@@ -170,6 +170,7 @@ public class CalendarView extends JFrame {
 		gbc_employeeComboBox.gridy = 0;
 		topPanel.add(employeeComboBox, gbc_employeeComboBox);
 		employeeComboBox.setPreferredSize(new Dimension(200, 23));
+		// TODO add listener to combo box
 
 		/* Logged in user */
 		JLabel loginLabel = new JLabel("Innlogget som:");
@@ -289,9 +290,10 @@ public class CalendarView extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			String actionCommand = ae.getActionCommand();
+			int column = calendarTable.getSelectedColumn();
+			int row = calendarTable.getSelectedRow();
+			
 			if (actionCommand.equals("Ny avtale")) {
-				int column = calendarTable.getSelectedColumn();
-				int row = calendarTable.getSelectedRow();
 				Calendar startDate = Calendar.getInstance();
 				Appointment app = new Appointment(loggedInEmployee);
 				if (column > 0 && row > 0 && column < 8 && row < 15){
@@ -311,23 +313,43 @@ public class CalendarView extends JFrame {
 					startDate.set(Calendar.MINUTE, 0);
 				}
 				app.setStartDateTime(startDate);
-				new EditAppointment(thisFrame, app);
+				try {
+					new EditAppointment(thisFrame, app);
+				} catch (LogoutException e) {
+					logoutUser();
+					initializeLoggedInUser();
+					return;
+				}
 
 			}
-			else{
-				Appointment app = (Appointment) calendarTableModel.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
-				if (actionCommand.equals("Avtalevisning") && app != null) {
-					if (app.getAppointmentLeader().equals(loggedInEmployee)){
-						new EditAppointment(thisFrame, app);
+			else if (actionCommand.equals("Avtalevisning")) {
+				if (column > 0 && row > 0 && column < 8 && row < 15) {
+					Appointment app = (Appointment) calendarTableModel.getValueAt(row, column);
+					if (app == null) return;
+					
+					try {
+						if (app.getAppointmentLeader().equals(loggedInEmployee)){
+							new EditAppointment(thisFrame, app);
+						}
+						else{
+							new ViewAppointment(thisFrame, app);
+						}
+					} catch (LogoutException e) {
+						logoutUser();
+						initializeLoggedInUser();
+						return;
 					}
-					else{
-						new ViewAppointment(thisFrame, app);
-					}
+					
 				}
-				else if(actionCommand.equals("Slett avtale") && app != null) {
+			}
+			else if(actionCommand.equals("Slett avtale")) {
+				if (column > 0 && row > 0 && column < 8 && row < 15) {
+					Appointment app = (Appointment) calendarTableModel.getValueAt(calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
+					if (app == null) return;
+					
 					int choice = JOptionPane.showConfirmDialog(thisFrame,
 							"Er du sikker på at du vil slette denne avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
-
+					
 					if (choice == 0) { // delete
 						if (app.getAppointmentLeader().equals(loggedInEmployee)) {
 							app.delete();
@@ -342,12 +364,12 @@ public class CalendarView extends JFrame {
 						}
 						calendarTableModel.setValueAt(null, calendarTable.getSelectedRow(), calendarTable.getSelectedColumn());
 					}
-
 				}
-			} if(actionCommand.equals("->")) {
+			}
+			else if(actionCommand.equals("->")) {
 				weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() + 1);
 				sendWeekCalendarRequest(calendarTableModel.getEmployee());
-
+				
 			} else if(actionCommand.equals("<-")) {
 				weekComboBox.setSelectedItem((Integer)weekComboBox.getSelectedItem() - 1);
 				sendWeekCalendarRequest(calendarTableModel.getEmployee());
@@ -453,25 +475,27 @@ public class CalendarView extends JFrame {
 		public void mouseClicked(MouseEvent me) {
 			if (me.getSource() == notificationList && me.getClickCount() == 2) {
 				Notification notification = notificationList.getSelectedValue();
+				if (notification == null) return;
+				
 				int appointmentID = notification.getAppointmentID();
 				Appointment app = new Appointment(appointmentID);
 				try {
 					app.initialize();
+					
+					if (app.getAppointmentLeader().equals(loggedInEmployee)) {
+						new EditAppointment(thisFrame, app);
+					}
+					else{
+						new ViewAppointment(thisFrame, app);
+					}
 				} catch (LogoutException e) {
 					logoutUser();
 					initializeLoggedInUser();
 					return;
 				}
-				if (app.getAppointmentLeader().equals(loggedInEmployee)) {
-					new EditAppointment(thisFrame, app);
-				}
-				else{
-					new ViewAppointment(thisFrame, app);
-				}
 			}
 		}
 	};
-	
 
 
 

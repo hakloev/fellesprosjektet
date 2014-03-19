@@ -308,7 +308,7 @@ public class Appointment implements NetInterface {
 
 	@Override
 	public String toString() {
-		return appointmentLeader.getName().split(" ")[0] + " : " + locationText;
+		return " " + appointmentLeader.getUsername() + " : " + locationText;
 	}
 
 	@Override
@@ -362,7 +362,7 @@ public class Appointment implements NetInterface {
         jsonObject.put("appointmentID", appointmentID);
         
         JSONArray emailarray = new JSONArray();
-        for (int i = 0; i < emailRecipientsList.getSize(); i++) {
+        if (emailRecipientsList != null) for (int i = 0; i < emailRecipientsList.getSize(); i++) {
         	emailarray.add(emailRecipientsList.get(i));
         }
         jsonObject.put("emaillistmodel", emailarray);
@@ -386,7 +386,7 @@ public class Appointment implements NetInterface {
         JSONObject json = new JSONObject();
         json.put("dbmethod", "delete");
         json.put("request","appointment");
-        json.put("appointmentid",this.appointmentID);
+        json.put("appointmentID",this.appointmentID);
         OutboundWorker.sendRequest(json);
 	}
     

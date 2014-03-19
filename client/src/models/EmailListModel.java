@@ -23,7 +23,7 @@ public class EmailListModel extends DefaultListModel<String> {
 	 */
 	public EmailListModel(EmailListModel oldList) {
 		super();
-		for (Object email : oldList.toArray()){
+		if (oldList != null) for (Object email : oldList.toArray()){
 			this.addElement((String) email);
 		}
 	}

@@ -5,6 +5,7 @@ import gui.CalendarView;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+import controllers.LogoutException;
 import models.*;
 
 import java.awt.GridBagConstraints;
@@ -23,7 +24,7 @@ public class EditAppointment extends JDialog {
 	private DetailsPanel detailsPanel;
 	
 	
-	public EditAppointment(JFrame parent, Appointment appointment) {
+	public EditAppointment(JFrame parent, Appointment appointment) throws LogoutException {
 		super(parent, true);
 		this.setTitle("Rediger avtale");
 		this.setResizable(false);
@@ -32,6 +33,10 @@ public class EditAppointment extends JDialog {
 		this.setContentPane(contentPane);
 		
 		ParticipantListModel plModel = appointment.getParticipantList();
+		if (plModel == null) {
+			appointment.initialize();
+			plModel = appointment.getParticipantList();
+		}
 		Participant currentUser = plModel.get(plModel.indexOf(new Participant( ((CalendarView)parent).getLoggedInEmployee() )));
 		
 		GridBagLayout gbl = new GridBagLayout();

@@ -12,6 +12,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import controllers.LogoutException;
 import models.*;
 
 @SuppressWarnings("serial")
@@ -21,7 +22,7 @@ public class ViewAppointment extends JDialog {
 	private JPanel contentPane;
 	
 	
-	public ViewAppointment(JFrame parent, Appointment appointment) {
+	public ViewAppointment(JFrame parent, Appointment appointment) throws LogoutException {
 		super(parent, true);
 		this.setTitle("Avtalevisning");
 		this.setResizable(false);
@@ -30,6 +31,9 @@ public class ViewAppointment extends JDialog {
 		this.setContentPane(contentPane);
 		
 		ParticipantListModel plModel = appointment.getParticipantList();
+		if (plModel == null) {
+			appointment.initialize();
+		}
 		Participant currentUser = plModel.get(plModel.indexOf(new Participant( ((CalendarView)parent).getLoggedInEmployee() )));
 		
 		GridBagLayout gbl = new GridBagLayout();

@@ -31,7 +31,7 @@ public class SocketListener extends Thread {
     
     
     public SocketListener() {
-    	this("78.91.28.182", 4657);
+    	this("78.91.29.127", 4657);
     }
     
     
@@ -42,8 +42,7 @@ public class SocketListener extends Thread {
 
             while(connected) {
             	
-            	in = socketClient.getInputStream();
-            	DataInputStream inFromServer = new DataInputStream(in); 
+            	DataInputStream inFromServer = new DataInputStream(socketClient.getInputStream()); 
             	
                 //readFromServer = new BufferedReader(new InputStreamReader(socketClient.getInputStream(), "UTF-8"));
 

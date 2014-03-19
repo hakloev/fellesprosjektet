@@ -47,7 +47,7 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 	private static Object[] columnTitles = new String[] {
 		"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
 
-
+	
 	public WeekCalendar() {
 		super(emptyCalendar, columnTitles);
 		//appointmentList = new ArrayList<Appointment>();
@@ -84,12 +84,11 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
         	Vector dataVector = weekCal.getDataVector();
         	for (Object vector : dataVector) {
         		for (Object app : (Vector)vector) {
-        			if (app != null) {
+        			if (app != null && app instanceof Appointment) {
         				this.addAppointment((Appointment)app);
         			}
         		}
         	}
-        	
         }
 	}
 
@@ -162,23 +161,26 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 	
 	public void addAppointment(Appointment appointment) {
 		Calendar dateTime = appointment.getStartDateTime();
-		if (dateTime.getWeekYear() == week){
-			int row = dateTime.get(Calendar.DAY_OF_WEEK);
-			if (row == Calendar.SUNDAY) {
-				row = 7;
+		//if (dateTime.getWeekYear() == week){
+			int column = dateTime.get(Calendar.DAY_OF_WEEK);
+			if (column == Calendar.SUNDAY) {
+				column = 7;
 			} else {
-				row -= 1;
+				column -= 1;
 			}
-			int column = dateTime.get(Calendar.HOUR_OF_DAY);
-			column -= 6;
-			if (column < 1 || column > 14) {
+			int row = dateTime.get(Calendar.HOUR_OF_DAY);
+			row -= 6;
+			System.out.println("Column: " + column);
+			System.out.println("Row: " + row);
+			if (row < 1 || row > 14) {
 				System.out.println("InvalidTimeException");
 			}
 			else {
 				this.setValueAt(appointment, row, column);
 				//emptyCalendar[row][column] = appointment.getDescription();
 			}
-		}
+			System.out.println("Appointment added; " + appointment);
+		//}
 		//appointmentList.add(appointment);
 	}
 	
