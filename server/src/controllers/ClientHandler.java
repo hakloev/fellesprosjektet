@@ -44,10 +44,14 @@ public class ClientHandler extends Thread implements Runnable {
 			writeToClient = new DataOutputStream(_SOCKET.getOutputStream());
 
 			while (_SERVING) {
-				InputStream in = _SOCKET.getInputStream();
-				inFromClient = new DataInputStream(in);
+				inFromClient = new DataInputStream(_SOCKET.getInputStream());
 				//readFromClient = new BufferedReader(new InputStreamReader(_SOCKET.getInputStream(), "UTF-8"));
-				Request request = acceptIncomingRequest(inFromClient.readUTF()); //readFromClient.readLine());
+				Request request = null;
+				try {
+					request = acceptIncomingRequest(inFromClient.readUTF()); //readFromClient.readLine());
+				} catch (EOFException e) {
+					System.out.println("ClientHandler.run: EOFException, BUT WHHHHHHYYYYYY (PS: KILLROY WAS HERE)");
+				}
 				start = Calendar.getInstance();
 				if (request == null) {
 					System.out.println("ClientHandler.run " + _CONNECTIONID + ": CLIENT FROM " +

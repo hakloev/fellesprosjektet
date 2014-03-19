@@ -183,6 +183,14 @@ public class Appointment implements DBInterface {
 	@Override
 	public void delete() {
 		System.out.println("Appointment.delete");
+		Connection dbCon = DBconnection.getConnection();
+		try {
+			Statement stmt = dbCon.createStatement();
+			String sql = "DELETE FROM 'avtale' WHERE avtaleid = " + this.getAppointmentID();
+			stmt.close();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

@@ -53,7 +53,6 @@ public class WeekCalendar implements DBInterface {
 			}
 			stmt.close();
 			rs.close();
-			System.out.println(this.appointmentList.toString());
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 		}

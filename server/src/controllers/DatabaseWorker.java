@@ -67,6 +67,13 @@ public class DatabaseWorker {
 					a.setAppointmentID(appointmentID);
 					a.initialize();
 					response = new Response(sendAppointment(a));
+				} else if (dbMethod.equals("save")) {
+					System.out.println("DatabaseWorker.handleRequest: APPOINTMENT SAVE");
+					int appointmentID = Integer.valueOf(jsonObject.get("appointmentID").toString());
+					Appointment a = new Appointment();
+					a.setAppointmentID(appointmentID);
+					a.delete();
+					response = new Response(deleteAppointment(a));
 				}
 			} else if (requestType.equals("roomlistmodel")) {
 				System.out.println("DatabaseWorker.handleRequest: ROOMLISTMODEL");
@@ -101,6 +108,15 @@ public class DatabaseWorker {
 			e.printStackTrace();
 		}
 		return response;
+	}
+
+	private static String deleteAppointment(Appointment a) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("response", "appointment");
+		jsonObject.put("dbmethod", "delete");
+		jsonObject.put("appointmentID", a.getAppointmentID());
+		return jsonObject.toJSONString();
+
 	}
 
 	private static String employeeListModelAsJSON(EmployeeListModel employeeListModel) {

@@ -84,8 +84,13 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 						deltar = "deltar_ikke";
 					}
 				}
-				// TODO: SKILLE MELLOM NULL OG IKKE I DELTAR, TO SPøRRINGER
-				sql = "insert into deltager values ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', 'null', '" + show + "')";
+				if (deltar == null) {
+				// TODO: SKILLER FORHÅPENTLIGVIS MELLOM DELTAR SATT ELLER IKKE
+					sql = "insert into deltager (brukernavn, avtaleid, vises) values ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + show + "')";
+				} else {
+					sql = "insert into deltager values ('" + p.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', 'null', '" + show + "')";
+
+				}
 				System.out.println(sql);
 				stmt.executeUpdate(sql);
 			}
