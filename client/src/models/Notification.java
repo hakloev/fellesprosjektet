@@ -15,9 +15,9 @@ public class Notification implements NetInterface {
 	private String type;
 	
 	
-	public Notification(int notificationID, String userName, int appointmentID, String type) {
+	public Notification(int notificationID, int appointmentID, String type) {
 		this.notificationID = notificationID;
-		this.userName = userName;
+		//this.userName = userName;
 		this.appointmentID = appointmentID;
 		this.type = type;
 		this.isSeen = false;
@@ -78,7 +78,7 @@ public class Notification implements NetInterface {
         json.put("request","notification");
         json.put("dbmethod","save");
         json.put("notificationID", this.notificationID);
-        json.put("isseen", this.isSeen);
+        json.put("isseen", (this.isSeen ? 1 : 0));
         OutboundWorker.sendRequest(json);
         
         // Not really interrested in response
