@@ -8,16 +8,6 @@ import controllers.SocketListener;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-
-
-
-
-
-
-
-
-
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.text.DateFormat;

@@ -114,7 +114,18 @@ public class DatabaseWorker {
 				if (dbMethod.equals("initialize")) {
 					System.out.println("DatabaseWorker.handleRequest: NOTIFICATIONLISTMODEL INITIALIZE");
 					NotificationListModel notificationListModel = new NotificationListModel();
+					notificationListModel.setUsername((String) jsonObject.get("employee"));
+					notificationListModel.initialize();
 					response = new Response(notificationListModelAsJSON(notificationListModel));
+				}
+			} else if (requestType.equals("notification")) {
+				System.out.println("DatabaseWorker.handleRequest: NOTIFICATION");
+				String dbMethod = (String) jsonObject.get("dbmethod");
+				if (dbMethod.equals("save")) {
+					System.out.println("DatabaseWorker.handleRequest: NOTIFICATION SAVE");
+					Notification n = new Notification(Integer.valueOf(jsonObject.get("notificationID").toString()), null, 0, null,  Integer.valueOf(jsonObject.get("isseen").toString()));
+					n.save();
+					response = new Response(notificationSave(n));
 				}
 			} else if (requestType.equals("participant")) {
 				System.out.println("DatabaseWorker.handleRequest: PARTICIPANT");
@@ -138,6 +149,14 @@ public class DatabaseWorker {
 		return response;
 	}
 
+	private static String notificationSave(Notification n) {
+		JSONObject jsonObject =  new JSONObject();
+		jsonObject.put("response", "notification");
+		jsonObject.put("dbmethod", "save");
+		jsonObject.put("notification", n.getNotificationID());
+		return jsonObject.toJSONString();
+	}
+
 	private static String saveParticipant(Participant p) {
 		JSONObject jsonObject =  new JSONObject();
 		jsonObject.put("response", "participant");
@@ -159,6 +178,16 @@ public class DatabaseWorker {
 		JSONObject jsonObject =  new JSONObject();
 		jsonObject.put("response", "notificationlistmodel");
 		jsonObject.put("dbmethod", "initialize");
+		JSONArray array = new JSONArray();
+		for (int i = 0; i < notificationListModel.size(); i++) {
+			Notification n = notificationListModel.get(i);
+			JSONObject object = new JSONObject();
+			jsonObject.put("notificationID", n.getNotificationID());
+			jsonObject.put("isSeen", n.isSeen());
+			jsonObject.put("type", n.getType());
+			jsonObject.put("appointmentID", n.getAppointmentID());
+		    array.add(object);
+		}
 		return jsonObject.toJSONString();
 
 	}

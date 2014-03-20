@@ -84,7 +84,7 @@ public class ClientHandler extends Thread implements Runnable {
 
 		} catch (SocketException e) {
 			System.out.println("ClientHandler.run " + _CONNECTIONID + ": CLIENT FROM " +
-					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + "CLOSED UNEXPECTEDLY (SocketException)");
+					_SOCKET.getInetAddress() + " ON PORT " + _SOCKET.getPort() + " CLOSED UNEXPECTEDLY (SocketException)");
 			printKilroy();
 			e.printStackTrace();
 		} catch (IOException e) {
