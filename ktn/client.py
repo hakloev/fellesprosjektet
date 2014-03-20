@@ -81,6 +81,7 @@ class Client(object):
         print '|                                                                                  |'
         print '|                                   GOOD BYE!                                      |'
         print '*==================================================================================*'
+        raw_input('')
         sys.exit(0)
     
     # Method that sends data to the server
