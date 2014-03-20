@@ -317,7 +317,7 @@ public class CalendarView extends JFrame {
 					
 					startDate.set(Calendar.DAY_OF_WEEK, day);
 					int hour = row + 6;
-					startDate.set(Calendar.HOUR, hour);
+					startDate.set(Calendar.HOUR_OF_DAY, hour);
 					startDate.set(Calendar.MINUTE, 0);
 				}
 				app.setStartDateTime(startDate);
