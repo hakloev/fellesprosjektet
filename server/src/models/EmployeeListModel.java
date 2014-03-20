@@ -1,6 +1,5 @@
 package models;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import controllers.DBconnection;
 
 import javax.swing.DefaultListModel;

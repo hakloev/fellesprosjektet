@@ -118,8 +118,10 @@ public class Appointment implements DBInterface {
 				this.endDateTime.setTime(sdf.parse(String.valueOf(rs.getString(4))));
 				this.description = rs.getString(5);
 				this.locationText = rs.getString(6);
-				this.setLocation(new Room(rs.getString(7), 0));
-				this.getRoom().refresh();
+				if (rs.getObject(7) != null) {
+					this.setLocation(new Room(rs.getString(7), 0));
+					this.getRoom().refresh();
+				}
 			}
 			stmt.close();
 			rs.close();
@@ -169,10 +171,26 @@ public class Appointment implements DBInterface {
 			System.out.println(sql);
 			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 
+			int getPrevAppointmentID = this.getAppointmentID();
+
 			ResultSet rs = stmt.getGeneratedKeys();
 			while (rs.next()) {
 				this.setAppointmentID(rs.getInt(1));
 			}
+			rs.close();
+
+			String notificationSql = null;
+			for (int i = 0; i < participantList.size(); i++) {
+				if (getPrevAppointmentID == 0) {
+					notificationSql = "INSERT INTO varsel (avtaleid, brukernavn, type_varsel) VALUES ('" + this.getAppointmentID() + "', '" + participantList.get(i).getUserName() +
+						"', '" + "ny_avtale" + "')";
+				} else {
+					notificationSql = "UPDATE varsel SET type_varsel = 'endret_avtale' WHERE avtaleid = " + this.getAppointmentID();
+				}
+				System.out.println(notificationSql);
+				stmt.executeUpdate(notificationSql, Statement.RETURN_GENERATED_KEYS);
+			}
+
 			rs.close();
 			stmt.close();
 		} catch (SQLException e) {
@@ -186,7 +204,12 @@ public class Appointment implements DBInterface {
 		Connection dbCon = DBconnection.getConnection();
 		try {
 			Statement stmt = dbCon.createStatement();
-			String sql = "DELETE FROM 'avtale' WHERE avtaleid = " + this.getAppointmentID();
+			String sql = "DELETE FROM avtale WHERE avtaleid = " + this.getAppointmentID();
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
+			String notificationSql = "UPDATE varsel SET type_varsel = 'avtale_avlyst' WHERE avtaleid = " + this.getAppointmentID();
+			System.out.println(notificationSql);
+			stmt.executeUpdate(notificationSql);
 			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
