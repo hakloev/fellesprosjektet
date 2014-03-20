@@ -10,8 +10,6 @@ import models.*;
 
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.Calendar;
-import java.util.Date;
 
 @SuppressWarnings("serial")
 public class EditAppointment extends JDialog {
@@ -46,8 +44,6 @@ public class EditAppointment extends JDialog {
 		GridBagConstraints gbc_detailsPanel = new GridBagConstraints();
 		gbc_detailsPanel.gridx = 0;
 		gbc_detailsPanel.gridy = 0;
-		
-		// TODO Send proper time
 		detailsPanel = new DetailsPanel(this, appointment, currentUser); 
 		contentPane.add(detailsPanel, gbc_detailsPanel);
 

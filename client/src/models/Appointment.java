@@ -11,6 +11,13 @@ import org.json.simple.JSONObject;
 
 
 
+
+
+
+
+
+
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.text.DateFormat;
@@ -101,6 +108,7 @@ public class Appointment implements NetInterface {
 		startDateTime.setTimeInMillis(date.getTime());
 	}
 
+	@SuppressWarnings("deprecation")
 	public void setStart(Date start){
 		if (startDateTime == null) startDateTime = Calendar.getInstance();
 
@@ -112,6 +120,7 @@ public class Appointment implements NetInterface {
         this.startDateTime = startDateTime;
     }
 
+	@SuppressWarnings("deprecation")
 	public void setEnd(Date end){
 		if (endDateTime == null) endDateTime = Calendar.getInstance();
 
@@ -139,6 +148,7 @@ public class Appointment implements NetInterface {
         this.endDateTime = endDateTime;
     }
 
+	@SuppressWarnings("deprecation")
 	public void setDuration(Date duration){
 		if (startDateTime != null) {
 			String oldValue = this.getEnd();
@@ -311,6 +321,7 @@ public class Appointment implements NetInterface {
 		return " " + appointmentLeader.getUsername() + " : " + locationText;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize() throws LogoutException {
         JSONObject json = new JSONObject();
@@ -334,7 +345,7 @@ public class Appointment implements NetInterface {
         	this.startDateTime = app.startDateTime;
         	this.endDateTime = app.endDateTime;
         	this.emailRecipientsList = app.emailRecipientsList;
-        	// TODO showInCalendar;
+        	// FIXME showInCalendar. not get from server maybe?
         }
 
 	}
@@ -344,8 +355,9 @@ public class Appointment implements NetInterface {
         this.initialize();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void save() {
+	public void save() throws LogoutException {
         DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         JSONObject json = new JSONObject();
         json.put("dbmethod", "save");
@@ -378,10 +390,15 @@ public class Appointment implements NetInterface {
 
         OutboundWorker.sendRequest(json);
         
-        // TODO get ID from response
+        // FIXME get ID from response
+        Object[] response = new Object[1];
+        new ResponseWaiter(SocketListener.getSL(), response);
+        
+        
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
 	public void delete() {
         JSONObject json = new JSONObject();
         json.put("dbmethod", "delete");
@@ -390,7 +407,8 @@ public class Appointment implements NetInterface {
         OutboundWorker.sendRequest(json);
 	}
     
-    private JSONObject createParticipant(Participant p) {
+    @SuppressWarnings("unchecked")
+	private JSONObject createParticipant(Participant p) {
     	JSONObject participant = new JSONObject();
     	participant.put("name",p.getName());
     	participant.put("username",p.getUserName());
@@ -399,6 +417,12 @@ public class Appointment implements NetInterface {
     	} else {
     		participant.put("participantstatus",null);
     	}
+    	if (p.getAlarm() != null) {
+        	DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        	participant.put("alarm", sdf.format(p.getAlarm().getTime()));
+        } else {
+        	participant.put("alarm", null);
+        }
     	participant.put("showInCalendar",p.isShowInCalendar());
     	return participant;
     }

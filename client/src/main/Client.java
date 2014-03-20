@@ -1,7 +1,6 @@
 package main;
 
-import controllers.LogoutException;
-import controllers.SocketListener;
+import controllers.*;
 import gui.CalendarView;
 import models.*;
 
@@ -88,7 +87,6 @@ public class Client {
         try {
 			groupListModel.initialize();
 		} catch (LogoutException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

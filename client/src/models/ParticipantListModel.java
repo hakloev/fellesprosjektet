@@ -1,7 +1,5 @@
 package models;
 
-import gui.CalendarView;
-
 import javax.swing.DefaultListModel;
 import javax.swing.event.ListDataListener;
 

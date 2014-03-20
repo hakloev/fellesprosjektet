@@ -29,11 +29,10 @@ public class RoomListModel extends DefaultListModel<Room> implements NetInterfac
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize() throws LogoutException {
-        JSONObject json;
-        json = new JSONObject();
-        JSONObject jsonObject = new JSONObject();
+        JSONObject json = new JSONObject();
         json.put("request","roomlistmodel");
         json.put("dbmethod","initialize");
         json.put("capacity", minimumCapacity);

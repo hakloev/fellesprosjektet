@@ -1,6 +1,11 @@
 package models;
 
-public class Notification {
+import org.json.simple.JSONObject;
+
+import controllers.LogoutException;
+import controllers.OutboundWorker;
+
+public class Notification implements NetInterface {
 	
 	
 	private int notificationID;
@@ -52,6 +57,44 @@ public class Notification {
 	@Override
 	public String toString() {
 		return userName + " " + type;
+	}
+
+
+	@Override
+	public void initialize() throws LogoutException {
+		// Should be initialized as a list or pushed from server
+	}
+
+	@Override
+	public void refresh() throws LogoutException {
+		// Same as initialized
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void save() {
+		JSONObject json;
+        json = new JSONObject();
+        json.put("request","notification");
+        json.put("dbmethod","save");
+        json.put("notificationID", this.notificationID);
+        json.put("isseen", this.isSeen);
+        OutboundWorker.sendRequest(json);
+        
+        // Not really interrested in response
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void delete() {
+		JSONObject json;
+        json = new JSONObject();
+        json.put("request","notification");
+        json.put("dbmethod","delete");
+        json.put("notificationID", this.notificationID);
+        OutboundWorker.sendRequest(json);
+        
+        // Not really interrested in response
 	}
 	
 	

@@ -18,6 +18,7 @@ public class GroupListModel extends DefaultListModel<Group> implements NetInterf
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize() throws LogoutException {
         JSONObject json;

@@ -14,14 +14,15 @@ import java.awt.GridBagLayout;
 import java.awt.GridBagConstraints;
 import java.awt.Insets;
 
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JList;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableCellRenderer;
 
 import controllers.*;
 
@@ -33,6 +34,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.Calendar;
+import java.util.Iterator;
 
 @SuppressWarnings("serial")
 public class CalendarView extends JFrame {
@@ -43,10 +45,11 @@ public class CalendarView extends JFrame {
 	private WeekCalendar calendarTableModel;
 	private JComboBox<Integer> weekComboBox;
 	private JComboBox<Employee> employeeComboBox;
-	private EmployeeComboBoxModel employeeComboBoxModel;
 	private JLabel usernameLabel;
 	private JList<Notification> notificationList;
 	private JSpinner yearSpinner;
+	
+	private static NotificationListModel notificationListModel;
 
 	private JFrame thisFrame;
 
@@ -171,7 +174,8 @@ public class CalendarView extends JFrame {
 		gbc_employeeComboBox.gridy = 0;
 		topPanel.add(employeeComboBox, gbc_employeeComboBox);
 		employeeComboBox.setPreferredSize(new Dimension(200, 23));
-		// TODO add listener to combo box
+		employeeComboBox.setActionCommand("employeeComboBox");
+		employeeComboBox.addActionListener(actionListener);
 
 		/* Logged in user */
 		JLabel loginLabel = new JLabel("Innlogget som:");
@@ -257,6 +261,7 @@ public class CalendarView extends JFrame {
 
 		notificationList = new JList<Notification>();
 		notificationList.addMouseListener(mouseListener);
+		notificationList.setCellRenderer(new NotificationRenderer());
 		notificationScrollPane.setViewportView(notificationList);
 
 		JLabel notificationLabel = new JLabel(" Varsler");
@@ -278,14 +283,13 @@ public class CalendarView extends JFrame {
 		calendarTableModel = new WeekCalendar();
 		calendarTable = new JTable(calendarTableModel);
 		calendarTable.setModel(calendarTableModel);
-		//calendarTable.setColumnSelectionAllowed(true);
 		calendarTable.setCellSelectionEnabled(true);
-		//calendarTable.setFillsViewportHeight(true);
 		int rowHeight = 45; // 29
 		calendarTable.setPreferredSize(new Dimension(800, rowHeight * 15));
 		calendarTable.setRowHeight(rowHeight);
 		calendarTable.setGridColor(new Color(200, 200, 200));
 		//calendarTable.setDefaultRenderer(CalendarCell.class, new DefaultTableCellRenderer());
+		calendarTable.addMouseListener(mouseListener);
 		calendarPanel.add(calendarTable);
 	}
 
@@ -297,7 +301,7 @@ public class CalendarView extends JFrame {
 			int column = calendarTable.getSelectedColumn();
 			int row = calendarTable.getSelectedRow();
 			
-			if (actionCommand.equals("Ny avtale")) {
+			if (actionCommand.equals("Ny avtale") && loggedInEmployee.equals(calendarTableModel.getEmployee())) {
 				Calendar startDate = Calendar.getInstance();
 				Appointment app = new Appointment(loggedInEmployee);
 				if (column > 0 && row > 0 && column < 8 && row < 15){
@@ -325,7 +329,7 @@ public class CalendarView extends JFrame {
 					return;
 				}
 			}
-			else if (actionCommand.equals("Avtalevisning")) {
+			else if (actionCommand.equals("Avtalevisning") && loggedInEmployee.equals(calendarTableModel.getEmployee())) {
 				if (column > 0 && row > 0 && column < 8 && row < 15) {
 					Appointment app = ((CalendarCell)calendarTableModel.getValueAt(row, column)).getfirst();
 					if (app == null) return;
@@ -344,7 +348,7 @@ public class CalendarView extends JFrame {
 					}
 				}
 			}
-			else if(actionCommand.equals("Slett avtale")) {
+			else if(actionCommand.equals("Slett avtale") && loggedInEmployee.equals(calendarTableModel.getEmployee())) {
 				if (column > 0 && row > 0 && column < 8 && row < 15) {
 					Appointment app = ((CalendarCell)calendarTableModel.getValueAt(row, column)).getfirst();
 					if (app == null) return;
@@ -378,10 +382,36 @@ public class CalendarView extends JFrame {
 
 			} else if(actionCommand.equals("week")) {
 				sendWeekCalendarRequest(calendarTableModel.getEmployee());
+				
+			} else if(actionCommand.equals("employeeComboBox")) {
+				sendWeekCalendarRequest((Employee)employeeComboBox.getSelectedItem());
 
 			} else if(actionCommand.equals("Logg ut")) {
 				logoutUser();
 				initializeLoggedInUser();
+				
+			} else if(actionCommand.split(" ")[0].equals("cellRightClick")) {
+				if ( column > 0 && row > 0 && column < 8 && row < 15 && loggedInEmployee.equals(calendarTableModel.getEmployee()) ) {
+					int index = Integer.parseInt(actionCommand.split(" ")[1]);
+					CalendarCell calCell = (CalendarCell)calendarTable.getValueAt(row, column);
+					Appointment app = calCell.get(index);
+					
+					try {
+						if (app.getAppointmentLeader().equals(loggedInEmployee)){
+							new EditAppointment(thisFrame, app);
+						}
+						else{
+							new ViewAppointment(thisFrame, app);
+						}
+					} catch (LogoutException e) {
+						logoutUser();
+						initializeLoggedInUser();
+						return;
+					}
+					
+					
+					
+				}
 			}
 		}
 	};
@@ -429,30 +459,35 @@ public class CalendarView extends JFrame {
 
 
 	private void initializeLoggedInUser() {
-		Employee[] user = new Employee[1]; // point to something mutable so we can get it back
+		Employee[] user = new Employee[1]; // point to something mutable so we can get the user back
 		new LoginScreen(thisFrame, user);
 		usernameLabel.setText(user[0].getUsername());
 		loggedInEmployee = user[0];
 
 		/* Do initialization */
-		// TODO proper initialization
 		EmployeeComboBoxModel ecbModel = new EmployeeComboBoxModel();
 		try {
 			ecbModel.initialize();
+			employeeComboBox.setModel(ecbModel);
+			employeeComboBox.setSelectedItem(loggedInEmployee);
+			
+			NotificationListModel notiListModel = new NotificationListModel(loggedInEmployee);
+			notiListModel.initialize();
+			notificationList.setModel(notiListModel);
+			notificationListModel = notiListModel;
+			
 		} catch (LogoutException e) {
 			logoutUser();
 			initializeLoggedInUser(); // tjuvtriks
 			return;
 		}
-		employeeComboBox.setModel(ecbModel);
-		employeeComboBox.setSelectedItem(loggedInEmployee);
-		//employeeComboBox.updateUI();
 
-		NotificationListModel notiListModel = new NotificationListModel();
-		notiListModel.initialize();
-		notificationList.setModel(notiListModel);
-
-		sendWeekCalendarRequest(loggedInEmployee);
+		//sendWeekCalendarRequest(loggedInEmployee); // probably redundant
+	}
+	
+	
+	public static void addNotification(Notification notification) {
+		notificationListModel.addElement(notification);
 	}
 
 
@@ -475,31 +510,60 @@ public class CalendarView extends JFrame {
 	private MouseAdapter mouseListener = new MouseAdapter() {
 		@Override
 		public void mouseClicked(MouseEvent me) {
-			if (me.getSource() == notificationList && me.getClickCount() == 2) {
+			if (me.getSource() == notificationList) {
 				Notification notification = notificationList.getSelectedValue();
 				if (notification == null) return;
 				
-				int appointmentID = notification.getAppointmentID();
-				Appointment app = new Appointment(appointmentID);
-				try {
-					app.initialize();
+				if (! notification.isSeen()) {
+					notification.setSeen(true);
+					notification.save();
+				}
+				
+				if (me.getClickCount() == 2) {
+					int appointmentID = notification.getAppointmentID();
+					Appointment app = new Appointment(appointmentID);
+					try {
+						app.initialize();
+						
+						if (app.getAppointmentLeader().equals(loggedInEmployee)) {
+							new EditAppointment(thisFrame, app);
+						}
+						else{
+							new ViewAppointment(thisFrame, app);
+						}
+					} catch (LogoutException e) {
+						logoutUser();
+						initializeLoggedInUser();
+						return;
+					}
+				}
+			} else if (me.getSource() == calendarTable && me.getButton() == MouseEvent.BUTTON3) {
+				int column = calendarTable.getSelectedColumn();
+				int row = calendarTable.getSelectedRow();
+				if (column > 0 && row > 0 && column < 8 && row < 15) {
+					CalendarCell calCell = (CalendarCell)calendarTable.getValueAt(row, column);
 					
-					if (app.getAppointmentLeader().equals(loggedInEmployee)) {
-						new EditAppointment(thisFrame, app);
+					JPopupMenu popup = new JPopupMenu();
+					JMenuItem menuItem;
+					int index = 0;
+					if (calCell != null) for (Appointment app : calCell) {
+						menuItem = new JMenuItem(app.toString());
+						menuItem.setActionCommand("cellRightClick " + index);
+						menuItem.addActionListener(actionListener);
+						popup.add(menuItem);
+						index++;
 					}
-					else{
-						new ViewAppointment(thisFrame, app);
-					}
-				} catch (LogoutException e) {
-					logoutUser();
-					initializeLoggedInUser();
-					return;
+					popup.show(me.getComponent(), me.getX(), me.getY());
 				}
 			}
 		}
 	};
+	
+	
 
 
 
 }
+
+
 

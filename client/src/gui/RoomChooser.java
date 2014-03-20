@@ -133,7 +133,7 @@ public class RoomChooser extends JDialog {
 					JOptionPane.showMessageDialog(null, "Du må skrive inn et tall", "Feil", JOptionPane.ERROR_MESSAGE);
 					capacityTextField.setText("");
 				} catch (LogoutException e) {
-					// TODO notify calendarView
+					// TODO notify calendarView of logout
 					//e.printStackTrace();
 					System.out.println(e.getMessage());
 				}
