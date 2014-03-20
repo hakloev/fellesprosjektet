@@ -64,7 +64,7 @@ public class JSONHandler {
                     return appointment;
                 }
                 else if (jsonObject.get("dbmethod").equals("save")) {
-                    String id = jsonObject.get("appointmentid").toString();
+                    String id = jsonObject.get("appointmentID").toString();
                 	return id;
                 }
                 else if (jsonObject.get("dbmethod").equals("delete")) {
