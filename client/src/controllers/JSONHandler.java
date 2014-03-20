@@ -115,7 +115,7 @@ public class JSONHandler {
 	            
             } else if (jsonObject.get("response").equals("notificationlistmodel")) {
             	NotificationListModel notiListModel = new NotificationListModel();
-            	JSONArray array = (JSONArray) jsonObject.get("model");
+            	JSONArray array = (JSONArray) jsonObject.get("array");
             	Iterator iterator = array.iterator();
             	while (iterator.hasNext()) {
             		JSONObject jsonNotification = (JSONObject) iterator.next();
