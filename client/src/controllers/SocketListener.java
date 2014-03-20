@@ -32,7 +32,7 @@ public class SocketListener extends Thread {
     
     
     public SocketListener() {
-    	this("129.241.165.42", 4657);
+    	this("78.91.28.170", 4657);
     }
     
     
