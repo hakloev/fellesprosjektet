@@ -112,14 +112,36 @@ public class JSONHandler {
 		            employeeListModel.addElement(e);
 	            }
 	            return employeeListModel;
+	            
+            } else if (jsonObject.get("response").equals("notificationlistmodel")) {
+            	NotificationListModel notiListModel = new NotificationListModel();
+            	JSONArray array = (JSONArray) jsonObject.get("array");
+            	Iterator iterator = array.iterator();
+            	while (iterator.hasNext()) {
+            		JSONObject jsonNotification = (JSONObject) iterator.next();
+            		int notiID = Integer.valueOf(jsonNotification.get("notificationID").toString());
+            		//String username = (String)jsonNotification.get("username");
+            		int appID = Integer.valueOf(jsonNotification.get("appointmentID").toString());
+            		String type = (String)jsonNotification.get("type");
+            		Notification noti = new Notification(notiID, appID, type);
+            		noti.setSeen( "1".equals( jsonNotification.get("isseen").toString() ) );
+            		
+            		notiListModel.addElement(noti);
+            	}
+            	return notiListModel;
+            	
+            } else if (jsonObject.get("response").equals("notification")) {
+            	int notiID = Integer.valueOf(jsonObject.get("notificationID").toString());
+            	int appID = Integer.valueOf(jsonObject.get("appointmentID").toString());
+            	String type = (String)jsonObject.get("type");
+            	Notification noti = new Notification(notiID, appID, type);
+            	noti.setSeen( "1".equals( jsonObject.get("isseen").toString() ) );
+            	
+            	return noti;
+            	
             }
-            
-            // TODO Notification (for single notification push)
-            // TODO NotificationListModel
-
 
         }
-
 
         return object;
     }
