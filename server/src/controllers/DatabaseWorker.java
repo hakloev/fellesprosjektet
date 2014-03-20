@@ -188,6 +188,7 @@ public class DatabaseWorker {
 			jsonObject.put("appointmentID", n.getAppointmentID());
 		    array.add(object);
 		}
+		jsonObject.put("array", array);
 		return jsonObject.toJSONString();
 
 	}
