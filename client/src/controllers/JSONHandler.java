@@ -64,10 +64,11 @@ public class JSONHandler {
                     return appointment;
                 }
                 else if (jsonObject.get("dbmethod").equals("save")) {
-
+                    String id = jsonObject.get("appointmentID").toString();
+                	return id;
                 }
                 else if (jsonObject.get("dbmethod").equals("delete")) {
-
+                    // TODO: Give error if delete is not sucessful
                 }
             }
             else if (jsonObject.get("response").equals("roomlistmodel")) {
@@ -112,6 +113,9 @@ public class JSONHandler {
 	            }
 	            return employeeListModel;
             }
+            
+            // TODO Notification (for single notification push)
+            // TODO NotificationListModel
 
 
         }
@@ -135,10 +139,19 @@ public class JSONHandler {
         } catch (java.text.ParseException e) {
             e.printStackTrace();
         }
-        if (jsonObject.get("location") != null) {
-            //TODO: legge til room
+
+        if (jsonObject.get("emaillistmodel") != null) {
+            EmailListModel emailListModel = new EmailListModel();
+            JSONArray jsonArray = (JSONArray) jsonObject.get("emaillistmodel");
+            Iterator iterator = jsonArray.iterator();
+            while (iterator.hasNext()) {
+                emailListModel.addElement(iterator.next().toString());
+            }
+            appointment.setEmailRecipientsList(emailListModel);
         }
+        
         appointment.setLocation((String) jsonObject.get("locationText"));
+        
         if (jsonObject.get("participants") != null) {
             ParticipantListModel model = new ParticipantListModel();
             appointment.setParticipantList(model);

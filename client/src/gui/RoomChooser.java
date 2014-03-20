@@ -6,6 +6,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Date;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -36,13 +37,12 @@ public class RoomChooser extends JDialog {
 	
 	
 	
-	public RoomChooser(JDialog parent, int capacity, Room[] saveRoomHere) throws LogoutException {
+	public RoomChooser(JDialog parent, int capacity, Room[] saveRoomHere, Date startDateTime, Date endDateTime) throws LogoutException {
 		super(parent, true);
 		this.setTitle("Velg rom");
 		this.setResizable(false);
 		this.thisDialog = this;
 		this.saveRoomHere = saveRoomHere;
-		//this.parent = parent;
 		
 		this.contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -73,7 +73,6 @@ public class RoomChooser extends JDialog {
 		JButton refreshButton = new JButton("Nytt søk");
 		GridBagConstraints gbc_refreshButton = new GridBagConstraints();
 		gbc_refreshButton.insets = new Insets(0, 5, 5, 5);
-		//gbc_refreshButton.fill = GridBagConstraints.HORIZONTAL;
 		gbc_refreshButton.anchor = GridBagConstraints.NORTH;
 		gbc_refreshButton.gridx = 0;
 		gbc_refreshButton.gridy = 2;
@@ -92,7 +91,7 @@ public class RoomChooser extends JDialog {
 		JLabel roomLabel = new JLabel(" Ledige rom");
 		roomScrollPane.setColumnHeaderView(roomLabel);
 		
-		roomListModel = new RoomListModel(capacity);
+		roomListModel = new RoomListModel(capacity, startDateTime, endDateTime);
 		roomListModel.initialize();
 		roomList = new JList<Room>(roomListModel);
 		roomScrollPane.setViewportView(roomList);
@@ -133,7 +132,7 @@ public class RoomChooser extends JDialog {
 					JOptionPane.showMessageDialog(null, "Du må skrive inn et tall", "Feil", JOptionPane.ERROR_MESSAGE);
 					capacityTextField.setText("");
 				} catch (LogoutException e) {
-					// TODO notify calendarView
+					// TODO notify calendarView of logout
 					//e.printStackTrace();
 					System.out.println(e.getMessage());
 				}

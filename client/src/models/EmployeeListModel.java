@@ -15,6 +15,7 @@ public class EmployeeListModel extends DefaultListModel<Employee> implements Net
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize() throws LogoutException {
 		

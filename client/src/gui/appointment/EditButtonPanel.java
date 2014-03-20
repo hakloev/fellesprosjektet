@@ -104,7 +104,7 @@ class EditButtonPanel extends JPanel implements ActionListener {
 			try {
 				new EditParticipants(parent, appointment);
 			} catch (LogoutException e) {
-				// TODO notify calendarView
+				// TODO notify calendarView of logout
 				//e.printStackTrace();
 				System.out.println(e.getMessage());
 			}
@@ -130,7 +130,9 @@ class EditButtonPanel extends JPanel implements ActionListener {
                 "Er du sikker på at du vil slette " + ((EditAppointment)parent).getSelectedParticipant().getName() + " fra avtalen?", "Bekreft", JOptionPane.YES_NO_OPTION);
 
             if (choice == 0) {
-            	appointment.getParticipantList().removeElement(((EditAppointment) parent).getSelectedParticipant());
+            	Participant part = ((EditAppointment) parent).getSelectedParticipant();
+            	appointment.getParticipantList().removeElement(part);
+            	part.delete(appointment.getAppointmentID());
             }
         }
         else if (ae.getActionCommand().equals("email")) {

@@ -48,6 +48,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 	private Participant currentUser;
 
 
+	@SuppressWarnings("deprecation")
 	DetailsPanel(JDialog parent, Appointment appointment, Participant currentUser) {
 		this.appointment = appointment;
 		appointment.addPropertyChangeListener(this);
@@ -169,6 +170,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		gbc_descriptionScrollPane.gridy = 0;
 		this.add(descriptionScrollPane, gbc_descriptionScrollPane);
 		descriptionScrollPane.setPreferredSize(new Dimension(120, 120));
+		descriptionScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
 
 		JLabel lblBeskrivelse = new JLabel(" Beskrivelse");
 		descriptionScrollPane.setColumnHeaderView(lblBeskrivelse);
@@ -176,6 +178,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		descriptionTextArea = new JTextArea();
 		descriptionTextArea.addFocusListener(this);
 		descriptionTextArea.setFont(new Font("Tahoma", Font.PLAIN, 11));
+		descriptionTextArea.setLineWrap(true);
+		descriptionTextArea.setWrapStyleWord(true);
 		descriptionScrollPane.setViewportView(descriptionTextArea);
 		descriptionTextArea.setText(appointment.getDescription());
 
@@ -245,8 +249,8 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 		this.add(alarmTextField, gbc_alarmTextField);
 		alarmTextField.setEditable(false);
 		alarmTextField.setColumns(11);
-		// TODO set text based on user alarm
-		//alarmTextField.setText(currentUser.getAlarm());
+		alarmTime[0] = currentUser.getAlarm();
+		setAlarmTextField();
 
 		JButton btnVelgTid = new JButton("Velg tid");
 		GridBagConstraints gbc_btnVelgTid = new GridBagConstraints();
@@ -364,6 +368,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 
 
 	ActionListener actionListener = new ActionListener() {
+		@SuppressWarnings("deprecation")
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			if (ae.getActionCommand().equals("Velg tid")) {
@@ -385,9 +390,17 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 			} else if (ae.getActionCommand().equals("Velg rom")) {
 				Room[] room = new Room[1];
 				try {
-					new RoomChooser(parent, appointment.getParticipantList().getSize(), room);
+					Date startDate = (Date)dateSpinner.getValue();
+					startDate.setHours( ((Date)startTimeSpinner.getValue()).getHours() );
+					startDate.setMinutes(((Date)startTimeSpinner.getValue()).getMinutes() );
+					Date endDate = new Date( ((Date)dateSpinner.getValue()).getTime() );
+					endDate.setHours( ((Date)stopTimeSpinner.getValue()).getHours() );
+					endDate.setMinutes(((Date)stopTimeSpinner.getValue()).getMinutes() );
+					
+					new RoomChooser(parent, appointment.getParticipantList().getSize(), room, startDate, endDate);
+					
 				} catch (LogoutException e) {
-					// TODO notify calendarView
+					// TODO notify calendarView of logout
 					//e.printStackTrace();
 					System.out.println(e.getMessage());
 				}
@@ -400,6 +413,7 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 	};
 
 
+	@SuppressWarnings("deprecation")
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName().equals("participantList")){

@@ -7,22 +7,18 @@ import controllers.SocketListener;
 
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Iterator;
 import java.util.Vector;
 
 import javax.swing.table.DefaultTableModel;
 
 @SuppressWarnings("serial")
-public class WeekCalendar extends DefaultTableModel implements NetInterface { //Iterator<Appointment>
+public class WeekCalendar extends DefaultTableModel implements NetInterface {
 
 
 	private Employee employee;
-	//private ArrayList<Appointment> appointmentList;
 	private int week;
 	private int year;
-	//private int iteratorIndex;
 
 	private JSONObject json;
 
@@ -50,7 +46,6 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 	
 	public WeekCalendar() {
 		super(emptyCalendar, columnTitles);
-		//appointmentList = new ArrayList<Appointment>();
 	}
 
 
@@ -59,11 +54,11 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 		this.employee = employee;
 		this.week = weekNumber;
 		this.year = year;
-		//iteratorIndex = 0;
 	}
 
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initialize() throws LogoutException {
 
@@ -111,22 +106,6 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 		// Server access should be administered on each Appointment object
 	}
 
-	/*
-	@Override
-	public boolean hasNext() {
-		return iteratorIndex < appointmentList.size();
-	}
-
-	@Override
-	public Appointment next() {
-		return appointmentList.get(iteratorIndex++);
-	}
-
-	@Override
-	public void remove() {
-		// Not allowed!
-	}
-	*/
 
 	public Employee getEmployee() {
 		return employee;
@@ -155,11 +134,6 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 				"time", "monday", "tuesday", "wednsday", "thursday", "friday", "saturday", "sunday"};
 	}
 
-	/*
-	public ArrayList<Appointment> getAppointmentList() {
-		return appointmentList;
-	}
-	*/
 	
 	public void addAppointment(Appointment appointment) {
 		Calendar dateTime = appointment.getStartDateTime();
@@ -190,19 +164,18 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface { //
 				System.out.println(this.getValueAt(row, column));
 			}
 		//}
-		//appointmentList.add(appointment);
 	}
 	
 	
 	public void removeAppointment(Appointment appointment) {
-		// TODO implement logic to remove appointment based on its data
 		int hour = appointment.getStartDateTime().get(Calendar.HOUR_OF_DAY);
 		hour-= 6;
 		int day = appointment.getStartDateTime().get(Calendar.DAY_OF_WEEK);
 		if (day == 1){
 			day = 7;
+		} else {
+			day -= 1;
 		}
-		day -= 1;
 		CalendarCell cell = (CalendarCell) this.getValueAt(day, hour);
 		if (cell != null){
 			cell.removeAppointment(appointment);
