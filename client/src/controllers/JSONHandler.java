@@ -64,7 +64,8 @@ public class JSONHandler {
                     return appointment;
                 }
                 else if (jsonObject.get("dbmethod").equals("save")) {
-                	// TODO parse returned appointmentID
+                    String id = jsonObject.get("appointmentid").toString();
+                	return id;
                 }
                 else if (jsonObject.get("dbmethod").equals("delete")) {
                     // TODO: Give error if delete is not sucessful

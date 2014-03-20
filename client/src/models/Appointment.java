@@ -389,11 +389,14 @@ public class Appointment implements NetInterface {
         json.put("model",jsonObject);
 
         OutboundWorker.sendRequest(json);
-        
-        // FIXME get ID from response
+
         Object[] response = new Object[1];
         new ResponseWaiter(SocketListener.getSL(), response);
-        
+        if (response[0] != null && response[0] instanceof String) {
+            for (Object id : ((RoomListModel)response[0]).toArray() ) {
+                this.setAppointmentID(Integer.valueOf(id.toString()));
+            }
+        }
         
     }
 
