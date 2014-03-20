@@ -28,7 +28,7 @@ public class CalendarCell implements Iterable<Appointment> {
 	public String toString(){
 		String ret = "<html>";
 		for (Appointment app: appointments){
-			if (ret.equals("")){
+			if (ret.equals("<html>")){
 				ret += app;
 			}
 			else{

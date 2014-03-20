@@ -30,6 +30,7 @@ public class ViewAppointment extends JDialog {
 		ParticipantListModel plModel = appointment.getParticipantList();
 		if (plModel == null) {
 			appointment.initialize();
+			plModel = appointment.getParticipantList();
 		}
 		Participant currentUser = plModel.get(plModel.indexOf(new Participant( ((CalendarView)parent).getLoggedInEmployee() )));
 		

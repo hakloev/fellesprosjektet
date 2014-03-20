@@ -390,7 +390,15 @@ class DetailsPanel extends JPanel implements PropertyChangeListener, FocusListen
 			} else if (ae.getActionCommand().equals("Velg rom")) {
 				Room[] room = new Room[1];
 				try {
-					new RoomChooser(parent, appointment.getParticipantList().getSize(), room);
+					Date startDate = (Date)dateSpinner.getValue();
+					startDate.setHours( ((Date)startTimeSpinner.getValue()).getHours() );
+					startDate.setMinutes(((Date)startTimeSpinner.getValue()).getMinutes() );
+					Date endDate = new Date( ((Date)dateSpinner.getValue()).getTime() );
+					endDate.setHours( ((Date)stopTimeSpinner.getValue()).getHours() );
+					endDate.setMinutes(((Date)stopTimeSpinner.getValue()).getMinutes() );
+					
+					new RoomChooser(parent, appointment.getParticipantList().getSize(), room, startDate, endDate);
+					
 				} catch (LogoutException e) {
 					// TODO notify calendarView of logout
 					//e.printStackTrace();

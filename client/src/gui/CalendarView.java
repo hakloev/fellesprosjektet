@@ -284,7 +284,7 @@ public class CalendarView extends JFrame {
 		calendarTable = new JTable(calendarTableModel);
 		calendarTable.setModel(calendarTableModel);
 		calendarTable.setCellSelectionEnabled(true);
-		int rowHeight = 45; // 29
+		int rowHeight = 30; // 29
 		calendarTable.setPreferredSize(new Dimension(800, rowHeight * 15));
 		calendarTable.setRowHeight(rowHeight);
 		calendarTable.setGridColor(new Color(200, 200, 200));
@@ -361,6 +361,13 @@ public class CalendarView extends JFrame {
 							app.delete();
 						} else {
 							app.setShowInCalendar(false);
+							try {
+								app.initialize();
+							} catch (LogoutException e) {
+								logoutUser();
+								initializeLoggedInUser();
+								return;
+							}
 							ParticipantListModel plModel = app.getParticipantList();
 							Participant currentUser = plModel.get(plModel.indexOf(new Participant(loggedInEmployee)));
 							currentUser.setShowInCalendar(false);

@@ -131,5 +131,19 @@ public class Participant {
     }
     
     
+    @SuppressWarnings("unchecked")
+	public void delete(int appointmentID) {
+    	JSONObject json;
+        json = new JSONObject();
+        json.put("request","participant");
+        json.put("dbmethod","delete");
+        json.put("username", this.userName);
+        json.put("appointmentID", appointmentID);
+        OutboundWorker.sendRequest(json);
+        
+        // Not really interrested in response
+    }
+    
+    
 }
 
