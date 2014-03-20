@@ -85,6 +85,8 @@ public class DatabaseWorker {
 					System.out.println("DatabaseWorker.handleRequest: ROOMLISTMODEL INITIALIZE");
 					RoomListModel roomListModel = new RoomListModel();
 					roomListModel.setCapacity(Integer.valueOf(jsonObject.get("capacity").toString()));
+					roomListModel.setStart((String) jsonObject.get("startdatetime"));
+					roomListModel.setSlutt((String) jsonObject.get("enddatetime"));
 					roomListModel.initialize();
 					response = new Response(roomListModelAsJSON(roomListModel));
 				}
@@ -106,11 +108,59 @@ public class DatabaseWorker {
 					employeeListModel.initialize();
 					response = new Response(employeeListModelAsJSON(employeeListModel));
 				}
+			} else if (requestType.equals("notificationlistmodel")) {
+				System.out.println("DatabaseWorker.handleRequest: NOTIFICATIONLISTMODEL");
+				String dbMethod = (String) jsonObject.get("dbmethod");
+				if (dbMethod.equals("initialize")) {
+					System.out.println("DatabaseWorker.handleRequest: NOTIFICATIONLISTMODEL INITIALIZE");
+					NotificationListModel notificationListModel = new NotificationListModel();
+					response = new Response(notificationListModelAsJSON(notificationListModel));
+				}
+			} else if (requestType.equals("participant")) {
+				System.out.println("DatabaseWorker.handleRequest: PARTICIPANT");
+				String dbMethod = (String) jsonObject.get("dbmethod");
+				if (dbMethod.equals("save")) {
+					System.out.println("DatabaseWorker.handleRequest: PARTICIPANT SAVE");
+					Participant p = new Participant((String) jsonObject.get("username"), null, ParticipantStatus.valueOf((String) jsonObject.get("participantstatus")),
+							Boolean.valueOf((String) jsonObject.get("showInCalendar")), Integer.valueOf((String) jsonObject.get("appointmentID")));
+					p.save();
+					response = new Response(saveParticipant(p));
+				} else if (dbMethod.equals("delete")) {
+					System.out.println("DatabaseWorker.handleRequest: PARTICIPANT DELETE");
+					Participant p = new Participant((String) jsonObject.get("username"), null, null, false, Integer.valueOf(jsonObject.get("appointmentID").toString()));
+					p.delete();
+					response = new Response(deleteParticipantFromAppointment(p));
+				}
 			}
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
 		return response;
+	}
+
+	private static String saveParticipant(Participant p) {
+		JSONObject jsonObject =  new JSONObject();
+		jsonObject.put("response", "participant");
+		jsonObject.put("dbmethod", "save");
+		jsonObject.put("username", p.getUserName());
+		return jsonObject.toJSONString();
+
+	}
+
+	private static String deleteParticipantFromAppointment(Participant p) {
+		JSONObject jsonObject =  new JSONObject();
+		jsonObject.put("response", "participant");
+		jsonObject.put("dbmethod", "delete");
+		jsonObject.put("username", p.getUserName());
+		return jsonObject.toJSONString();
+	}
+
+	private static String notificationListModelAsJSON(NotificationListModel notificationListModel) {
+		JSONObject jsonObject =  new JSONObject();
+		jsonObject.put("response", "notificationlistmodel");
+		jsonObject.put("dbmethod", "initialize");
+		return jsonObject.toJSONString();
+
 	}
 
 	private static String deleteAppointment(Appointment a) {
@@ -231,6 +281,7 @@ public class DatabaseWorker {
 			a.setLocation(r);
 		}
 		a.setLocationText((String) model.get("locationText"));
+		a.setAppointmentID(Integer.valueOf(model.get("appointmentID").toString()));
 		try {
 			a.getStartDateTime().setTime((sdf.parse((String) model.get("startDateTime"))));
 			a.getEndDateTime().setTime((sdf.parse((String) model.get("endDateTime"))));
@@ -252,11 +303,10 @@ public class DatabaseWorker {
 				}
 			}
 			Participant participant = new Participant((String) p.get("username"), (String) p.get("name"),
-					pStatus, Boolean.valueOf(p.get("showInCalendar").toString()));
+					pStatus, Boolean.valueOf(p.get("showInCalendar").toString()), a.getAppointmentID());
 		    plm.addElement(participant);
 		}
 
-		a.setAppointmentID(Integer.valueOf(model.get("appointmentID").toString()));
 		a.save();
 		plm.setAppointmentID(a.getAppointmentID());
 		plm.save();
@@ -276,8 +326,8 @@ public class DatabaseWorker {
 					GMail sendMail = new GMail();
 					String subject = "Invitert til avtale '" + a.getDescription() + "' hos Firma X";
 					String text = "Du er invitert til avtale '" + a.getDescription() + "' av " + a.getAppointmentLeader().getName() + "\n\n" +
-							"Avtalen finner sted i rom " + a.getLocationText() + "\nStart: " + a.getStartDateTime().getTime() + "Slutt: " + a.getEndDateTime().getTime() +
-							"\nHilsen Firma X sin superduper server som håndterer dette for deg!";
+							"Avtalen finner sted i rom " + a.getLocationText() + "\nStarttidspunkt: " + a.getStartDateTime().getTime() + " Slutttidspunkt: " + a.getEndDateTime().getTime() +
+							"\n\nHilsen Firma X sin superdupre server som håndterer dette for deg!";
 					sendMail.sendMail(emailListModel.get(i).toString(), subject, text);
 				}
 			}

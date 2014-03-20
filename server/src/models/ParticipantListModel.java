@@ -52,7 +52,7 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 				if (rs.getInt(5) == 0) {
 					show = false;
 				}
-				Participant p = new Participant(rs.getString(1), rs.getString(6), participating, show);
+				Participant p = new Participant(rs.getString(1), rs.getString(6), participating, show, this.appointmentID);
 				this.addElement(p);
 			}
 		} catch (SQLException e) {

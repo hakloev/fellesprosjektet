@@ -186,7 +186,9 @@ public class Appointment implements DBInterface {
 		Connection dbCon = DBconnection.getConnection();
 		try {
 			Statement stmt = dbCon.createStatement();
-			String sql = "DELETE FROM 'avtale' WHERE avtaleid = " + this.getAppointmentID();
+			String sql = "DELETE FROM avtale WHERE avtaleid = " + this.getAppointmentID();
+			System.out.println(sql);
+			stmt.executeUpdate(sql);
 			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
