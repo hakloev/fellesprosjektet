@@ -130,7 +130,7 @@ public class JSONHandler {
             	}
             	return notiListModel;
             	
-            } else if (jsonObject.get("response").equals("notification")) {
+            } else if (jsonObject.get("response").equals("pushnotification")) {
             	int notiID = Integer.valueOf(jsonObject.get("notificationID").toString());
             	int appID = Integer.valueOf(jsonObject.get("appointmentID").toString());
             	String type = (String)jsonObject.get("type");
@@ -190,7 +190,7 @@ public class JSONHandler {
                     status = ParticipantStatus.notParticipating;
                 }
                 Participant participant = new Participant((String) jp.get("username").toString(),(String) jp.get("name"),status);
-                if (jp.get("showInCalendar").equals("true")) {
+                if (jp.get("showInCalendar").toString().equals("true")) {
                     participant.setShowInCalendar(true);
                 }
                 else {
