@@ -179,7 +179,7 @@ public class Appointment implements DBInterface {
 							+ "', romkode = '" + this.location.getRoomCode() + "' WHERE avtale.avtaleid = " + this.getAppointmentID() + " LIMIT 1";
 				}
 				stmt.executeUpdate(sql);
-				notificationSql = "UPDATE varsel SET type_varsel = 'endret_avtale' WHERE avtaleid = " + this.getAppointmentID();
+				notificationSql = "UPDATE varsel SET type_varsel = 'endret_avtale', ersett = 0 WHERE avtaleid = " + this.getAppointmentID();
 			}
 			System.out.println(sql);
 			System.out.println(notificationSql);
