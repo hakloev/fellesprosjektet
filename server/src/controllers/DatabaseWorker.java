@@ -344,7 +344,7 @@ public class DatabaseWorker {
 					pStatus = ParticipantStatus.notParticipating;
 				}
 			}
-			String alarm = "0000-00-00 00:00:00";
+			String alarm = "0000-01-01 00:00:00";
 			if (p.get("alarm") != null) {
 				alarm = p.get("alarm").toString();
 			}
