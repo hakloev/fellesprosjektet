@@ -36,13 +36,16 @@ public class WeekCalendar implements DBInterface {
 		Date startDate = c.getTime();
 		c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 		Date endDate = c.getTime();
+		System.out.println("WeekCalendar.initialize: START OF WEEK: " + sdf.format(startDate));
+		System.out.println("WeekCalendar.initialize: END OF WEEK: " + sdf.format(endDate));
 
 		Calendar start = Calendar.getInstance();
 		Connection dbCon = DBconnection.getConnection(); // Singelton class
 		try {
 			String sql = "SELECT a.avtaleid FROM avtale a, deltager d WHERE start >= '" +
 					sdf.format(startDate) + "' AND slutt <= '" + sdf.format(endDate) + "' AND d.brukernavn = '" +
-					employee.getUsername() + "' AND a.avtaleid = d.avtaleid";
+					employee.getUsername() + "' AND a.avtaleid = d.avtaleid " +
+					"AND d.vises = 1";
 			Statement stmt = dbCon.createStatement();
 			ResultSet rs = stmt.executeQuery(sql);
 			while (rs.next()) {

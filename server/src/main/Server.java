@@ -16,8 +16,6 @@ public class Server {
 		SocketListener socketListener = new SocketListener();
 		System.out.println("Server.main: SOCKETLISTENER STARTED AT " + Request.getTime() + " (PS: TAKE THIS SWORD, YOU NEED IT: ()==[:::::::::::::> )");
 		socketListener.start();
-
-		// TODO: EPOSTLISTE OPPDATERES IKKE
 	}
 
 }

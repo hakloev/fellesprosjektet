@@ -14,14 +14,16 @@ public class Participant implements DBInterface {
 	private boolean showInCalendar;
     private ParticipantStatus participantStatus;
 	private int appointmentID;
+	private String alarm;
 
     public Participant(String userName, String name,
-                     ParticipantStatus participantStatus, boolean showInCalendar, int appointmentID) {
+                     ParticipantStatus participantStatus, boolean showInCalendar, String alarm, int appointmentID) {
         this.userName = userName;
         this.name = name;
         this.participantStatus = participantStatus;
 	    this.showInCalendar = showInCalendar;
 	    this.appointmentID = appointmentID;
+	    this.alarm = alarm;
     }
 
     @Override
@@ -32,6 +34,14 @@ public class Participant implements DBInterface {
                 ", participantStatus=" + participantStatus +
                 '}';
     }
+
+	public void setAppointmentID(int appointmentID) {
+		this.appointmentID = appointmentID;
+	}
+
+	public String getAlarm() {
+		return alarm;
+	}
 
 	public boolean isShowInCalendar() {
 		return showInCalendar;
@@ -69,7 +79,7 @@ public class Participant implements DBInterface {
 
 	@Override
 	public void save() {
-		System.out.println("ParticipantListModel.save");
+		System.out.println("Participant.save");
 		Connection dbCon = DBconnection.getConnection();
 		try {
 			Statement stmt = dbCon.createStatement();
@@ -89,22 +99,25 @@ public class Participant implements DBInterface {
 			String deltar = null;
 			if (this.getParticipantStatus() != null) {
 				deltar = "deltar";
-				if (this.getParticipantStatus().toString().equals("Deltar ikke")) {
+				if (this.getParticipantStatus() == ParticipantStatus.notParticipating) {
 					deltar = "deltar_ikke";
 				}
 			}
-
+			String alarmTid = "0000-01-01 00:00:00";
+			if (this.alarm != null) {
+				alarmTid = this.alarm;
+			}
 			if (isParticipant == 0) {
 				if (deltar == null) {
-					sql = "INSERT INTO deltager (brukernavn, avtaleid, vises) VALUES ('" + this.getUserName() + "', '" + this.appointmentID + "', '" + show + "')";
+					sql = "INSERT INTO deltager (brukernavn, avtaleid, vises, alarm) VALUES ('" + this.getUserName() + "', '" + this.appointmentID + "', '" + show + "', '" + alarmTid + "')";
 				} else {
-					sql = "INSERT INTO deltager (brukernavn, avtaleid, deltagerstatus, vises) VALUES ('" + this.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', '" + show + "')";
+					sql = "INSERT INTO deltager (brukernavn, avtaleid, deltagerstatus, vises, alarm) VALUES ('" + this.getUserName() + "', '" + this.appointmentID + "', '" + deltar + "', '" + show + "', '" + alarmTid + "')";
 				}
 			} else {
 				if (deltar == null) {
-					sql = "UPDATE deltager SET vises = '" + show + "' WHERE brukernavn = '" + this.getUserName() + "' AND avtaleid = '" + this.appointmentID + "'";
+					sql = "UPDATE deltager SET vises = '" + show + "', alarm = '" + alarmTid + "' WHERE brukernavn = '" + this.getUserName() + "' AND avtaleid = '" + this.appointmentID + "'";
 				} else {
-					sql = "UPDATE deltager SET vises = '" + show + "', deltagerstatus = '" + deltar + "' WHERE brukernavn = '" + this.getUserName() + "' AND avtaleid = '" + this.appointmentID + "'";
+					sql = "UPDATE deltager SET vises = '" + show + "', deltagerstatus = '" + deltar + "', alarm = '" + alarmTid + "' WHERE brukernavn = '" + this.getUserName() + "' AND avtaleid = '" + this.appointmentID + "'";
 				}
 			}
 			System.out.println(sql);

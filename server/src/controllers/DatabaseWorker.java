@@ -132,13 +132,24 @@ public class DatabaseWorker {
 				String dbMethod = (String) jsonObject.get("dbmethod");
 				if (dbMethod.equals("save")) {
 					System.out.println("DatabaseWorker.handleRequest: PARTICIPANT SAVE");
-					Participant p = new Participant((String) jsonObject.get("username"), null, ParticipantStatus.valueOf((String) jsonObject.get("participantstatus")),
-							Boolean.valueOf((String) jsonObject.get("showInCalendar")), Integer.valueOf((String) jsonObject.get("appointmentID")));
+					String status = jsonObject.get("participantstatus").toString();
+					ParticipantStatus participating = ParticipantStatus.notParticipating;
+					if (status.equals("Deltar")) {
+						participating = ParticipantStatus.participating;
+					}
+					String alarmTid = null;
+					if (jsonObject.get("alarm") == null) {
+						alarmTid = "0000-01-01 00:00:00";
+					} else {
+						alarmTid = jsonObject.get("alarm").toString();
+					}
+					Participant p = new Participant(jsonObject.get("username").toString(), null, participating,
+							Boolean.valueOf(jsonObject.get("showincalendar").toString()),alarmTid, Integer.valueOf(jsonObject.get("appointmentID").toString()));
 					p.save();
 					response = new Response(saveParticipant(p));
 				} else if (dbMethod.equals("delete")) {
 					System.out.println("DatabaseWorker.handleRequest: PARTICIPANT DELETE");
-					Participant p = new Participant((String) jsonObject.get("username"), null, null, false, Integer.valueOf(jsonObject.get("appointmentID").toString()));
+					Participant p = new Participant((String) jsonObject.get("username"), null, null, false, null, Integer.valueOf(jsonObject.get("appointmentID").toString()));
 					p.delete();
 					response = new Response(deleteParticipantFromAppointment(p));
 				}
@@ -153,7 +164,7 @@ public class DatabaseWorker {
 		JSONObject jsonObject =  new JSONObject();
 		jsonObject.put("response", "notification");
 		jsonObject.put("dbmethod", "save");
-		jsonObject.put("notification", n.getNotificationID());
+		jsonObject.put("notificationID", n.getNotificationID());
 		return jsonObject.toJSONString();
 	}
 
@@ -181,12 +192,12 @@ public class DatabaseWorker {
 		JSONArray array = new JSONArray();
 		for (int i = 0; i < notificationListModel.size(); i++) {
 			Notification n = notificationListModel.get(i);
-			JSONObject object = new JSONObject();
-			jsonObject.put("notificationID", n.getNotificationID());
-			jsonObject.put("isSeen", n.isSeen());
-			jsonObject.put("type", n.getType());
-			jsonObject.put("appointmentID", n.getAppointmentID());
-		    array.add(object);
+			JSONObject not = new JSONObject();
+			not.put("notificationID", n.getNotificationID());
+			not.put("isseen", n.isSeen());
+			not.put("type", n.getType());
+			not.put("appointmentID", n.getAppointmentID());
+		    array.add(not);
 		}
 		jsonObject.put("array", array);
 		return jsonObject.toJSONString();
@@ -276,6 +287,7 @@ public class DatabaseWorker {
 				participant.put("participantstatus", "null");
 			}
 			participant.put("showInCalendar", model.get(i).isShowInCalendar());
+			participant.put("alarm", model.get(i).getAlarm());
 			array.add(participant);
 		}
 		appointment.put("participants", array);
@@ -332,8 +344,12 @@ public class DatabaseWorker {
 					pStatus = ParticipantStatus.notParticipating;
 				}
 			}
+			String alarm = "0000-00-00 00:00:00";
+			if (p.get("alarm") != null) {
+				alarm = p.get("alarm").toString();
+			}
 			Participant participant = new Participant((String) p.get("username"), (String) p.get("name"),
-					pStatus, Boolean.valueOf(p.get("showInCalendar").toString()), a.getAppointmentID());
+					pStatus, Boolean.valueOf(p.get("showInCalendar").toString()), alarm, a.getAppointmentID());
 		    plm.addElement(participant);
 		}
 

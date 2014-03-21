@@ -52,7 +52,7 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 				if (rs.getInt(5) == 0) {
 					show = false;
 				}
-				Participant p = new Participant(rs.getString(1), rs.getString(6), participating, show, this.appointmentID);
+				Participant p = new Participant(rs.getString(1), rs.getString(6), participating, show, rs.getObject(4).toString(), this.appointmentID);
 				this.addElement(p);
 			}
 		} catch (SQLException e) {
@@ -70,14 +70,16 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 	@Override
 	public void save() {
 		System.out.println("ParticipantListModel.save");
-		Connection dbCon = DBconnection.getConnection();
-		try {
-			Statement stmt = dbCon.createStatement();
-			String sql = null;
+		//Connection dbCon = DBconnection.getConnection();
+		//try {
+			//Statement stmt = dbCon.createStatement();
+			//String sql = null;
 			for (int i = 0; i < this.size(); i++) {
 				Participant p = this.get(i);
+				p.setAppointmentID(this.appointmentID);
+				p.save();
 
-				sql = "SELECT count(*) FROM deltager WHERE brukernavn = '" + p.getUserName() + "' AND avtaleid = " + this.appointmentID;
+				/*sql = "SELECT count(*) FROM deltager WHERE brukernavn = '" + p.getUserName() + "' AND avtaleid = " + this.appointmentID;
 				ResultSet rs = stmt.executeQuery(sql);
 				int isParticipant = -1;
 				if (rs.next()) {
@@ -111,14 +113,14 @@ public class ParticipantListModel extends DefaultListModel<Participant> implemen
 						sql = "UPDATE deltager SET vises = '" + show + "', deltagerstatus = '" + deltar + "' WHERE brukernavn = '" + p.getUserName() + "' AND avtaleid = '" + this.appointmentID + "'";
 					}
 				}
-				System.out.println(sql);
-				stmt.executeUpdate(sql);
+				System.out.println(sql);*/
+				//stmt.executeUpdate(sql);
 			}
-			stmt.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
+			//stmt.close();
+		//} catch (SQLException e) {
+		//	e.printStackTrace();
 		}
-	}
+	//}
 
 	@Override
 	public void delete() {
