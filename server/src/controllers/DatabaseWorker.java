@@ -337,9 +337,11 @@ public class DatabaseWorker {
 		    plm.addElement(participant);
 		}
 
+		a.setParticipantList(plm);
 		a.save();
 		plm.setAppointmentID(a.getAppointmentID());
 		plm.save();
+		//a.save(); // THIS SHOULD HAPPEN ONE TIME, BUT BECAUSE LATE IN PROJECT AND LITE TID, SÅ FIKSER VI NÅ
 
 		if (model.get("emaillistmodel").toString() != null) {
 			EmailListModel emailListModel = new EmailListModel();

@@ -146,6 +146,7 @@ public class Appointment implements DBInterface {
 			Statement stmt = dbCon.createStatement();
 			DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String sql;
+			String notificationSql = null;
 			if (this.getAppointmentID() == 0) {
 				if (this.location == null) {
 					sql = "INSERT INTO avtale (avtaleansvarlig, start, slutt, beskrivelse, sted, romkode) VALUES ('" + this.getAppointmentLeader().getUsername()
@@ -155,6 +156,16 @@ public class Appointment implements DBInterface {
 					sql = "INSERT INTO avtale (avtaleansvarlig, start, slutt, beskrivelse, sted, romkode) VALUES ('" + this.getAppointmentLeader().getUsername()
 							+ "', '"  + sdf.format(this.startDateTime.getTime()) + "', '" + sdf.format(this.endDateTime.getTime()) + "', '" + this.description + "', '" + this.locationText
 							+ "', '" + this.location.getRoomCode() + "')";
+				}
+				stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+				ResultSet rs = stmt.getGeneratedKeys();
+				while (rs.next()) {
+					this.setAppointmentID(rs.getInt(1));
+				}
+				rs.close();
+				for (int i = 0; i < this.participantList.size(); i++) {
+					notificationSql = "INSERT INTO varsel (avtaleid, brukernavn, type_varsel) VALUES ('" + this.getAppointmentID() + "', '" + participantList.get(i).getUserName() +
+						"', '" + "ny_avtale" + "')";
 				}
 			} else {
 				if (this.location == null) {
@@ -167,31 +178,12 @@ public class Appointment implements DBInterface {
 							+ this.locationText + "', start = '" + sdf.format(this.startDateTime.getTime()) + "', slutt = '" + sdf.format(this.endDateTime.getTime())
 							+ "', romkode = '" + this.location.getRoomCode() + "' WHERE avtale.avtaleid = " + this.getAppointmentID() + " LIMIT 1";
 				}
+				stmt.executeUpdate(sql);
+				notificationSql = "UPDATE varsel SET type_varsel = 'endret_avtale' WHERE avtaleid = " + this.getAppointmentID();
 			}
 			System.out.println(sql);
-			stmt.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
-
-			int getPrevAppointmentID = this.getAppointmentID();
-
-			ResultSet rs = stmt.getGeneratedKeys();
-			while (rs.next()) {
-				this.setAppointmentID(rs.getInt(1));
-			}
-			rs.close();
-
-			String notificationSql = null;
-			for (int i = 0; i < participantList.size(); i++) {
-				if (getPrevAppointmentID == 0) {
-					notificationSql = "INSERT INTO varsel (avtaleid, brukernavn, type_varsel) VALUES ('" + this.getAppointmentID() + "', '" + participantList.get(i).getUserName() +
-						"', '" + "ny_avtale" + "')";
-				} else {
-					notificationSql = "UPDATE varsel SET type_varsel = 'endret_avtale' WHERE avtaleid = " + this.getAppointmentID();
-				}
-				System.out.println(notificationSql);
-				stmt.executeUpdate(notificationSql, Statement.RETURN_GENERATED_KEYS);
-			}
-
-			rs.close();
+			System.out.println(notificationSql);
+			stmt.executeUpdate(notificationSql);
 			stmt.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
