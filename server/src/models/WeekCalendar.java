@@ -34,6 +34,7 @@ public class WeekCalendar implements DBInterface {
 		c.set(Calendar.HOUR_OF_DAY, 0);
 		c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
 		Date startDate = c.getTime();
+		c.set(Calendar.HOUR_OF_DAY, 23);
 		c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
 		Date endDate = c.getTime();
 		System.out.println("WeekCalendar.initialize: START OF WEEK: " + sdf.format(startDate));
