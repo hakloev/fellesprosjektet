@@ -33,10 +33,10 @@ insert into gruppemedlem values ('fagKom', 'trulsmp');
 insert into gruppemedlem values ('Ledergruppa', 'kvolden');
 insert into gruppemedlem values ('Ledergruppa', 'tarald');
 
-INSERT INTO avtale VALUES (1, 'kvolden', '2014-03-17 10:00:00', '2013-03-17 11:00:00', 'Kjapt møte', 'R1', 'R1');
-INSERT INTO avtale VALUES (2, 'hakloev', '2014-03-18 09:00:00', '2013-03-18 11:00:00', 'Kjapt møte', 'B126', 'B1-126');
-INSERT INTO avtale VALUES (3, 'torgeirws', '2014-03-17 10:00:00', '2013-03-17 11:00:00', 'Kjapt møte', 'F1', 'F1');
-INSERT INTO avtale VALUES (4, 'havard', '2014-03-17 08:00:00', '2013-03-17 10:00:00', 'Kjapt møte', 'E304', 'E304');
+INSERT INTO avtale VALUES (1, 'kvolden', '2014-03-17 10:00:00', '2014-03-17 11:00:00', 'Kjapt møte', 'R1', 'R1');
+INSERT INTO avtale VALUES (2, 'hakloev', '2014-03-18 09:00:00', '2014-03-18 11:00:00', 'Kjapt møte', 'B126', 'B1-126');
+INSERT INTO avtale VALUES (3, 'torgeirws', '2014-03-17 10:00:00', '2014-03-17 11:00:00', 'Kjapt møte', 'F1', 'F1');
+INSERT INTO avtale VALUES (4, 'havard', '2014-03-17 08:00:00', '2014-03-17 10:00:00', 'Kjapt møte', 'E304', 'E304');
 
 INSERT INTO deltager VALUES ('hakloev', 1, 'deltar', null, 1);
 INSERT INTO deltager VALUES ('torgeirws', 1, 'deltar', null, 1);
