@@ -4,6 +4,7 @@ package controllers;
 
 
 import models.*;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -11,6 +12,7 @@ import org.json.simple.parser.ParseException;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Iterator;
 
 
@@ -196,6 +198,15 @@ public class JSONHandler {
                 else {
                     participant.setShowInCalendar(false);
                 }
+                
+                DateFormat sdfa = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Calendar cal = Calendar.getInstance();
+                try {
+					cal.setTime(sdfa.parse((String)jp.get("alarm")));
+				} catch (java.text.ParseException e) {
+					e.printStackTrace();
+				}
+                participant.setAlarm(cal);
 
                 appointment.getParticipantList().addElement(participant);
 
