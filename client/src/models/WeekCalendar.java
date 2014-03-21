@@ -181,6 +181,12 @@ public class WeekCalendar extends DefaultTableModel implements NetInterface {
 			cell.removeAppointment(appointment);
 		}
 	}
+	
+	
+	@Override
+	public boolean isCellEditable(int row, int column) {
+		return false;
+	}
 
 
 }
