@@ -29,6 +29,7 @@ class Server(object):
         self.writeableClients = []
         self.recvBuff = 1024
         self.msgQ = {}
+        self.messageLog = []
         self.usernames = {}
         self.serverSocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.serverSocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -82,7 +83,7 @@ class Server(object):
                         # Broadcast that client lost connection
                         try:
                             response = '| %s  SERVER | %s has quit the chat (connection lost or quit client)' % (time.strftime("%H:%M:%S"), self.usernames[sock]) 
-                            self.broadcastMessageToOthers(sock, self.createJSON('message', None, response + self.generateWhiteSpaces(84 - len(response)), None)) 
+                            self.broadcastMessageToOthers(sock, self.createJSON('message', None, response + self.generateWhiteSpaces(84 - len(response)), None, None)) 
                         except KeyError:
                             print 'Server.serveForver: CLIENT (%s, %s) NOT LOGGED IN, SO WILL NOT BROADCAST CONNECTION LOST' % addr
                         # If socket in writeable list, remove it
@@ -132,42 +133,44 @@ class Server(object):
     def loginRequest(self, data, sock):
         if not data['username'] in self.usernames.itervalues():
                 if re.search("^[a-zA-ZæøåÆØÅ0-9_]{0,15}$", data['username']) is not None:
-                    if self.debug: print 'Server.handleJSON: USERNAME %s ADDED' % data['username']
+                    if self.debug: print 'Server.loginRequest: USERNAME %s ADDED' % data['username']
                     self.usernames[sock] = data['username']
                     msgToOne = '| %s  SERVER | You are now logged in with username: %s' % (time.strftime("%H:%M:%S"), data['username'])
                     msgToOthers = '| %s  SERVER | %s joined the chat' % (time.strftime("%H:%M:%S"), data['username']) 
-                    self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], msgToOne + self.generateWhiteSpaces(84 - len(msgToOne)), None))
-                    self.msgQ[sock].put(self.createJSON('message', None, msgToOthers + self.generateWhiteSpaces(84 - len(msgToOthers)), None))
+                    self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], msgToOne + self.generateWhiteSpaces(84 - len(msgToOne)), None, self.messageLog))
+                    if self.debug: print 'Server.loginRequest: LEN MESSAGE LOG ' + str(len(self.messageLog))
+                    self.msgQ[sock].put(self.createJSON('message', None, msgToOthers + self.generateWhiteSpaces(84 - len(msgToOthers)), None, None))
                 else:
-                    if self.debug: print 'Server.handleJSON: INVALID USERNAME %s' % data['username']
+                    if self.debug: print 'Server.loginRequest: INVALID USERNAME %s' % data['username']
                     errorMsg = '| %s  SERVER | Invalid username!' % time.strftime("%H:%M:%S")
-                    self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, errorMsg + self.generateWhiteSpaces(84 - len(errorMsg))))
+                    self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, errorMsg + self.generateWhiteSpaces(84 - len(errorMsg)), None))
         else:
-            if self.debug: print 'Server.handleJSON: USERNAME %s ALREADY TAKEN' % data['username'] 
+            if self.debug: print 'Server.loginRequest: USERNAME %s ALREADY TAKEN' % data['username'] 
             errorMsg = '| %s  SERVER | Name already taken!' % time.strftime("%H:%M:%S")
-            self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, errorMsg + self.generateWhiteSpaces(84 - len(errorMsg))))
+            self.broadcastMessageToOne(sock, self.createJSON('login', data['username'], None, errorMsg + self.generateWhiteSpaces(84 - len(errorMsg)), None))
 
     def logoutRequest(self, sock):
         if sock in self.usernames.keys():
-                if self.debug: print 'Server.handleJSON: USERNAME %s REQUESTED LOGOUT' % self.usernames[sock]
+                if self.debug: print 'Server.logoutRequest: USERNAME %s REQUESTED LOGOUT' % self.usernames[sock]
                 msgToOne = '| %s  SERVER | You are now logged out from the server' % time.strftime("%H:%M:%S")
                 msgToOthers = '| %s  SERVER | %s logged out' % (time.strftime("%H:%M:%S"), self.usernames[sock]) 
-                self.broadcastMessageToOne(sock, self.createJSON('logout', self.usernames[sock], msgToOne + self.generateWhiteSpaces(84 - len(msgToOne)), None))
-                self.msgQ[sock].put(self.createJSON('message', None, msgToOthers + self.generateWhiteSpaces(84 - len(msgToOthers)), None))
+                self.broadcastMessageToOne(sock, self.createJSON('logout', self.usernames[sock], msgToOne + self.generateWhiteSpaces(84 - len(msgToOne)), None, None))
+                self.msgQ[sock].put(self.createJSON('message', None, msgToOthers + self.generateWhiteSpaces(84 - len(msgToOthers)), None, None))
                 del self.usernames[sock]
     
     def messageRequest(self, data, sock):
-        if self.debug: print 'Server.handleJSON: SENDING MESSAGE FROM %s' % str(sock.getpeername())
+        if self.debug: print 'Server.messageRequest: SENDING MESSAGE FROM %s' % str(sock.getpeername())
         try:
             msg = '| %s  %s said | %s' % (time.strftime("%H:%M:%S"), self.usernames[sock], data['message'])
-            self.msgQ[sock].put(self.createJSON('message', None, msg + self.generateWhiteSpaces(84 - len(msg)), None))
+            self.messageLog.append(msg + self.generateWhiteSpaces(84 - len(msg)))
+            self.msgQ[sock].put(self.createJSON('message', None, msg + self.generateWhiteSpaces(84 - len(msg)), None, None))
         except KeyError:
-            if self.debug: print 'Server.handleJSON: KeyError, INVALID USERNAME/NOT LOGGED IN'
+            if self.debug: print 'Server.messageRequest: KeyError, INVALID USERNAME/NOT LOGGED IN'
             msg = '| %s  SERVER | Please log in' % time.strftime("%H:%M:%S") 
-            self.broadcastMessageToOne(sock, self.createJSON('login', None, None, msg + self.generateWhiteSpaces(84 - len(msg))))      
+            self.broadcastMessageToOne(sock, self.createJSON('login', None, None, msg + self.generateWhiteSpaces(84 - len(msg), None)))      
 
     # Function to clean up JSON creation
-    def createJSON(self, response, username, message, error): # need messages also, when we implent message log
+    def createJSON(self, response, username, message, error, messages): # need messages also, when we implent message log
         res = {}
         if response is not None:
             res['response'] = response
@@ -177,6 +180,8 @@ class Server(object):
             res['message'] = message
         if error is not None:
             res['error'] = error
+        if messages is not None:
+            res['messages'] = messages
         return json.dumps(res)
 
     def generateWhiteSpaces(self, length): # length is 84 - current length

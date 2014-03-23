@@ -128,6 +128,12 @@ class Client(object):
                 if self.debug: print 'Client.handleJSON: LOGGED IN'
                 print data['message']
                 self.username = data['username']
+                if 'messages' in data:
+                    if self.debug: print 'Client.handleJSON: LOGGED IN, GOT MESSAGE LOG'
+                    print '*==================================================================================*'
+                    for message in data['messages']:
+                        print message
+                    print '*==================================================================================*'
         elif data['response'] == 'logout':
             if self.debug: print 'Client.handleJSON: LOGOUT'
             print data['message']
